@@ -2,7 +2,9 @@
 
 Interactive map for routing skiers home in the Tignes / Val d'Isere linked resort. Click anywhere on the mountain, pick your village, and see the route.
 
-Powered by the [Ski Home API](https://github.com/caldvs/ski-home-api). Built with [Leaflet](https://leafletjs.com) and [OpenStreetMap](https://www.openstreetmap.org) tiles.
+Powered by the [Ski Home API](https://github.com/caldvs/ski-home-api). Built with [MapLibre GL JS](https://maplibre.org) and [OpenFreeMap](https://openfreemap.org) vector tiles.
+
+![Ski Home Map](screenshot.png)
 
 ## Usage
 
