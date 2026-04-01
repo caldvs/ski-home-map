@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ski Home — Route Map</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  body { margin: 0; font-family: -apple-system, sans-serif; }
+  #map { height: 100vh; }
+  .controls {
+    position: absolute; top: 10px; right: 10px; z-index: 1000;
+    background: white; padding: 12px; border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3); max-width: 300px;
+  }
+  .controls select, .controls button {
+    width: 100%; margin: 4px 0; padding: 6px; font-size: 14px;
+  }
+  .controls label { font-size: 13px; font-weight: 600; display: block; margin-top: 8px; }
+  .controls .checkboxes label { font-weight: 400; margin-top: 2px; }
+  #route-info {
+    position: absolute; bottom: 10px; left: 10px; z-index: 1000;
+    background: white; padding: 12px; border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3); max-width: 400px;
+    max-height: 40vh; overflow-y: auto; display: none; font-size: 13px;
+  }
+  .leg { padding: 3px 4px; cursor: pointer; border-radius: 3px; }
+  .leg-run { color: #333; }
+  .leg-lift { color: #0066cc; }
+  .leg-skate { color: #999; font-style: italic; }
+  #loading { display: none; position: absolute; top: 50%; left: 50%; z-index: 2000;
+    transform: translate(-50%,-50%); background: white; padding: 16px 24px;
+    border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.3); font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="loading">Loading graph data...</div>
+<div class="controls">
+  <h3 style="margin:0 0 8px 0">Ski Home</h3>
+  <label>Click map to set start, then:</label>
+  <label>Home village</label>
+  <select id="village"></select>
+  <label>Difficulty</label>
+  <select id="difficulty">
+    <option value="any-piste">Any piste</option>
+    <option value="reds-if-needed">Reds if needed</option>
+    <option value="prefer-easy">Prefer greens & blues</option>
+  </select>
+  <label>Mode</label>
+  <select id="mode">
+    <option value="direct">Direct (fastest)</option>
+    <option value="most-skiing">Most skiing</option>
+  </select>
+  <button id="route-btn" onclick="computeRoute()">Route Home</button>
+  <div class="checkboxes" style="margin-top:8px;font-size:12px;color:#666">
+    <label><input type="checkbox" id="show-runs" checked onchange="toggleLayer('runs')"> Runs</label>
+    <label><input type="checkbox" id="show-lifts" checked onchange="toggleLayer('lifts')"> Lifts</label>
+    <label><input type="checkbox" id="show-nodes" onchange="toggleLayer('nodes')"> Nodes</label>
+  </div>
+</div>
+<div id="route-info"></div>
+
+<script>
+const API_BASE = 'https://ski-home-api.onrender.com';
+
+const diffColours = {
+  novice: '#00aa00', easy: '#0066ff', intermediate: '#ff0000',
+  advanced: '#333', expert: '#333', freeride: '#ff8800'
+};
+
+// Map setup
+const map = L.map('map').setView([45.455, 6.945], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 18,
+}).addTo(map);
+
+const runLayer = L.layerGroup().addTo(map);
+const liftLayer = L.layerGroup().addTo(map);
+const nodeLayer = L.layerGroup();
+
+let startMarker = null;
+let startCoord = null;
+let routeLayer = null;
+let graphData = null;
+
+// Load graph data from API and draw base layers
+async function init() {
+  document.getElementById('loading').style.display = 'block';
+
+  try {
+    // Fetch graph and villages in parallel
+    const [graphResp, villagesResp] = await Promise.all([
+      fetch(`${API_BASE}/graph`),
+      fetch(`${API_BASE}/villages`),
+    ]);
+    graphData = await graphResp.json();
+    const villages = await villagesResp.json();
+
+    // Populate village picker
+    const sel = document.getElementById('village');
+    for (const name of Object.keys(villages)) {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      sel.appendChild(opt);
+    }
+
+    // Build node lookup
+    const nodes = {};
+    graphData.nodes.forEach(n => nodes[n.id] = n);
+    graphData._nodes = nodes;
+
+    // Draw runs
+    graphData.edges.forEach(e => {
+      if (e.type !== 'run' && e.type !== 'connection') return;
+      if (!e.geometry || e.geometry.length < 2) return;
+      const coords = e.geometry.map(c => [c[1], c[0]]);
+      const colour = diffColours[e.difficulty] || '#999';
+      const dash = e.type === 'connection' ? '8,4' : null;
+      const line = L.polyline(coords, { color: colour, weight: 2.5, opacity: 0.6, dashArray: dash });
+      line.bindTooltip(e.name || 'unnamed', { sticky: true });
+      line.addTo(runLayer);
+    });
+
+    // Draw lifts
+    graphData.edges.forEach(e => {
+      if (e.type !== 'lift' && e.type !== 'lift_down') return;
+      if (!e.geometry || e.geometry.length < 2) return;
+      const coords = e.geometry.map(c => [c[1], c[0]]);
+      const line = L.polyline(coords, { color: '#cc00cc', weight: 2.5, opacity: 0.9 });
+      line.bindTooltip(`${e.name} (${e.lift_type || 'lift'})`, { sticky: true });
+      line.addTo(liftLayer);
+    });
+
+    // Draw nodes (hidden by default)
+    graphData.nodes.forEach(n => {
+      const marker = L.circleMarker([n.lat, n.lon], {
+        radius: 3, color: '#333', fillColor: n.villages.length > 0 ? '#ff6600' : '#666',
+        fillOpacity: 0.8, weight: 1,
+      });
+      marker.bindTooltip(`${n.name} (${Math.round(n.elev)}m)`, { sticky: true });
+      marker.addTo(nodeLayer);
+    });
+
+  } catch (err) {
+    alert('Failed to load graph data from API: ' + err.message);
+  }
+
+  document.getElementById('loading').style.display = 'none';
+}
+
+// Click to set start position
+map.on('click', function(e) {
+  startCoord = e.latlng;
+  if (startMarker) map.removeLayer(startMarker);
+  startMarker = L.marker(e.latlng, {
+    icon: L.divIcon({ className: '', html: '<div style="background:#ff3300;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.5)"></div>', iconSize: [12, 12], iconAnchor: [6, 6] })
+  }).addTo(map);
+});
+
+function toggleLayer(name) {
+  const layers = { runs: runLayer, lifts: liftLayer, nodes: nodeLayer };
+  const cb = document.getElementById('show-' + name);
+  if (cb.checked) layers[name].addTo(map);
+  else map.removeLayer(layers[name]);
+}
+
+async function computeRoute() {
+  if (!startCoord) { alert('Click on the map to set your position first.'); return; }
+  const village = document.getElementById('village').value;
+  const difficulty = document.getElementById('difficulty').value;
+  const mode = document.getElementById('mode').value;
+
+  const url = `${API_BASE}/route?lon=${startCoord.lng}&lat=${startCoord.lat}&village=${encodeURIComponent(village)}&difficulty=${difficulty}&mode=${mode}&geometry=true`;
+
+  document.getElementById('route-btn').textContent = 'Routing...';
+  document.getElementById('route-btn').disabled = true;
+
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.error) {
+      alert('Routing error: ' + data.error);
+      return;
+    }
+
+    displayRoute(data);
+  } catch (err) {
+    alert('API request failed: ' + err.message);
+  } finally {
+    document.getElementById('route-btn').textContent = 'Route Home';
+    document.getElementById('route-btn').disabled = false;
+  }
+}
+
+function clearRoute() {
+  if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
+  restoreBaseLayers();
+  document.getElementById('route-info').style.display = 'none';
+}
+
+function dimBaseLayers() {
+  runLayer.eachLayer(l => l.setStyle({ opacity: 0.15 }));
+  liftLayer.eachLayer(l => l.setStyle({ opacity: 0.15 }));
+}
+function restoreBaseLayers() {
+  runLayer.eachLayer(l => l.setStyle({ opacity: 0.6 }));
+  liftLayer.eachLayer(l => l.setStyle({ opacity: 0.9 }));
+}
+
+function displayRoute(data) {
+  if (routeLayer) map.removeLayer(routeLayer);
+  routeLayer = L.layerGroup();
+  dimBaseLayers();
+
+  const info = document.getElementById('route-info');
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center">
+    <h3 style="margin:0">Route to ${data.to.village}</h3>
+    <button onclick="clearRoute()" style="background:none;border:none;font-size:18px;cursor:pointer;padding:0 4px" title="Dismiss">&times;</button>
+  </div>`;
+
+  const legPolylines = [];
+
+  data.legs.forEach((leg, i) => {
+    let lineColor, weight, dash, cls, desc;
+
+    if (leg.type === 'run' || leg.type === 'connection') {
+      lineColor = diffColours[leg.difficulty] || '#999';
+      weight = 4;
+      dash = leg.type === 'connection' ? '8,4' : null;
+      cls = 'leg-run';
+      desc = leg.type === 'connection'
+        ? `↔️ ${leg.name} (connection)`
+        : `⛷️ ${leg.name} (${leg.difficulty || ''})`;
+    } else if (leg.type === 'lift' || leg.type === 'lift_down') {
+      lineColor = '#ff00ff';
+      weight = 4; dash = null; cls = 'leg-lift';
+      const dir = leg.direction === 'down' ? '⬇' : '⬆';
+      desc = `🚡 ${leg.name} (${leg.lift_type || 'lift'} ${dir})`;
+    } else {
+      lineColor = '#ff9900';
+      weight = 3; dash = '4,4'; cls = 'leg-skate';
+      desc = `🛹 ${leg.name}`;
+      if (leg.elev_gain) desc += ` (+${Math.round(leg.elev_gain)}m)`;
+    }
+
+    // Draw geometry
+    let polyline = null;
+    if (leg.geometry && leg.geometry.length >= 2) {
+      const coords = leg.geometry.map(c => [c[1], c[0]]);
+      polyline = L.polyline(coords, { color: lineColor, weight: weight, dashArray: dash, opacity: 0.9 });
+      polyline._baseColor = lineColor;
+      polyline._baseWeight = weight;
+      polyline.addTo(routeLayer);
+    }
+    legPolylines.push(polyline);
+
+    html += `<div class="leg ${cls}" data-leg-idx="${i}">${i+1}. ${desc} — ${Math.round(leg.from.elev)}m→${Math.round(leg.to.elev)}m</div>`;
+  });
+
+  html += `<hr><b>${data.summary.runs} runs, ${data.summary.lifts} lifts — ~${data.summary.estimated_minutes} min, ${Math.round(data.summary.vertical_m)}m vertical</b>`;
+  info.innerHTML = html;
+  info.style.display = 'block';
+  routeLayer.addTo(map);
+
+  // Fit map to route
+  const allCoords = data.legs.flatMap(l => (l.geometry || []).map(c => [c[1], c[0]]));
+  if (allCoords.length > 0) {
+    map.fitBounds(L.latLngBounds(allCoords), { padding: [60, 60], maxZoom: 15 });
+  }
+
+  // Hover highlighting
+  info.querySelectorAll('.leg[data-leg-idx]').forEach(el => {
+    const idx = parseInt(el.dataset.legIdx);
+    el.addEventListener('mouseenter', () => {
+      legPolylines.forEach((p, j) => {
+        if (!p) return;
+        if (j === idx) {
+          p.setStyle({ weight: 8, opacity: 1.0, color: '#ff00ff' });
+          p.bringToFront();
+        } else {
+          p.setStyle({ weight: 3, opacity: 0.3 });
+        }
+      });
+      el.style.background = '#eef';
+    });
+    el.addEventListener('mouseleave', () => {
+      legPolylines.forEach(p => {
+        if (!p) return;
+        p.setStyle({ weight: p._baseWeight, opacity: 0.9, color: p._baseColor });
+      });
+      el.style.background = '';
+    });
+    el.addEventListener('click', () => {
+      const p = legPolylines[idx];
+      if (p) map.fitBounds(p.getBounds(), { padding: [60, 60], maxZoom: 16 });
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>
