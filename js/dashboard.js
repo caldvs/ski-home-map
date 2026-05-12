@@ -1,22 +1,36 @@
 /**
- * Dashboard: lay out the world tiles. Clicking a tile navigates to
- * map.html?world=<id> where app.js takes over.
+ * Dashboard: two views over the WORLDS list.
+ *
+ *   - Tile grid: cards, default
+ *   - Map: MapLibre with a clickable marker for each world. Marker is
+ *     coloured by sub-region, navigates to map.html?world=<id> on click.
+ *
+ * The Tiles ↔ Map toggle lives in the header. Map is built lazily on
+ * the first switch.
  */
 
 import { WORLDS } from "./worlds.js";
 
-const grid = document.getElementById("world-grid");
+const grid          = document.getElementById("world-grid");
+const mapWrap       = document.getElementById("world-map-wrap");
+const switchBtns    = document.querySelectorAll(".view-switch button");
 
-// Probe each world's data file at page load and grey out any that aren't
-// available yet (e.g. before scripts/build_data.py has been run).
-async function isAvailable(url) {
+// availability cache so both views agree on greyed-out state
+const availability = new Map();
+
+async function probe(url) {
+  if (availability.has(url)) return availability.get(url);
   try {
     const r = await fetch(url, { method: "HEAD" });
+    availability.set(url, r.ok);
     return r.ok;
   } catch (e) {
+    availability.set(url, false);
     return false;
   }
 }
+
+// ─────────────── Tile grid ───────────────
 
 for (const w of Object.values(WORLDS)) {
   const tile = document.createElement("a");
@@ -36,13 +50,11 @@ for (const w of Object.values(WORLDS)) {
   `;
   grid.appendChild(tile);
 
-  // Async availability probe
-  isAvailable(w.data).then((available) => {
-    if (available) {
-      tile.classList.remove("loading");
+  probe(w.data).then((ok) => {
+    tile.classList.remove("loading");
+    if (ok) {
       tile.href = `./map.html?world=${encodeURIComponent(w.id)}`;
     } else {
-      tile.classList.remove("loading");
       tile.classList.add("disabled");
       tile.querySelector("h2").innerHTML +=
         ' <span class="muted">(not built yet)</span>';
@@ -50,3 +62,113 @@ for (const w of Object.values(WORLDS)) {
     }
   });
 }
+
+// ─────────────── View switch ───────────────
+
+let mapBuilt = false;
+let dashboardMap = null;
+
+function showView(name) {
+  switchBtns.forEach((b) => {
+    const on = b.dataset.view === name;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  if (name === "map") {
+    grid.hidden = true;
+    mapWrap.hidden = false;
+    if (!mapBuilt) {
+      mapBuilt = true;
+      buildMap();
+    } else if (dashboardMap) {
+      // Map was hidden; MapLibre needs a resize after display:none lift
+      requestAnimationFrame(() => dashboardMap.resize());
+    }
+  } else {
+    grid.hidden = false;
+    mapWrap.hidden = true;
+  }
+}
+switchBtns.forEach((b) =>
+  b.addEventListener("click", () => showView(b.dataset.view)));
+
+// ─────────────── Map view ───────────────
+
+function buildMap() {
+  // Centre on Tarentaise / Vanoise. Bounds are auto-fit below.
+  dashboardMap = new maplibregl.Map({
+    container: "world-map",
+    style: "https://tiles.openfreemap.org/styles/liberty",
+    center: [6.7, 45.4],
+    zoom: 9,
+    maxPitch: 0,
+    attributionControl: { compact: true },
+  });
+  dashboardMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  dashboardMap.addControl(new maplibregl.ScaleControl(), "bottom-right");
+
+  dashboardMap.on("load", async () => {
+    const bounds = new maplibregl.LngLatBounds();
+    const all = Object.values(WORLDS);
+
+    // Probe all worlds first so disabled state is applied to the marker
+    await Promise.all(all.map((w) => probe(w.data)));
+
+    for (const w of all) {
+      const ok = availability.get(w.data);
+      const [lon, lat] = w.initialView.center;
+      bounds.extend([lon, lat]);
+
+      const el = document.createElement("div");
+      el.className = "world-marker " + (w.bannerClass || "");
+      if (!ok) el.classList.add("disabled");
+      el.title = w.name + (ok ? "" : " (not built yet)");
+
+      const popupHtml = `
+        <h3>${w.name}</h3>
+        <div class="region">${w.region || ""}</div>
+        <p>${w.description}</p>
+        <div class="stats">
+          ${w.stats.nodes} nodes · ${w.stats.edges} edges · ${w.stats.villages} villages
+        </div>
+        ${ok
+          ? `<a class="open-btn" href="./map.html?world=${encodeURIComponent(w.id)}">Open →</a>`
+          : `<div style="margin-top:6px;color:#c66;font-size:11px">Graph not built yet.</div>`
+        }
+      `;
+      const popup = new maplibregl.Popup({
+        offset: 14,
+        closeButton: true,
+        className: "world-popup",
+        maxWidth: "260px",
+      }).setHTML(popupHtml);
+
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat([lon, lat])
+        .setPopup(popup)
+        .addTo(dashboardMap);
+
+      // Single click on the marker (when graph is available): open immediately.
+      // Long-press / shift-click pops the info card instead.
+      if (ok) {
+        el.addEventListener("click", (ev) => {
+          if (ev.shiftKey) {
+            marker.togglePopup();
+            return;
+          }
+          window.location.href =
+            "./map.html?world=" + encodeURIComponent(w.id);
+        });
+      } else {
+        el.addEventListener("click", () => marker.togglePopup());
+      }
+    }
+
+    if (!bounds.isEmpty()) {
+      dashboardMap.fitBounds(bounds, { padding: 60, maxZoom: 11, duration: 0 });
+    }
+  });
+}
+
+// Default view: tiles
+showView("grid");

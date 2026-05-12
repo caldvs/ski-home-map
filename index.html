@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <title>ski-home-map · pick a world</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
 <link rel="stylesheet" href="./css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>⛷</text></svg>">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
 <body class="dashboard">
 
@@ -16,10 +18,26 @@
     Built on <a href="https://github.com/caldvs/skiroute">skiroute</a> and
     <a href="https://openskidata.org/">OpenSkiData</a>.
   </p>
+  <div class="view-switch" role="tablist" aria-label="View">
+    <button class="active" data-view="grid" role="tab" aria-selected="true">Tiles</button>
+    <button data-view="map" role="tab" aria-selected="false">Map</button>
+  </div>
 </header>
 
-<main class="world-grid" id="world-grid">
-  <!-- populated by js/dashboard.js -->
+<main class="dashboard-main">
+  <section class="world-grid" id="world-grid">
+    <!-- populated by js/dashboard.js -->
+  </section>
+
+  <section class="world-map-wrap" id="world-map-wrap" hidden>
+    <div id="world-map"></div>
+    <div class="map-legend">
+      <span><i class="dot tarentaise"></i> Tarentaise</span>
+      <span><i class="dot vanoise"></i> Vanoise</span>
+      <span><i class="dot beaufortain"></i> Beaufortain</span>
+      <span><i class="dot maurienne"></i> Maurienne</span>
+    </div>
+  </section>
 </main>
 
 <footer class="dashboard-footer">
