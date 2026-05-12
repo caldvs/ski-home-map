@@ -107,6 +107,9 @@ function buildMap() {
   dashboardMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
   dashboardMap.addControl(new maplibregl.ScaleControl(), "bottom-right");
 
+  // Only ever one popup open at a time on the dashboard map.
+  let openPopup = null;
+
   dashboardMap.on("load", async () => {
     const bounds = new maplibregl.LngLatBounds();
     const all = Object.values(WORLDS);
@@ -132,36 +135,39 @@ function buildMap() {
           ${w.stats.nodes} nodes · ${w.stats.edges} edges · ${w.stats.villages} villages
         </div>
         ${ok
-          ? `<a class="open-btn" href="./map.html?world=${encodeURIComponent(w.id)}">Open →</a>`
+          ? `<a class="open-btn" href="./map.html?world=${encodeURIComponent(w.id)}">Go here →</a>`
           : `<div style="margin-top:6px;color:#c66;font-size:11px">Graph not built yet.</div>`
         }
       `;
       const popup = new maplibregl.Popup({
         offset: 14,
         closeButton: true,
+        closeOnClick: true,
         className: "world-popup",
         maxWidth: "260px",
       }).setHTML(popupHtml);
+
+      popup.on("close", () => {
+        if (openPopup === popup) openPopup = null;
+      });
 
       const marker = new maplibregl.Marker({ element: el })
         .setLngLat([lon, lat])
         .setPopup(popup)
         .addTo(dashboardMap);
 
-      // Single click on the marker (when graph is available): open immediately.
-      // Long-press / shift-click pops the info card instead.
-      if (ok) {
-        el.addEventListener("click", (ev) => {
-          if (ev.shiftKey) {
-            marker.togglePopup();
-            return;
-          }
-          window.location.href =
-            "./map.html?world=" + encodeURIComponent(w.id);
-        });
-      } else {
-        el.addEventListener("click", () => marker.togglePopup());
-      }
+      el.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        // Close any other open popup before opening this one
+        if (openPopup && openPopup !== popup) openPopup.remove();
+        if (openPopup === popup) {
+          popup.remove();
+          openPopup = null;
+        } else {
+          marker.togglePopup();
+          openPopup = popup;
+        }
+      });
     }
 
     if (!bounds.isEmpty()) {
