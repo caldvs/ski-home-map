@@ -1,0 +1,28 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check JS module syntax
+        run: |
+          for f in js/*.js; do
+            echo "checking $f"
+            node --check "$f"
+          done
+      - name: Verify HTML files parse
+        run: |
+          for f in *.html; do
+            echo "checking $f"
+            python3 -c "from html.parser import HTMLParser; HTMLParser().feed(open('$f').read())"
+          done

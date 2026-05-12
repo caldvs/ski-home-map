@@ -1,0 +1,72 @@
+name: rebuild graphs
+
+on:
+  workflow_dispatch:
+    inputs:
+      gpkg_url:
+        description: "OpenSkiData GeoPackage URL"
+        required: false
+        default: "https://tiles.openskimap.org/openskidata.gpkg"
+      worlds:
+        description: "Worlds to build (space-separated, blank = all)"
+        required: false
+        default: ""
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install skiroute
+        run: |
+          python -m pip install --upgrade pip
+          # Once skiroute is on PyPI, switch to `pip install skiroute`.
+          pip install "git+https://github.com/caldvs/skiroute.git@main"
+          python -c "import skiroute; print('skiroute', skiroute.__version__)"
+
+      - name: Cache OpenSkiData GeoPackage
+        id: gpkg-cache
+        uses: actions/cache@v4
+        with:
+          path: openskidata.gpkg
+          # Cache key includes the URL — change the URL to force a refresh
+          key: gpkg-${{ inputs.gpkg_url }}
+
+      - name: Download GeoPackage
+        if: steps.gpkg-cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Downloading from ${{ inputs.gpkg_url }}"
+          curl -fL --retry 3 -o openskidata.gpkg "${{ inputs.gpkg_url }}"
+          du -h openskidata.gpkg
+
+      - name: Build graphs
+        env:
+          SKIROUTE_GPKG: ${{ github.workspace }}/openskidata.gpkg
+        run: |
+          python3 scripts/build_data.py ${{ inputs.worlds }}
+          ls -lh data/
+
+      - name: Commit and push if changed
+        run: |
+          if [[ -z "$(git status --porcelain data/)" ]]; then
+            echo "No graph changes — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "Auto-rebuild graphs from OpenSkiData
+
+Triggered by workflow_dispatch on $(date -u +%Y-%m-%dT%H:%M:%SZ).
+Source: ${{ inputs.gpkg_url }}"
+          git push

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ski-home-map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
+<link rel="stylesheet" href="./css/map.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/maplibre-contour@0.0.7/dist/index.min.js"></script>
+<script src="https://unpkg.com/mapbox-gl-shadow-simulator/dist/mapbox-gl-shadow-simulator.umd.min.js"></script>
+</head>
+<body>
+
+<div id="map"></div>
+
+<a id="back-link" href="./index.html">← worlds</a>
+
+<div id="control-panel" class="panel">
+  <h1 id="world-title">Loading…</h1>
+  <div class="summary" id="world-summary"></div>
+  <div style="display:flex;gap:6px;margin-bottom:8px">
+    <button id="toggle-3d">3D mode</button>
+    <button id="reset-view">Reset</button>
+  </div>
+  <h2>Layers</h2>
+  <label><input type="checkbox" id="lyr-pistes" checked> Pistes</label>
+  <div class="legend-row" style="padding-left:20px">
+    <span class="swatch" style="background:#00b050"></span>green
+    <span class="swatch" style="background:#1e88e5"></span>blue
+    <span class="swatch" style="background:#e53935"></span>red
+    <span class="swatch" style="background:#2c2c2c"></span>black
+  </div>
+  <label><input type="checkbox" id="lyr-lifts" checked>
+    <span class="swatch" style="background:#ff6f00"></span> Lifts</label>
+  <label><input type="checkbox" id="lyr-stations" checked>
+    <span class="swatch swatch-circle"></span> Stations</label>
+  <label><input type="checkbox" id="lyr-villages" checked>
+    <span class="swatch swatch-village"></span> Villages</label>
+  <label><input type="checkbox" id="lyr-skates"> Skating links</label>
+  <label><input type="checkbox" id="lyr-hillshade" checked>
+    <span class="swatch" style="background:#888"></span> Hillshade</label>
+  <label><input type="checkbox" id="lyr-contours" checked>
+    <span class="swatch" style="background:rgba(102,78,53,0.7)"></span> Contour lines</label>
+  <label><input type="checkbox" id="lyr-terrain" checked> 3D terrain</label>
+  <div class="credits">
+    Map © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ·
+    <a href="https://openmaptiles.org/">OpenMapTiles</a> /
+    <a href="https://openfreemap.org/">OpenFreeMap</a> ·
+    Terrain © <a href="https://mapterhorn.com/">Mapterhorn</a> ·
+    Pistes <a href="https://openskidata.org/">OpenSkiData</a> ·
+    Sun <a href="https://shademap.app/">ShadeMap</a>
+  </div>
+</div>
+
+<div id="sun-panel" class="panel sun">
+  <strong>☀ Sun</strong>
+  <input type="date" id="sun-date">
+  <button id="sun-h-minus" title="−1 hour">−1h</button>
+  <button id="sun-m-minus" title="−15 min">−15m</button>
+  <span id="sun-time-label" class="time">12:00</span>
+  <button id="sun-m-plus" title="+15 min">+15m</button>
+  <button id="sun-h-plus" title="+1 hour">+1h</button>
+  <button id="sun-play" class="primary" title="Animate one full day">▶</button>
+  <button id="sun-now" title="Reset to noon" style="font-size:11px">noon</button>
+  <label class="checkbox">
+    <input type="checkbox" id="lyr-shadows" checked> Shadows
+  </label>
+  <button id="sun-key-gear" title="Manage ShadeMap API key">⚙</button>
+  <div id="sun-status"></div>
+</div>
+
+<div id="perf-overlay">
+  <span class="label">fps</span> <span id="perf-fps">--</span> ·
+  <span class="label">frame</span> <span id="perf-frame-ms">--</span><span class="label">ms</span><br>
+  <span class="label">shadow</span> <span id="perf-shadow-ms">--</span><span class="label">ms</span> ·
+  <span class="label">tiles</span> <span id="perf-tiles">--</span>
+</div>
+
+<div id="route-panel" class="panel">
+  <div class="route-panel-header">
+    <strong>Route Finder</strong>
+    <button id="clear-route-btn">Clear</button>
+  </div>
+  <label>Difficulty preference
+    <select id="user-difficulty">
+      <option value="prefer-easy" selected>Prefer greens &amp; blues</option>
+      <option value="reds-if-needed">Reds if needed</option>
+      <option value="any-piste">Any piste (fastest)</option>
+    </select>
+  </label>
+  <details>
+    <summary>Visualise algorithm exploration</summary>
+    <div style="margin-top:8px">
+      <label>Algorithm
+        <select id="anim-algorithm">
+          <option value="dijkstra">Dijkstra (radial)</option>
+          <option value="astar">A* (goal-directed)</option>
+          <option value="bidir">Bidirectional Dijkstra</option>
+        </select>
+      </label>
+      <label>Speed: <span id="anim-speed-label">200</span> nodes/sec
+        <input type="range" id="anim-speed" min="30" max="3000" step="10" value="200">
+      </label>
+      <div style="display:flex;gap:6px">
+        <button id="anim-run-btn" class="primary" style="flex:1">▶ Animate</button>
+        <button id="anim-stop-btn">⏹</button>
+      </div>
+      <div id="anim-stats"><em>Drop two pins, then press Animate.</em></div>
+    </div>
+  </details>
+  <div id="user-route-info">
+    <em class="muted">Click the map to place a start pin.</em>
+  </div>
+</div>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>
