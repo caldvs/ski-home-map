@@ -241,6 +241,28 @@ export function runDijkstra(srcId, tgtId, mode, graph) {
   return { path: null, totalSeconds: null, visited: iters };
 }
 
+// Count how many distinct nodes a Dijkstra-style traversal starting at
+// `srcId` can reach. Pass `reverse: true` to count nodes that can reach
+// `srcId` instead. Used to diagnose "no route" failures and tell the user
+// whether the problem is the start, the end, or just a missing one-way
+// edge between two well-connected regions.
+export function reachableCount(graph, srcId, opts = {}) {
+  const reverse = !!opts.reverse;
+  const limit = opts.limit ?? Infinity;
+  const seen = new Set([srcId]);
+  const stack = [srcId];
+  while (stack.length && seen.size < limit) {
+    const u = stack.pop();
+    const list = reverse ? (graph.reverseAdj[u] || []) : (graph.adj[u] || []);
+    for (const eIdx of list) {
+      const e = graph.routingEdges[eIdx];
+      const v = reverse ? e.f : e.t;
+      if (!seen.has(v)) { seen.add(v); stack.push(v); }
+    }
+  }
+  return seen.size;
+}
+
 export function nearestNodeId(graph, lat, lon) {
   let best = null, bestD = Infinity;
   for (const id in graph.routingNodes) {

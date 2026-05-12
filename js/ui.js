@@ -7,6 +7,7 @@
 import {
   runDijkstra, nearestNodeId, describeNode,
   DijkstraRunner, AstarRunner, BidirRunner, edgeCost,
+  reachableCount,
 } from "./routing.js";
 
 export function wireRouting(map, graph) {
@@ -89,10 +90,30 @@ export function wireRouting(map, graph) {
       const result = runDijkstra(startNodeId, endNodeId, mode, graph);
       const tMs = (performance.now() - t0).toFixed(0);
       if (result.path === null) {
+        // Diagnose: is the start in a forward-orphan pocket, the end in
+        // a reverse-orphan pocket, or just a missing connection between
+        // two well-connected regions? Bound the BFS so giant worlds stay
+        // snappy — anything above the threshold is "plenty of nodes".
+        const POCKET_THRESHOLD = 25;
+        const PROBE = POCKET_THRESHOLD + 1;
+        const totalNodes = graph.routingNodes.length;
+        const fwd = reachableCount(graph, startNodeId, { limit: PROBE });
+        const rev = reachableCount(graph, endNodeId, { limit: PROBE, reverse: true });
+
+        let why;
+        if (fwd <= POCKET_THRESHOLD && rev > POCKET_THRESHOLD) {
+          why = `<div style="color:#e67;margin-top:6px">Start is stuck in a small ${fwd}-node pocket — the graph data has no skiable route out of here. <span class="muted">(${totalNodes} total nodes in this world)</span></div>`;
+        } else if (rev <= POCKET_THRESHOLD && fwd > POCKET_THRESHOLD) {
+          why = `<div style="color:#e67;margin-top:6px">End is in a small ${rev}-node pocket — nothing in the wider graph can ski into it. <span class="muted">(${totalNodes} total nodes)</span></div>`;
+        } else if (fwd <= POCKET_THRESHOLD && rev <= POCKET_THRESHOLD) {
+          why = `<div style="color:#e67;margin-top:6px">Both endpoints are in small pockets (start ${fwd} nodes, end ${rev}) — probable graph data gap.</div>`;
+        } else {
+          why = `<div style="color:#c33;margin-top:6px">No route found between these specific points (start reaches ${fwd > POCKET_THRESHOLD ? `${PROBE}+` : fwd}, end reachable from ${rev > POCKET_THRESHOLD ? `${PROBE}+` : rev} — likely a missing one-way edge between two well-connected regions).</div>`;
+        }
         info.innerHTML =
           '<div style="color:#22aa22">A: ' + describeNode(graph, startNodeId) + "</div>" +
           '<div style="color:#dd2222">B: ' + describeNode(graph, endNodeId) + "</div>" +
-          '<div style="color:#c33;margin-top:6px">No route found.</div>';
+          why;
         return;
       }
       drawRoute(map, graph, result.path);
