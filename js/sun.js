@@ -77,14 +77,14 @@ export function wireSun(map) {
     if (want && !shadowsCurrentlyAdded) {
       shadeMap.addTo(map);
       shadowsCurrentlyAdded = true;
-      if (map.getLayer("hillshade-layer")) {
-        map.setLayoutProperty("hillshade-layer", "visibility", "none");
+      if (map.getLayer("hillshade")) {
+        map.setLayoutProperty("hillshade", "visibility", "none");
       }
     } else if (!want && shadowsCurrentlyAdded) {
       shadeMap.remove();
       shadowsCurrentlyAdded = false;
-      if (map.getLayer("hillshade-layer")) {
-        map.setLayoutProperty("hillshade-layer", "visibility", "visible");
+      if (map.getLayer("hillshade")) {
+        map.setLayoutProperty("hillshade", "visibility", "visible");
       }
     }
     updateSunStatus();

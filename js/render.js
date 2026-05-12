@@ -8,10 +8,12 @@ import { LIFT_COLOUR } from "./graph.js";
 export function initMap(container, initialView) {
   const map = new maplibregl.Map({
     container,
-    // Positron — clean neutral grey OpenMapTiles style. Lets the
-    // hillshade + contours carry the visual weight (openskimap.org's
-    // approach) rather than fighting colourful landuse fills.
-    style: "https://tiles.openfreemap.org/styles/positron",
+    // Vendored openskimap terrain_v2 style: their basemap layers verbatim
+    // with the ski-specific sources stripped (we render those from our
+    // own graph) and glyph/sprite urls repointed to OpenFreeMap. The
+    // vector tiles themselves are OpenFreeMap, which is what openskimap
+    // already uses upstream.
+    style: "./styles/terrain.json",
     center: initialView.center,
     zoom: initialView.zoom,
     pitch: initialView.pitch,
@@ -29,8 +31,7 @@ export function initMap(container, initialView) {
 }
 
 // Try to insert a layer before `beforeId`; fall back to adding it on top
-// if that reference layer doesn't exist in the current style (positron
-// uses different layer ids than liberty).
+// if that reference layer doesn't exist in the current style.
 function addLayerBefore(map, layer, beforeId) {
   if (beforeId && map.getLayer(beforeId)) {
     map.addLayer(layer, beforeId);
@@ -39,73 +40,13 @@ function addLayerBefore(map, layer, beforeId) {
   }
 }
 
-// Push the positron basemap into a colder "snowed-in" palette. Run once
-// the style has loaded — overrides positron's default landuse / water /
-// building fills with a near-white snowy palette, leaving roads + labels
-// readable. Iterates by layer-id pattern so it's robust to minor schema
-// drift between positron versions and across other OpenMapTiles styles.
-function applySnowyPalette(map) {
-  const layers = (map.getStyle().layers) || [];
-
-  const SNOW       = "#f4f5f6";   // background — fresh snow
-  const ICE_FILL   = "#d0d8de";   // lakes, glaciers
-  const ICE_LINE   = "#b8c2c8";   // rivers
-  const SHADE      = "#e6e8e6";   // generic landuse
-  const WOOD       = "#dee2dc";   // forest, slightly cool green-grey
-  const BUILT      = "#e5e7e9";   // urban
-  const BUILDING   = "#d8dadd";   // building footprints
-
-  for (const layer of layers) {
-    const id = layer.id, type = layer.type;
-    try {
-      if (id === "background" && type === "background") {
-        map.setPaintProperty(id, "background-color", SNOW);
-      } else if (type === "fill" && /water|ocean|sea|lake|glacier/i.test(id)) {
-        map.setPaintProperty(id, "fill-color", ICE_FILL);
-      } else if (type === "line" && /water|river|stream/i.test(id)) {
-        map.setPaintProperty(id, "line-color", ICE_LINE);
-      } else if (type === "fill" && /wood|forest/i.test(id)) {
-        map.setPaintProperty(id, "fill-color", WOOD);
-      } else if (type === "fill" && /park|grass|cemetery|recreation/i.test(id)) {
-        map.setPaintProperty(id, "fill-color", "#e8ebe5");
-      } else if (type === "fill" && id === "building") {
-        map.setPaintProperty(id, "fill-color", BUILDING);
-      } else if (type === "fill" && /residential|urban|industrial|commercial|built/i.test(id)) {
-        map.setPaintProperty(id, "fill-color", BUILT);
-      } else if (type === "fill" && /landuse|landcover/i.test(id)) {
-        map.setPaintProperty(id, "fill-color", SHADE);
-      }
-    } catch (e) {
-      // Some layers have data-driven paint expressions that don't accept
-      // a static colour override — skip them silently.
-    }
-  }
-}
-
 export function addBaseLayers(map) {
-  applySnowyPalette(map);
-
-  // Terrain DEM
-  map.addSource("terrain-dem", {
-    type: "raster-dem",
-    url: "https://tiles.mapterhorn.com/tilejson.json",
-  });
-  map.setTerrain({ source: "terrain-dem", exaggeration: 1.2 });
-
-  // Hillshade — pushed harder now that the basemap is neutral grey.
-  // Shadows are a warm brown to mimic openskimap's "alpine" feel.
-  addLayerBefore(map, {
-    id: "hillshade-layer",
-    type: "hillshade",
-    source: "terrain-dem",
-    paint: {
-      "hillshade-shadow-color": "#3a2e22",
-      "hillshade-highlight-color": "#ffffff",
-      "hillshade-accent-color": "#8d6f55",
-      "hillshade-illumination-direction": 335,
-      "hillshade-exaggeration": 0.95,
-    },
-  }, "park");
+  // The terrain.json style already defines:
+  //   - 3D terrain (terrain block → "terrain" raster-dem source)
+  //   - Hillshade layer id "hillshade" using the "hillshade" raster-dem source
+  // Both point at Mapterhorn (same supplier we used before). So we no
+  // longer add our own DEM source / hillshade-layer here — only the
+  // contour-lines layer, which openskimap doesn't render via vector tiles.
 
   // Contour lines via maplibre-contour (browser-side from the same DEM)
   const demSource = new mlcontour.DemSource({
@@ -404,16 +345,16 @@ export function wireLayerToggles(map) {
   bind("lyr-stations",  ["stations-layer"]);
   bind("lyr-villages",  ["villages-layer", "villages-label"]);
   bind("lyr-skates",    ["skates-layer"]);
-  bind("lyr-hillshade", ["hillshade-layer"]);
+  // Hillshade layer in the vendored terrain.json is id "hillshade".
+  bind("lyr-hillshade", ["hillshade"]);
   bind("lyr-contours",  ["contour-lines", "contour-labels"]);
 
   const terrainCb = document.getElementById("lyr-terrain");
   if (terrainCb) {
     terrainCb.addEventListener("change", (e) => {
+      // The vendored style declares the terrain source as "terrain".
       map.setTerrain(
-        e.target.checked
-          ? { source: "terrain-dem", exaggeration: 1.2 }
-          : null,
+        e.target.checked ? { source: "terrain", exaggeration: 1.0 } : null,
       );
     });
   }
