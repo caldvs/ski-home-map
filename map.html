@@ -33,11 +33,11 @@
   <div id="bottom-pane">
     <div class="pane-header">
       <strong>Route Finder</strong>
-      <span class="pane-sub muted">Click the map to place pins.</span>
+      <span class="pane-sub muted">Click the map (or a town name) to place pins.</span>
       <button id="clear-route-btn">Clear</button>
     </div>
     <div class="pane-body">
-      <div class="pane-col">
+      <div class="pane-col route-col">
         <label>Difficulty preference
           <select id="user-difficulty">
             <option value="prefer-easy" selected>Prefer greens &amp; blues</option>
@@ -49,21 +49,24 @@
           <em class="muted">Click the map to place a start pin.</em>
         </div>
       </div>
-      <div class="pane-col">
+
+      <div class="pane-col algo-col">
         <details>
           <summary>Visualise algorithm exploration</summary>
           <div class="algo-controls">
-            <label>Algorithm
+            <div class="algo-field">
+              <label for="anim-algorithm">Algorithm</label>
               <select id="anim-algorithm">
                 <option value="dijkstra">Dijkstra (radial)</option>
                 <option value="astar">A* (goal-directed)</option>
                 <option value="bidir">Bidirectional Dijkstra</option>
               </select>
-            </label>
-            <label>Speed: <span id="anim-speed-label">200</span> nodes/sec
+            </div>
+            <div class="algo-field">
+              <label for="anim-speed">Speed: <span id="anim-speed-label">200</span> nodes/sec</label>
               <input type="range" id="anim-speed" min="30" max="3000" step="10" value="200">
-            </label>
-            <div class="row">
+            </div>
+            <div class="algo-buttons">
               <button id="anim-run-btn" class="primary">▶ Animate</button>
               <button id="anim-stop-btn">⏹</button>
             </div>

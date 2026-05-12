@@ -228,19 +228,21 @@ body.sidebar-closed #sidebar {
 /* ───── Bottom pane ───── */
 
 #bottom-pane {
-  flex: 0 0 var(--bottom-h);
-  height: var(--bottom-h);
+  flex: 0 0 auto;
+  min-height: 150px;
+  max-height: 320px;
   background: var(--panel-bg);
   border-top: 1px solid var(--panel-border);
   padding: 10px 16px 12px;
   display: flex;
   flex-direction: column;
-  transition: flex-basis 220ms ease, height 220ms ease, padding 220ms ease;
+  transition: min-height 220ms ease, max-height 220ms ease, padding 220ms ease;
   overflow: hidden;
 }
 body.bottom-closed #bottom-pane {
   flex: 0 0 0;
-  height: 0;
+  min-height: 0;
+  max-height: 0;
   padding: 0 16px;
   border-top: none;
 }
@@ -249,7 +251,8 @@ body.bottom-closed #bottom-pane {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
 }
 .pane-header strong { font-size: 14px; }
 .pane-sub { font-size: 11px; }
@@ -257,35 +260,77 @@ body.bottom-closed #bottom-pane {
 
 .pane-body {
   display: flex;
-  gap: 24px;
-  flex: 1;
+  gap: 28px;
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  align-items: flex-start;
 }
 .pane-col {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
+}
+.route-col {
+  flex: 0 0 280px;
+  max-width: 320px;
+}
+.algo-col {
+  flex: 1 1 auto;
+  border-left: 1px solid var(--panel-border);
+  padding-left: 24px;
 }
 .pane-col label {
   display: block;
   font-size: 12px;
   color: #ccc;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
-.algo-controls .row {
+
+/* Algorithm visualiser — horizontal layout when open */
+.algo-col details > summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: #bbb;
+  padding: 2px 0;
+  margin-bottom: 6px;
+  user-select: none;
+}
+.algo-col details[open] > summary {
+  color: #eee;
+  font-weight: 600;
+}
+.algo-controls {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.algo-field {
+  flex: 1 1 160px;
+  min-width: 140px;
+  max-width: 240px;
+}
+.algo-field label {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 3px;
+}
+.algo-buttons {
   display: flex;
   gap: 6px;
-  margin-top: 6px;
+  flex: 0 0 auto;
+  align-self: flex-end;
 }
-.algo-controls .row button.primary { flex: 1; }
+.algo-buttons .primary { white-space: nowrap; padding: 6px 14px; }
 #anim-stats {
-  margin-top: 6px;
+  flex: 1 1 100%;
+  margin-top: 4px;
   font-size: 11px;
   color: #999;
   font-family: ui-monospace, monospace;
   line-height: 1.6;
 }
-#user-route-info { margin-top: 6px; font-size: 12px; }
+#user-route-info { margin-top: 8px; font-size: 12px; line-height: 1.5; }
 #user-route-info .muted { color: #888; font-style: italic; }
 
 /* ───── Rail toggles ───── */
