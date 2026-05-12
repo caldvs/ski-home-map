@@ -25,8 +25,26 @@ OUT      = Path(__file__).resolve().parent.parent / "styles" / "terrain.json"
 DROP_SOURCES = {"openskimap", "naturalearth"}
 
 
+def _swap_font(style: dict, src: str, dst: str) -> int:
+    """Walk every layer's text-font property and replace `src` with `dst`."""
+    n = 0
+    for layer in style.get("layers", []):
+        layout = layer.get("layout") or {}
+        fonts = layout.get("text-font")
+        if isinstance(fonts, list):
+            new = [dst if f == src else f for f in fonts]
+            if new != fonts:
+                layout["text-font"] = new
+                n += 1
+    return n
+
+
 def main() -> None:
-    with urllib.request.urlopen(UPSTREAM, timeout=30) as r:
+    req = urllib.request.Request(
+        UPSTREAM,
+        headers={"User-Agent": "ski-home-map build-style.py (https://github.com/caldvs/ski-home-map)"},
+    )
+    with urllib.request.urlopen(req, timeout=30) as r:
         style = json.load(r)
 
     for src in DROP_SOURCES:
@@ -40,6 +58,11 @@ def main() -> None:
 
     style["glyphs"] = "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf"
     style["sprite"] = "https://tiles.openfreemap.org/sprites/ofm_f384/ofm"
+
+    # OpenFreeMap's font server doesn't serve "Open Sans Semibold" — used by
+    # a handful of openskimap labels. Substitute Noto Sans Bold so those
+    # labels render. (Visually near-identical at typical map zoom levels.)
+    _swap_font(style, "Open Sans Semibold", "Noto Sans Bold")
 
     style.setdefault("metadata", {})
     style["metadata"]["derived-from"] = (

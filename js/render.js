@@ -131,7 +131,9 @@ export function addBaseLayers(map) {
 }
 
 export function addGraphLayers(map, graph) {
-  // Pistes outline + colour
+  // Pistes — matched to openskimap.org's downhill-runs paint (without
+  // their per-feature `downhill` offset, which we don't carry in our
+  // graph format). Exponential interpolation, exp-base 1.1.
   map.addSource("pistes", { type: "geojson", data: graph.pistesFC });
   map.addLayer({
     id: "pistes-outline",
@@ -139,8 +141,8 @@ export function addGraphLayers(map, graph) {
     type: "line",
     paint: {
       "line-color": "#fff",
-      "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.8, 14, 4, 18, 7],
-      "line-opacity": 0.7,
+      "line-width": ["interpolate", ["exponential", 1.1], ["zoom"], 7, 0.5, 22, 15],
+      "line-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0, 18, 1],
     },
     layout: { "line-cap": "round", "line-join": "round" },
   });
@@ -150,13 +152,13 @@ export function addGraphLayers(map, graph) {
     type: "line",
     paint: {
       "line-color": ["get", "colour"],
-      "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.0, 14, 2.5, 18, 5],
-      "line-opacity": 0.95,
+      "line-width": ["interpolate", ["exponential", 1.1], ["zoom"], 7, 0.25, 22, 5],
+      "line-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0, 18, 1],
     },
     layout: { "line-cap": "round", "line-join": "round" },
   });
 
-  // Lifts down (dashed, hidden by default)
+  // Lifts down (dashed, hidden by default) — same exp-base as lifts.
   map.addSource("lifts-down", { type: "geojson", data: graph.liftsDownFC });
   map.addLayer({
     id: "lifts-down-layer",
@@ -164,23 +166,36 @@ export function addGraphLayers(map, graph) {
     type: "line",
     paint: {
       "line-color": LIFT_COLOUR,
-      "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.7, 14, 1.4, 18, 2.2],
+      "line-width": ["interpolate", ["exponential", 1.15], ["zoom"], 7, 0.1, 22, 10],
       "line-opacity": 0.55,
       "line-dasharray": [3, 3],
     },
     layout: { visibility: "none" },
   });
 
-  // Lifts up
+  // Lifts — matched to openskimap.org's lift-casing + operating-lift paint.
+  // Two stacked lines (white casing under, coloured top) with the same
+  // exponential growth (base 1.15) they use.
   map.addSource("lifts", { type: "geojson", data: graph.liftsFC });
+  map.addLayer({
+    id: "lifts-casing",
+    source: "lifts",
+    type: "line",
+    paint: {
+      "line-color": "#fff",
+      "line-width": ["interpolate", ["exponential", 1.15], ["zoom"], 7, 0.5, 22, 30],
+      "line-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0, 18, 1],
+    },
+    layout: { "line-cap": "round", "line-join": "round" },
+  });
   map.addLayer({
     id: "lifts-layer",
     source: "lifts",
     type: "line",
     paint: {
       "line-color": LIFT_COLOUR,
-      "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.4, 14, 3.0, 18, 5.5],
-      "line-opacity": 0.95,
+      "line-width": ["interpolate", ["exponential", 1.15], ["zoom"], 7, 0.2, 22, 15],
+      "line-opacity": 0.8,
     },
     layout: { "line-cap": "round" },
   });
@@ -200,30 +215,37 @@ export function addGraphLayers(map, graph) {
     layout: { visibility: "none" },
   });
 
-  // Piste name labels
+  // Piste labels — matched to openskimap.org's run-names: data-driven
+  // colour, white halo with a hint of blur, label appears from z13.
   map.addLayer({
     id: "piste-labels",
     type: "symbol",
     source: "pistes",
-    minzoom: 12,
+    minzoom: 13,
     filter: ["!=", ["get", "display_name"], ""],
     layout: {
       "symbol-placement": "line",
       "symbol-spacing": 350,
       "text-field": ["get", "display_name"],
+      // OpenFreeMap's font server lacks Open Sans Semibold (openskimap's
+      // pick); Noto Sans Bold reads near-identically at map zooms.
       "text-font": ["Noto Sans Bold"],
-      "text-size": ["interpolate", ["linear"], ["zoom"], 12, 9, 15, 11, 18, 13],
-      "text-padding": 4,
-      "text-letter-spacing": 0.05,
+      "text-size": ["interpolate", ["linear"], ["zoom"], 11, 8, 18, 15],
+      "text-offset": [0, 0.15],
+      "text-padding": 0,
+      "text-rotation-alignment": "map",
+      "text-pitch-alignment": "viewport",
     },
     paint: {
       "text-color": ["get", "colour"],
       "text-halo-color": "#fff",
-      "text-halo-width": 1.8,
+      "text-halo-width": 1.7,
+      "text-halo-blur": 0.5,
     },
   });
 
-  // Lift name labels (with type)
+  // Lift labels — matched to openskimap.org's lift-names: dark grey text,
+  // uppercase, white halo. Appears from z12.
   map.addLayer({
     id: "lift-labels",
     type: "symbol",
@@ -235,14 +257,17 @@ export function addGraphLayers(map, graph) {
       "symbol-spacing": 400,
       "text-field": ["get", "display_name"],
       "text-font": ["Noto Sans Bold"],
-      "text-size": ["interpolate", ["linear"], ["zoom"], 12, 9, 15, 11, 18, 13],
-      "text-padding": 4,
-      "text-letter-spacing": 0.05,
+      "text-size": ["interpolate", ["linear"], ["zoom"], 11, 8, 18, 15],
+      "text-transform": "uppercase",
+      "text-padding": 0,
+      "text-rotation-alignment": "map",
+      "text-pitch-alignment": "viewport",
     },
     paint: {
-      "text-color": LIFT_COLOUR,
+      "text-color": "#333",
       "text-halo-color": "#fff",
-      "text-halo-width": 1.8,
+      "text-halo-width": 2,
+      "text-halo-blur": 0.3,
     },
   });
 
@@ -342,7 +367,7 @@ export function wireLayerToggles(map) {
   };
 
   bind("lyr-pistes",    ["pistes-layer", "pistes-outline", "piste-labels"]);
-  bind("lyr-lifts",     ["lifts-layer", "lift-labels"]);
+  bind("lyr-lifts",     ["lifts-casing", "lifts-layer", "lift-labels"]);
   bind("lyr-stations",  ["stations-layer"]);
   bind("lyr-villages",  ["villages-layer", "villages-label"]);
   bind("lyr-skates",    ["skates-layer"]);

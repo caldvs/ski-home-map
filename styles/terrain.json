@@ -7608,7 +7608,7 @@
   ],
   "metadata": {
     "maputnik:renderer": "mlgljs",
-    "derived-from": "openskimap.org terrain_v2 style \u2014 basemap layers retained verbatim, ski-data sources/layers stripped, glyph+sprite urls repointed to OpenFreeMap."
+    "derived-from": "openskimap.org terrain_v2 \u2014 basemap layers retained, ski-data sources/layers stripped, glyph+sprite urls repointed to OpenFreeMap."
   },
   "projection": {
     "type": "mercator"
