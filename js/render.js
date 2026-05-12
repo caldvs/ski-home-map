@@ -39,7 +39,52 @@ function addLayerBefore(map, layer, beforeId) {
   }
 }
 
+// Push the positron basemap into a colder "snowed-in" palette. Run once
+// the style has loaded — overrides positron's default landuse / water /
+// building fills with a near-white snowy palette, leaving roads + labels
+// readable. Iterates by layer-id pattern so it's robust to minor schema
+// drift between positron versions and across other OpenMapTiles styles.
+function applySnowyPalette(map) {
+  const layers = (map.getStyle().layers) || [];
+
+  const SNOW       = "#f4f5f6";   // background — fresh snow
+  const ICE_FILL   = "#d0d8de";   // lakes, glaciers
+  const ICE_LINE   = "#b8c2c8";   // rivers
+  const SHADE      = "#e6e8e6";   // generic landuse
+  const WOOD       = "#dee2dc";   // forest, slightly cool green-grey
+  const BUILT      = "#e5e7e9";   // urban
+  const BUILDING   = "#d8dadd";   // building footprints
+
+  for (const layer of layers) {
+    const id = layer.id, type = layer.type;
+    try {
+      if (id === "background" && type === "background") {
+        map.setPaintProperty(id, "background-color", SNOW);
+      } else if (type === "fill" && /water|ocean|sea|lake|glacier/i.test(id)) {
+        map.setPaintProperty(id, "fill-color", ICE_FILL);
+      } else if (type === "line" && /water|river|stream/i.test(id)) {
+        map.setPaintProperty(id, "line-color", ICE_LINE);
+      } else if (type === "fill" && /wood|forest/i.test(id)) {
+        map.setPaintProperty(id, "fill-color", WOOD);
+      } else if (type === "fill" && /park|grass|cemetery|recreation/i.test(id)) {
+        map.setPaintProperty(id, "fill-color", "#e8ebe5");
+      } else if (type === "fill" && id === "building") {
+        map.setPaintProperty(id, "fill-color", BUILDING);
+      } else if (type === "fill" && /residential|urban|industrial|commercial|built/i.test(id)) {
+        map.setPaintProperty(id, "fill-color", BUILT);
+      } else if (type === "fill" && /landuse|landcover/i.test(id)) {
+        map.setPaintProperty(id, "fill-color", SHADE);
+      }
+    } catch (e) {
+      // Some layers have data-driven paint expressions that don't accept
+      // a static colour override — skip them silently.
+    }
+  }
+}
+
 export function addBaseLayers(map) {
+  applySnowyPalette(map);
+
   // Terrain DEM
   map.addSource("terrain-dem", {
     type: "raster-dem",
