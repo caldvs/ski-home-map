@@ -148,6 +148,16 @@ body.dashboard {
   box-shadow: none;
 }
 
+.world-tile.loading {
+  opacity: 0.7;
+  cursor: progress;
+}
+.world-tile.loading:hover {
+  transform: none;
+  border-color: #2a2e36;
+  box-shadow: none;
+}
+
 .dashboard-footer {
   text-align: center;
   font-size: 11px;

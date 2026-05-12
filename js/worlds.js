@@ -37,7 +37,6 @@ export const WORLDS = {
       pitch: 0,
       bearing: 0,
     },
-    comingSoon: true,
   },
   "savoie-16": {
     id: "savoie-16",
@@ -53,6 +52,5 @@ export const WORLDS = {
       pitch: 0,
       bearing: 0,
     },
-    comingSoon: true,
   },
 };
