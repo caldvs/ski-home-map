@@ -19,6 +19,11 @@
 
     <a id="back-link" href="./index.html">← worlds</a>
 
+    <button id="ui-toggle" class="ui-toggle" title="Hide all controls (H)" aria-label="Toggle controls">
+      <span class="ui-toggle-icon">⛶</span>
+      <span class="ui-toggle-label">Hide UI</span>
+    </button>
+
     <div id="perf-overlay">
       <span class="label">fps</span> <span id="perf-fps">--</span> ·
       <span class="label">frame</span> <span id="perf-frame-ms">--</span><span class="label">ms</span><br>
@@ -169,6 +174,28 @@
     setSidebar(document.body.classList.contains("sidebar-closed")));
   bBtn.addEventListener("click", () =>
     setBottom(document.body.classList.contains("bottom-closed")));
+
+  // Combined "Hide UI" button. If either pane is open, this closes both.
+  // If both are closed, it reopens both. Press H to toggle from the keyboard.
+  const uiBtn = document.getElementById("ui-toggle");
+  function setBoth(open) {
+    setSidebar(open);
+    setBottom(open);
+    uiBtn.querySelector(".ui-toggle-label").textContent = open ? "Hide UI" : "Show UI";
+    uiBtn.title = open ? "Hide all controls (H)" : "Show all controls (H)";
+  }
+  uiBtn.addEventListener("click", () => {
+    const bothClosed =
+      document.body.classList.contains("sidebar-closed") &&
+      document.body.classList.contains("bottom-closed");
+    setBoth(bothClosed);
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key !== "h" && e.key !== "H") return;
+    const t = e.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "SELECT" || t.tagName === "TEXTAREA")) return;
+    uiBtn.click();
+  });
 
   // When the map's container resizes, MapLibre needs an explicit resize().
   const mapEl = document.getElementById("map");

@@ -64,6 +64,27 @@ body {
 }
 #back-link:hover { background: rgba(40, 42, 48, 0.95); }
 
+#ui-toggle {
+  position: absolute;
+  top: 12px;
+  left: 90px;
+  z-index: 1500;
+  background: rgba(20, 22, 28, 0.9);
+  color: #eee;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--panel-border);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+#ui-toggle:hover { background: rgba(40, 42, 48, 0.95); }
+#ui-toggle .ui-toggle-icon { font-size: 13px; }
+
 /* ───── Sidebar (right) ───── */
 
 #sidebar {
