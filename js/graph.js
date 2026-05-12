@@ -33,6 +33,92 @@ const LIFT_TYPE_LABEL = {
   magic_carpet: "MAGIC CARPET",
 };
 
+// Tunables for the synthetic "walk" connector edges.
+// User asked for "walks of around 100 m or less on mostly flat terrain";
+// we go a bit beyond that ceiling because real ski-resort foot connections
+// (funicular top → adjacent chairlift base, parallel lift stations, etc.)
+// commonly run 100–200 m with a few metres of climb. The cost ramp below
+// is steep enough that Dijkstra only chooses these when no skiable
+// alternative exists.
+const MAX_WALK_M       = 200;
+const MAX_WALK_DELEV   = 15;
+const WALK_COST_BASE   = 60;    // seconds — clicking out / into skis
+const WALK_COST_PER_M  = 3;     // seconds per horizontal metre
+const WALK_COST_PER_M_UP = 30;  // extra seconds per metre of climb
+
+
+function addWalkEdges(routingNodes, routingEdges, adj, reverseAdj) {
+  // Build an undirected set of node pairs that ALREADY have any edge,
+  // so we never add a walk where a real skiable connection exists.
+  const have = new Set();
+  for (const e of routingEdges) {
+    const a = e.f, b = e.t;
+    have.add(a < b ? `${a}:${b}` : `${b}:${a}`);
+  }
+
+  // Equirectangular projection for distance — fast and accurate enough
+  // at ski-resort scales (we don't span enough latitude for haversine
+  // to be needed). Use the bbox centroid for the lon-degree scale.
+  const ids = Object.keys(routingNodes);
+  if (ids.length === 0) return 0;
+  let latSum = 0;
+  for (const id of ids) latSum += routingNodes[id][1];
+  const meanLat = latSum / ids.length;
+  const LAT_M_PER_DEG = 111320;
+  const LON_M_PER_DEG = 111320 * Math.cos(meanLat * Math.PI / 180);
+  const MAX_SQ = MAX_WALK_M * MAX_WALK_M;
+
+  let added = 0;
+  for (let i = 0; i < ids.length; i++) {
+    const a = ids[i];
+    const na = routingNodes[a];
+    const aId = parseInt(a, 10);
+    for (let j = i + 1; j < ids.length; j++) {
+      const b = ids[j];
+      const nb = routingNodes[b];
+      if (Math.abs(na[2] - nb[2]) > MAX_WALK_DELEV) continue;
+      const dx = (nb[0] - na[0]) * LON_M_PER_DEG;
+      const dy = (nb[1] - na[1]) * LAT_M_PER_DEG;
+      const d2 = dx * dx + dy * dy;
+      if (d2 > MAX_SQ) continue;
+      const key = aId < parseInt(b, 10) ? `${aId}:${b}` : `${b}:${aId}`;
+      if (have.has(key)) continue;
+
+      const dist = Math.sqrt(d2);
+      // Cost goes up with both distance and climb (climb only — flat or
+      // downhill walks just pay the horizontal price). Punishes going UP
+      // out of a pocket more than going across or down to the same lift.
+      const climbAB = Math.max(0, nb[2] - na[2]);
+      const climbBA = Math.max(0, na[2] - nb[2]);
+      const costAB = Math.round(WALK_COST_BASE + WALK_COST_PER_M * dist + WALK_COST_PER_M_UP * climbAB);
+      const costBA = Math.round(WALK_COST_BASE + WALK_COST_PER_M * dist + WALK_COST_PER_M_UP * climbBA);
+      const bId = parseInt(b, 10);
+      const geomAB = [[na[1], na[0]], [nb[1], nb[0]]];
+      const geomBA = [[nb[1], nb[0]], [na[1], na[0]]];
+
+      const idx1 = routingEdges.length;
+      routingEdges.push({
+        f: aId, t: bId, c: costAB, ty: "walk", d: "", lt: "",
+        n: `Walk ${Math.round(dist)}m`, g: geomAB,
+      });
+      (adj[aId] = adj[aId] || []).push(idx1);
+      (reverseAdj[bId] = reverseAdj[bId] || []).push(idx1);
+
+      const idx2 = routingEdges.length;
+      routingEdges.push({
+        f: bId, t: aId, c: costBA, ty: "walk", d: "", lt: "",
+        n: `Walk ${Math.round(dist)}m`, g: geomBA,
+      });
+      (adj[bId] = adj[bId] || []).push(idx2);
+      (reverseAdj[aId] = reverseAdj[aId] || []).push(idx2);
+
+      added++;
+    }
+  }
+  return added;
+}
+
+
 export async function loadGraph(url) {
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`Failed to load graph: ${resp.status} ${resp.statusText}`);
@@ -136,6 +222,19 @@ function reshapeGraph(raw) {
 
     (adj[e.from] = adj[e.from] || []).push(edgeIdx);
     (reverseAdj[e.to] = reverseAdj[e.to] || []).push(edgeIdx);
+  }
+
+  // --- Synthetic walk edges (self-healing connectivity) ---
+  // The upstream graph builder occasionally misses short-distance gaps
+  // between stations or piste endpoints that real skiers cross on foot
+  // (e.g. funicular top → adjacent chairlift base, ~100 m flat walk).
+  // We add bidirectional "walk" edges between any pair of nodes within
+  // a short horizontal distance and a small elevation difference, with
+  // a relatively high cost so Dijkstra only chooses them when there's
+  // no skiable alternative.
+  const walkCount = addWalkEdges(routingNodes, routingEdges, adj, reverseAdj);
+  if (walkCount > 0) {
+    console.log(`[graph] added ${walkCount} synthetic walk edges (≤100 m, ≤5 m Δelev)`);
   }
 
   // --- Villages + stations as Point features ---
