@@ -56,6 +56,13 @@ jobs:
           python3 scripts/build_data.py ${{ inputs.worlds }}
           ls -lh data/
 
+      - name: Apply per-world patches
+        run: |
+          # Fixes for upstream graph bugs the builder doesn't catch
+          # (e.g. duplicate-name nodes split across components). See
+          # scripts/patches.json + scripts/audit_duplicates.py.
+          python3 scripts/apply_patches.py
+
       - name: Commit and push if changed
         env:
           GPKG_URL: ${{ inputs.gpkg_url }}

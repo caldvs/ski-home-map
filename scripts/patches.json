@@ -1,0 +1,30 @@
+{
+  "_comment": "Per-world graph patches applied after build_data.py. Each entry connects two nodes the upstream skiroute builder split into separate places. Run via scripts/apply_patches.py. See scripts/audit_duplicates.py for finding candidates.",
+
+  "les-arcs": {
+    "add_edges": [
+      {
+        "_note": "Dissolves the Bois de Saule / Funiculaire 1 pocket. The pocket contains a stranded 'Funiculaire 1 bottom' at 1128m that's really the same station as the main 'Funiculaire 1 bottom' at 808m. We model the bridge as the funicular ride itself: pocket → main funi top.",
+        "from_name": "Funiculaire 1 bottom",
+        "from_elev": 1128,
+        "to_name": "Funiculaire Les Arcs' Express top",
+        "to_elev": 1616,
+        "type": "lift",
+        "name": "Funiculaire Les Arcs' Express (bridge)",
+        "lift_type": "funicular",
+        "cost_base": 420
+      },
+      {
+        "_note": "Reverse: ride the funicular down from the main top into the pocket. Higher cost (matches lift_down convention).",
+        "from_name": "Funiculaire Les Arcs' Express top",
+        "from_elev": 1616,
+        "to_name": "Funiculaire 1 bottom",
+        "to_elev": 1128,
+        "type": "lift_down",
+        "name": "Funiculaire Les Arcs' Express (bridge, down)",
+        "lift_type": "funicular",
+        "cost_base": 840
+      }
+    ]
+  }
+}
