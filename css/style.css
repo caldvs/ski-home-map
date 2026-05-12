@@ -98,17 +98,38 @@ body.dashboard {
   border-bottom: 1px solid #2a2e36;
 }
 
-.world-tile-banner.tignes {
+/* Sub-region banner gradients */
+.world-tile-banner.tarentaise {
   background: linear-gradient(135deg, #2e7d32 0%, #1b3220 50%, #607d8b 100%);
 }
-.world-tile-banner.three-valleys {
-  background: linear-gradient(135deg, #5e35b1 0%, #1a1530 50%, #7c4dff 100%);
+.world-tile-banner.maurienne {
+  background: linear-gradient(135deg, #4527a0 0%, #18112d 50%, #7c4dff 100%);
 }
-.world-tile-banner.savoie {
+.world-tile-banner.beaufortain {
+  background: linear-gradient(135deg, #ef6c00 0%, #3a1f06 50%, #ffb74d 100%);
+}
+.world-tile-banner.vanoise {
+  background: linear-gradient(135deg, #00695c 0%, #102826 50%, #4db6ac 100%);
+}
+.world-tile-banner.mega {
   background: linear-gradient(135deg, #d84315 0%, #5d1e10 50%, #ff7043 100%);
 }
 .world-tile-banner.coming-soon {
   background: linear-gradient(135deg, #555 0%, #222 100%);
+}
+
+/* Region tag in tile header */
+.region-tag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
 }
 
 .world-tile-body {

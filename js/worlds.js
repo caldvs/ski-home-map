@@ -1,56 +1,222 @@
 /**
- * Pre-built worlds available in this deployment.
+ * Worlds available in this deployment.
  *
- * Each entry corresponds to a JSON file in /data/. The build script
- * (scripts/build_data.py) generates these by running `skiroute.build_graph`
- * + stitching against the OpenSkiData GeoPackage.
+ * The dashboard probes each `data` URL on load and greys out any
+ * world whose graph JSON hasn't been built yet. Run
+ * `scripts/build_data.py` to populate.
+ *
+ * Banner classes group resorts by sub-region for visual cohesion:
+ *   tarentaise   — north central (Tignes, 3V, Les Arcs, La Plagne, La Rosière, Ste-Foy)
+ *   maurienne    — southern (Val Cenis and friends)
+ *   beaufortain  — north (Arêches, Espace Diamant)
+ *   vanoise      — central (Pralognan, Valmorel)
+ *   mega         — the two stitched mega-worlds
  */
 
 export const WORLDS = {
+  // ────── Tarentaise ──────
   tignes: {
     id: "tignes",
     name: "Tignes / Val d'Isère",
-    bannerClass: "tignes",
+    region: "Tarentaise",
+    bannerClass: "tarentaise",
     description:
       "Espace Killy — 8 villages across two valleys, the Grande Motte glacier, 1550–3450 m.",
     data: "./data/tignes.json",
     stats: { nodes: 374, edges: 1311, villages: 7 },
-    // Cinematic initial view: north of Tignes Le Lac, looking SW toward Val Claret + Grande Motte
-    initialView: {
-      center: [6.913, 45.477],
-      zoom: 13.2,
-      pitch: 62,
-      bearing: 190,
-    },
+    initialView: { center: [6.913, 45.477], zoom: 13.2, pitch: 62, bearing: 190 },
   },
+  "trois-vallees": {
+    id: "trois-vallees",
+    name: "Trois Vallées",
+    region: "Tarentaise",
+    bannerClass: "tarentaise",
+    description:
+      "Méribel · Courchevel · Val Thorens · Les Menuires. The largest linked area in France today.",
+    data: "./data/trois-vallees.json",
+    stats: { nodes: "≈ 875", edges: "≈ 3,700", villages: 10 },
+    initialView: { center: [6.580, 45.350], zoom: 11.5, pitch: 0, bearing: 0 },
+  },
+  "les-arcs": {
+    id: "les-arcs",
+    name: "Les Arcs",
+    region: "Tarentaise",
+    bannerClass: "tarentaise",
+    description:
+      "Paradiski half. Arc 1600 / 1800 / 1950 / 2000 plus Peisey-Vallandry.",
+    data: "./data/les-arcs.json",
+    stats: { nodes: "≈ 500", edges: "≈ 2,400", villages: 5 },
+    initialView: { center: [6.790, 45.595], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  "la-plagne": {
+    id: "la-plagne",
+    name: "La Plagne",
+    region: "Tarentaise",
+    bannerClass: "tarentaise",
+    description:
+      "Paradiski's other half. Eight high-altitude villages around the Glaciers de Bellecôte.",
+    data: "./data/la-plagne.json",
+    stats: { nodes: "≈ 350", edges: "≈ 1,500", villages: 8 },
+    initialView: { center: [6.690, 45.510], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  "la-rosiere": {
+    id: "la-rosiere",
+    name: "La Rosière",
+    region: "Tarentaise",
+    bannerClass: "tarentaise",
+    description:
+      "South-facing Tarentaise resort linking to La Thuile (Italy) over the Petit-Saint-Bernard.",
+    data: "./data/la-rosiere.json",
+    stats: { nodes: "≈ 110", edges: "≈ 500", villages: 2 },
+    initialView: { center: [6.855, 45.620], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "sainte-foy": {
+    id: "sainte-foy",
+    name: "Sainte-Foy Tarentaise",
+    region: "Tarentaise",
+    bannerClass: "tarentaise",
+    description:
+      "Small, cult-favourite off-piste resort sitting between Tignes and Les Arcs.",
+    data: "./data/sainte-foy.json",
+    stats: { nodes: "≈ 47", edges: "≈ 170", villages: 1 },
+    initialView: { center: [6.919, 45.592], zoom: 13, pitch: 0, bearing: 0 },
+  },
+
+  // ────── Vanoise west ──────
+  valmorel: {
+    id: "valmorel",
+    name: "Valmorel / Le Grand Domaine",
+    region: "Vanoise west",
+    bannerClass: "vanoise",
+    description:
+      "Linked with Saint-François-Longchamp. Family-oriented; gentler than Three Valleys next door.",
+    data: "./data/valmorel.json",
+    stats: { nodes: "≈ 130", edges: "≈ 470", villages: 2 },
+    initialView: { center: [6.449, 45.462], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  pralognan: {
+    id: "pralognan",
+    name: "Pralognan-la-Vanoise",
+    region: "Vanoise",
+    bannerClass: "vanoise",
+    description:
+      "Inside the Vanoise National Park boundary. Small, scenic, very quiet.",
+    data: "./data/pralognan.json",
+    stats: { nodes: "≈ 48", edges: "≈ 170", villages: 1 },
+    initialView: { center: [6.724, 45.380], zoom: 13, pitch: 0, bearing: 0 },
+  },
+
+  // ────── Beaufortain (north) ──────
+  "espace-diamant": {
+    id: "espace-diamant",
+    name: "Espace Diamant",
+    region: "Beaufortain",
+    bannerClass: "beaufortain",
+    description:
+      "Les Saisies · Notre-Dame-de-Bellecombe · Crest-Voland. Mont Blanc views.",
+    data: "./data/espace-diamant.json",
+    stats: { nodes: "≈ 285", edges: "≈ 950", villages: 3 },
+    initialView: { center: [6.520, 45.780], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  "areches-beaufort": {
+    id: "areches-beaufort",
+    name: "Arêches-Beaufort",
+    region: "Beaufortain",
+    bannerClass: "beaufortain",
+    description:
+      "Cult Beaufortain resort. Small lift network, lots of ski touring around it.",
+    data: "./data/areches-beaufort.json",
+    stats: { nodes: "≈ 60", edges: "≈ 240", villages: 2 },
+    initialView: { center: [6.580, 45.685], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+
+  // ────── Maurienne (south) ──────
+  "val-cenis": {
+    id: "val-cenis",
+    name: "Val Cenis",
+    region: "Haute-Maurienne",
+    bannerClass: "maurienne",
+    description:
+      "Espace Haute Maurienne Vanoise. Lanslebourg · Lanslevillard · Termignon.",
+    data: "./data/val-cenis.json",
+    stats: { nodes: "≈ 155", edges: "≈ 505", villages: 3 },
+    initialView: { center: [6.880, 45.282], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  "bonneval-sur-arc": {
+    id: "bonneval-sur-arc",
+    name: "Bonneval-sur-Arc",
+    region: "Haute-Maurienne",
+    bannerClass: "maurienne",
+    description:
+      "End of the Iseran road. Highest commune in the Maurienne; the most photogenic village in Savoie.",
+    data: "./data/bonneval-sur-arc.json",
+    stats: { nodes: "≈ 43", edges: "≈ 190", villages: 1 },
+    initialView: { center: [7.048, 45.368], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  aussois: {
+    id: "aussois",
+    name: "Aussois",
+    region: "Maurienne",
+    bannerClass: "maurienne",
+    description:
+      "Compact Maurienne resort with direct trail access into the Vanoise National Park.",
+    data: "./data/aussois.json",
+    stats: { nodes: "≈ 53", edges: "≈ 230", villages: 1 },
+    initialView: { center: [6.743, 45.231], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "la-norma": {
+    id: "la-norma",
+    name: "La Norma",
+    region: "Maurienne",
+    bannerClass: "maurienne",
+    description: "Purpose-built car-free resort on the south side of the Maurienne.",
+    data: "./data/la-norma.json",
+    stats: { nodes: "≈ 55", edges: "≈ 225", villages: 1 },
+    initialView: { center: [6.715, 45.198], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  valfrejus: {
+    id: "valfrejus",
+    name: "Valfréjus",
+    region: "Maurienne",
+    bannerClass: "maurienne",
+    description: "Modjon plateau and the Punta Bagna ridge above the Maurienne.",
+    data: "./data/valfrejus.json",
+    stats: { nodes: "≈ 49", edges: "≈ 220", villages: 1 },
+    initialView: { center: [6.662, 45.170], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "galibier-thabor": {
+    id: "galibier-thabor",
+    name: "Galibier-Thabor",
+    region: "Maurienne",
+    bannerClass: "maurienne",
+    description:
+      "Valloire + Valmeinier linked. The Col du Galibier above; full Mont Thabor traverse below.",
+    data: "./data/galibier-thabor.json",
+    stats: { nodes: "≈ 186", edges: "≈ 700", villages: 2 },
+    initialView: { center: [6.460, 45.170], zoom: 12, pitch: 0, bearing: 0 },
+  },
+
+  // ────── Stitched mega-worlds ──────
   "tignes-three-valleys": {
     id: "tignes-three-valleys",
     name: "Tignes + Trois Vallées",
-    bannerClass: "three-valleys",
+    region: "Stitched",
+    bannerClass: "mega",
     description:
-      "Espace Killy stitched to the Trois Vallées via two synthetic cable cars across the Vanoise.",
+      "Espace Killy connected to the Trois Vallées by two synthetic cable cars across the Vanoise.",
     data: "./data/tignes-three-valleys.json",
     stats: { nodes: "≈ 1,250", edges: "≈ 5,000", villages: 17 },
-    initialView: {
-      center: [6.83, 45.44],
-      zoom: 11.3,
-      pitch: 0,
-      bearing: 0,
-    },
+    initialView: { center: [6.830, 45.440], zoom: 11.3, pitch: 0, bearing: 0 },
   },
   "savoie-16": {
     id: "savoie-16",
     name: "Savoie 16-resort mega",
-    bannerClass: "savoie",
+    region: "Stitched",
+    bannerClass: "mega",
     description:
-      "Sixteen real French Alpine resorts stitched into a single connected network. Largest hypothetical lift-linked area on earth.",
+      "Sixteen real French Alpine resorts stitched into one connected network. The biggest hypothetical lift-linked area on earth.",
     data: "./data/savoie-16.json",
     stats: { nodes: "≈ 3,300", edges: "≈ 13,700", villages: 50 },
-    initialView: {
-      center: [6.75, 45.45],
-      zoom: 10.5,
-      pitch: 0,
-      bearing: 0,
-    },
+    initialView: { center: [6.750, 45.450], zoom: 10.5, pitch: 0, bearing: 0 },
   },
 };

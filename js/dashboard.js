@@ -25,7 +25,7 @@ for (const w of Object.values(WORLDS)) {
   tile.innerHTML = `
     <div class="world-tile-banner ${w.bannerClass}"></div>
     <div class="world-tile-body">
-      <h2>${w.name}</h2>
+      <h2>${w.name}${w.region ? `<span class="region-tag">${w.region}</span>` : ""}</h2>
       <p>${w.description}</p>
       <div class="world-stats">
         <span><strong>${w.stats.nodes}</strong> nodes</span>

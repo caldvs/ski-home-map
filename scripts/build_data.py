@@ -376,8 +376,25 @@ def _build_resort(idx: int) -> skiroute.Graph:
     )
 
 
-def build_tignes() -> skiroute.Graph:
-    return _build_resort(TIGNES)
+# URL-safe slug for each resort. Must be in the same order as RESORTS.
+SINGLE_RESORT_SLUGS = [
+    "tignes",            # TIGNES         (0)
+    "trois-vallees",     # TROIS_VALLEES  (1)
+    "les-arcs",          # ARCS           (2)
+    "la-plagne",         # PLAGNE         (3)
+    "la-rosiere",        # ROSIERE        (4)
+    "sainte-foy",        # STE_FOY        (5)
+    "valmorel",          # VALMOREL       (6)
+    "espace-diamant",    # DIAMANT        (7)
+    "pralognan",         # PRALOGNAN      (8)
+    "val-cenis",         # VAL_CENIS      (9)
+    "bonneval-sur-arc",  # BONNEVAL       (10)
+    "galibier-thabor",   # GALIBIER       (11)
+    "valfrejus",         # VALFREJUS      (12)
+    "la-norma",          # NORMA          (13)
+    "aussois",           # AUSSOIS        (14)
+    "areches-beaufort",  # ARECHES        (15)
+]
 
 
 def build_tignes_three_valleys() -> skiroute.Graph:
@@ -415,11 +432,13 @@ def build_savoie_16() -> skiroute.Graph:
 # ---------------------------------------------------------------------------
 
 
-WORLDS = {
-    "tignes": build_tignes,
-    "tignes-three-valleys": build_tignes_three_valleys,
-    "savoie-16": build_savoie_16,
+# Single-resort builders, then the two stitched mega-worlds.
+WORLDS: dict = {
+    slug: (lambda i=i: _build_resort(i))
+    for i, slug in enumerate(SINGLE_RESORT_SLUGS)
 }
+WORLDS["tignes-three-valleys"] = build_tignes_three_valleys
+WORLDS["savoie-16"] = build_savoie_16
 
 
 def main() -> None:
