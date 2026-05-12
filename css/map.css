@@ -1,85 +1,168 @@
-/* Map view styles — extracted from the previous Python renderer */
+/* Map view styles — grid layout, anchored sidebar + bottom pane. */
 
 :root {
-  --panel-bg: rgba(20, 22, 28, 0.94);
+  --panel-bg: #14161c;
   --panel-fg: #eee;
+  --panel-border: #2a2d35;
   --lift-colour: #ff6f00;
   --route-colour: #ffe000;
+  --sidebar-w: 320px;
+  --bottom-h: 200px;
+  --rail-w: 28px;
+  --rail-h: 28px;
 }
+
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0c1014;
+  color: var(--panel-fg);
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+/* ───── Left column: map + bottom pane ───── */
+
+#app-shell {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#map-region {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: #050608;
 }
 
 #map {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
 }
 
 #back-link {
   position: absolute;
-  top: 12px; left: 12px;
+  top: 12px;
+  left: 12px;
   z-index: 1500;
-  background: rgba(20,22,28,0.85);
+  background: rgba(20, 22, 28, 0.9);
   color: #eee;
   padding: 4px 10px;
   border-radius: 5px;
   font-size: 12px;
   text-decoration: none;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  border: 1px solid #444;
+  border: 1px solid var(--panel-border);
 }
-#back-link:hover { background: rgba(40,42,48,0.95); }
+#back-link:hover { background: rgba(40, 42, 48, 0.95); }
 
-.panel {
-  position: absolute;
-  z-index: 1000;
+/* ───── Sidebar (right) ───── */
+
+#sidebar {
+  flex: 0 0 var(--sidebar-w);
+  width: var(--sidebar-w);
   background: var(--panel-bg);
-  color: var(--panel-fg);
-  padding: 12px 14px;
-  border-radius: 10px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  border-left: 1px solid var(--panel-border);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: flex-basis 220ms ease, width 220ms ease;
   font-size: 13px;
   line-height: 1.45;
 }
-.panel h1 { font-size: 15px; margin: 0 0 8px 0; letter-spacing: 0.02em; }
-.panel h2 {
-  font-size: 11px;
-  margin: 10px 0 4px 0;
-  color: #bbb;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+body.sidebar-closed #sidebar {
+  flex: 0 0 0;
+  width: 0;
+  border-left: none;
 }
-.panel .summary { color: #aaa; font-size: 12px; margin-bottom: 10px; }
-.panel button {
-  background: #333; color: #eee;
-  border: 1px solid #555; border-radius: 5px;
-  padding: 5px 9px; font-size: 12px;
+
+.sidebar-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.sidebar-header h1 {
+  font-size: 16px;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.01em;
+}
+.sidebar-header .summary {
+  color: #999;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+.view-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.sidebar-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.sidebar-section h2 {
+  font-size: 10px;
+  margin: 0 0 8px 0;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.sidebar-section label {
+  display: block;
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+.legend-row {
+  padding-left: 20px;
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+/* Buttons & form controls inside the sidebar */
+#sidebar button,
+#bottom-pane button {
+  background: #2a2d35;
+  color: #eee;
+  border: 1px solid #3e424c;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
   cursor: pointer;
   font-family: inherit;
 }
-.panel button:hover { background: #444; }
-.panel button.primary {
-  background: #0066ff; border-color: #0066ff; font-weight: 600;
+#sidebar button:hover,
+#bottom-pane button:hover { background: #353944; }
+#sidebar button.primary,
+#bottom-pane button.primary {
+  background: #2466ff;
+  border-color: #2466ff;
+  font-weight: 600;
   color: white;
 }
-.panel select, .panel input[type=range], .panel input[type=date] {
+#sidebar select, #sidebar input[type=range], #sidebar input[type=date],
+#bottom-pane select, #bottom-pane input[type=range], #bottom-pane input[type=date] {
   width: 100%;
-  background: #222; color: #eee;
-  border: 1px solid #555;
-  border-radius: 5px; padding: 4px;
-  font-size: 12px; font-family: inherit;
-}
-.panel input[type=date] { width: auto; padding: 3px 6px; }
-.panel label {
-  display: block;
+  background: #1a1c22;
+  color: #eee;
+  border: 1px solid #3e424c;
+  border-radius: 5px;
+  padding: 5px 7px;
   font-size: 12px;
-  color: #bbb;
-  margin-bottom: 6px;
-  cursor: pointer;
+  font-family: inherit;
 }
+#sidebar input[type=date] { width: auto; }
+
 .swatch {
   display: inline-block;
   width: 18px; height: 3px;
@@ -99,61 +182,102 @@ html, body {
   width: 10px; height: 10px;
 }
 
-#control-panel { top: 12px; right: 12px; max-width: 280px; }
-#route-panel   { bottom: 12px; left: 12px; max-width: 360px; }
-
-#sun-panel {
-  top: 12px; left: 50%;
-  transform: translateX(-50%);
+/* Sun section (vertical inside sidebar) */
+#sun-panel .sun-time-row {
   display: flex;
-  gap: 10px;
   align-items: center;
-  padding: 10px 14px;
-  max-width: 700px;
-  width: auto;
+  gap: 4px;
+  margin: 8px 0;
 }
+#sun-panel .sun-time-row button { padding: 4px 7px; font-size: 11px; }
 #sun-panel .time {
+  flex: 1;
   font-family: ui-monospace, monospace;
-  color: #ffe000; font-weight: 700;
+  color: var(--route-colour);
+  font-weight: 700;
   font-size: 15px;
-  min-width: 54px;
   text-align: center;
 }
-#sun-panel .checkbox {
-  font-size: 12px; color: #bbb;
+#sun-panel .sun-action-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+#sun-panel .sun-action-row .checkbox {
+  font-size: 11px; color: #bbb;
   display: flex; align-items: center; gap: 4px;
   margin: 0;
 }
 #sun-status {
   font-size: 10px;
   color: #777;
-  max-width: 140px;
-  line-height: 1.3;
+  line-height: 1.4;
+  margin-top: 4px;
+  min-height: 14px;
 }
 
 .credits {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid #333;
-  font-size: 10px;
+  font-size: 11px;
   color: #888;
   line-height: 1.55;
 }
+.credits p { margin: 0 0 6px 0; }
 .credits a { color: #88c; }
 
-.route-panel-header {
+/* ───── Bottom pane ───── */
+
+#bottom-pane {
+  flex: 0 0 var(--bottom-h);
+  height: var(--bottom-h);
+  background: var(--panel-bg);
+  border-top: 1px solid var(--panel-border);
+  padding: 10px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  transition: flex-basis 220ms ease, height 220ms ease, padding 220ms ease;
+  overflow: hidden;
+}
+body.bottom-closed #bottom-pane {
+  flex: 0 0 0;
+  height: 0;
+  padding: 0 16px;
+  border-top: none;
+}
+
+.pane-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 8px;
 }
-.route-panel-header strong { font-size: 14px; }
-.route-panel-header button { margin-left: auto; }
+.pane-header strong { font-size: 14px; }
+.pane-sub { font-size: 11px; }
+.pane-header button { margin-left: auto; }
 
-#route-panel details { margin-top: 8px; border-top: 1px solid #444; padding-top: 8px; }
-#route-panel summary { cursor: pointer; padding: 2px 0; font-size: 12px; color: #bbb; }
-
-#user-route-info { margin-top: 8px; }
+.pane-body {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.pane-col {
+  flex: 1;
+  min-width: 0;
+}
+.pane-col label {
+  display: block;
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 6px;
+}
+.algo-controls .row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.algo-controls .row button.primary { flex: 1; }
 #anim-stats {
   margin-top: 6px;
   font-size: 11px;
@@ -161,12 +285,52 @@ html, body {
   font-family: ui-monospace, monospace;
   line-height: 1.6;
 }
+#user-route-info { margin-top: 6px; font-size: 12px; }
+#user-route-info .muted { color: #888; font-style: italic; }
+
+/* ───── Rail toggles ───── */
+
+.rail-toggle {
+  position: absolute;
+  z-index: 1200;
+  background: rgba(20, 22, 28, 0.92);
+  color: #eee;
+  border: 1px solid var(--panel-border);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  font-family: inherit;
+}
+.rail-toggle:hover { background: rgba(40, 44, 54, 0.95); }
+
+#sidebar-toggle {
+  width: var(--rail-w);
+  height: 56px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+}
+
+#bottom-toggle {
+  width: 56px;
+  height: var(--rail-h);
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+
+/* ───── Perf overlay (inside map region) ───── */
 
 #perf-overlay {
   position: absolute;
-  bottom: 12px; right: 80px;
-  z-index: 1000;
-  background: rgba(0,0,0,0.85);
+  bottom: 12px;
+  right: 80px;
+  z-index: 1100;
+  background: rgba(0, 0, 0, 0.85);
   color: #0f0;
   font-family: ui-monospace, "SF Mono", monospace;
   font-size: 11px;
@@ -178,6 +342,8 @@ html, body {
 #perf-overlay .label { color: #888; }
 #perf-overlay .hi    { color: #ff5; }
 #perf-overlay .alert { color: #f55; }
+
+/* ───── Map markers ───── */
 
 .pin-marker {
   background: #22aa22;
@@ -192,3 +358,27 @@ html, body {
 .pin-marker.end { background: #dd2222; }
 
 .muted { color: #888; }
+
+/* Make village + station labels obviously clickable */
+.maplibregl-canvas.clickable-label { cursor: pointer; }
+
+/* ───── Responsive: stack vertically on narrow screens ───── */
+
+@media (max-width: 720px) {
+  body { flex-direction: column; }
+  #sidebar {
+    flex: 0 0 240px;
+    width: 100%;
+    height: 240px;
+    border-left: none;
+    border-top: 1px solid var(--panel-border);
+  }
+  body.sidebar-closed #sidebar { flex: 0 0 0; height: 0; }
+  #sidebar-toggle {
+    width: 56px; height: var(--rail-h);
+    right: 50%; top: auto; bottom: 0;
+    transform: translateX(50%);
+    border-radius: 6px 6px 0 0;
+    border-bottom: none;
+  }
+}

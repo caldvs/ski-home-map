@@ -35,6 +35,10 @@ if (titleEl) titleEl.textContent = `${world.name} · ski-home-map`;
 const map = initMap("map", world.initialView);
 const initialView = world.initialView;
 
+// Expose for the inline ResizeObserver in map.html so the map redraws
+// when the sidebar / bottom pane collapse or the window resizes.
+window._skihomeMap = map;
+
 map.on("load", async () => {
   try {
     const graph = await loadGraph(world.data);

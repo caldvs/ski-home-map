@@ -16,7 +16,12 @@ export function wireRouting(map, graph) {
   function placePin(lat, lon, kind) {
     const nid = nearestNodeId(graph, lat, lon);
     if (nid === null) return null;
+    return placePinAtNode(nid, kind);
+  }
+
+  function placePinAtNode(nid, kind) {
     const n = graph.routingNodes[nid];
+    if (!n) return null;
     const el = document.createElement("div");
     el.className = "pin-marker" + (kind === "end" ? " end" : "");
     el.textContent = kind === "end" ? "B" : "A";
@@ -44,21 +49,40 @@ export function wireRouting(map, graph) {
       "<em>Drop two pins, then press Animate.</em>";
   }
 
-  map.on("click", (ev) => {
+  // Layers that should snap pin placement to their feature coordinate
+  // when clicked, instead of using the raw click location. This makes
+  // the village name + the station dot themselves clickable targets.
+  const SNAP_LAYERS = [
+    "villages-layer", "villages-label",
+    "stations-layer", "lift-labels",
+  ];
+
+  function pickClickCoord(ev) {
+    const layers = SNAP_LAYERS.filter((id) => map.getLayer(id));
+    if (!layers.length) return { lat: ev.lngLat.lat, lon: ev.lngLat.lng };
+    const feats = map.queryRenderedFeatures(ev.point, { layers });
+    if (feats.length) {
+      const c = feats[0].geometry && feats[0].geometry.coordinates;
+      if (c && c.length >= 2) return { lat: c[1], lon: c[0] };
+    }
+    return { lat: ev.lngLat.lat, lon: ev.lngLat.lng };
+  }
+
+  function handlePinClick({ lat, lon }) {
     const mode = document.getElementById("user-difficulty").value;
     const info = document.getElementById("user-route-info");
 
     if (startPin === null) {
-      const r = placePin(ev.lngLat.lat, ev.lngLat.lng, "start");
+      const r = placePin(lat, lon, "start");
       if (!r) return;
       startPin = r.marker; startNodeId = r.nodeId;
       info.innerHTML =
         '<div style="color:#22aa22">A: ' + describeNode(graph, r.nodeId) + "</div>" +
-        '<em class="muted">Click again to place the end pin.</em>';
+        '<em class="muted">Click again (map or a town name) to place the end pin.</em>';
       return;
     }
     if (endPin === null) {
-      const r = placePin(ev.lngLat.lat, ev.lngLat.lng, "end");
+      const r = placePin(lat, lon, "end");
       if (!r) return;
       endPin = r.marker; endNodeId = r.nodeId;
       const t0 = performance.now();
@@ -82,15 +106,26 @@ export function wireRouting(map, graph) {
         "Dijkstra visited " + result.visited + " nodes in " + tMs + " ms</div>";
       return;
     }
-    // 3rd click: clear and start over
     clearUserRoute();
-    const r = placePin(ev.lngLat.lat, ev.lngLat.lng, "start");
+    const r = placePin(lat, lon, "start");
     if (!r) return;
     startPin = r.marker; startNodeId = r.nodeId;
     info.innerHTML =
       '<div style="color:#22aa22">A: ' + describeNode(graph, r.nodeId) + "</div>" +
       '<em class="muted">Click again to place the end pin.</em>';
-  });
+  }
+
+  map.on("click", (ev) => handlePinClick(pickClickCoord(ev)));
+
+  // Pointer cursor over clickable named features so users discover them.
+  for (const layerId of SNAP_LAYERS) {
+    map.on("mouseenter", layerId, () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", layerId, () => {
+      map.getCanvas().style.cursor = "";
+    });
+  }
 
   document.getElementById("clear-route-btn").addEventListener("click", clearUserRoute);
 
