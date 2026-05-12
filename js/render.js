@@ -85,20 +85,21 @@ export function addBaseLayers(map) {
     source: "contour-source",
     "source-layer": "contours",
     paint: {
-      // Slightly darker + more opaque now that we sit on positron's
-      // pale background — contours need to read clearly without being
-      // shouty.
+      // Softer contours: the vendored openskimap basemap already shows
+      // terrain via hillshade, so the contour lines exist to *hint* at
+      // elevation rather than dominate. Major (level=1) lines stay
+      // visible; minor lines almost fade into the basemap.
       "line-color": [
         "case",
         ["==", ["get", "level"], 1],
-        "rgba(55, 40, 25, 0.85)",
-        "rgba(75, 55, 35, 0.55)",
+        "rgba(80, 60, 40, 0.45)",
+        "rgba(100, 80, 55, 0.22)",
       ],
       "line-width": [
         "interpolate", ["linear"], ["zoom"],
-        10, ["case", ["==", ["get", "level"], 1], 0.8, 0.3],
-        14, ["case", ["==", ["get", "level"], 1], 1.5, 0.7],
-        18, ["case", ["==", ["get", "level"], 1], 2.2, 1.1],
+        10, ["case", ["==", ["get", "level"], 1], 0.5, 0.2],
+        14, ["case", ["==", ["get", "level"], 1], 1.0, 0.4],
+        18, ["case", ["==", ["get", "level"], 1], 1.4, 0.6],
       ],
     },
   }, "road_minor");
@@ -122,9 +123,9 @@ export function addBaseLayers(map) {
       "text-rotation-alignment": "map",
     },
     paint: {
-      "text-color": "rgba(60, 45, 30, 0.92)",
-      "text-halo-color": "rgba(255, 255, 255, 0.85)",
-      "text-halo-width": 1.4,
+      "text-color": "rgba(75, 55, 35, 0.7)",
+      "text-halo-color": "rgba(255, 255, 255, 0.75)",
+      "text-halo-width": 1.1,
     },
   });
 }
