@@ -8,7 +8,10 @@ import { LIFT_COLOUR } from "./graph.js";
 export function initMap(container, initialView) {
   const map = new maplibregl.Map({
     container,
-    style: "https://tiles.openfreemap.org/styles/liberty",
+    // Positron — clean neutral grey OpenMapTiles style. Lets the
+    // hillshade + contours carry the visual weight (openskimap.org's
+    // approach) rather than fighting colourful landuse fills.
+    style: "https://tiles.openfreemap.org/styles/positron",
     center: initialView.center,
     zoom: initialView.zoom,
     pitch: initialView.pitch,
@@ -25,6 +28,17 @@ export function initMap(container, initialView) {
   return map;
 }
 
+// Try to insert a layer before `beforeId`; fall back to adding it on top
+// if that reference layer doesn't exist in the current style (positron
+// uses different layer ids than liberty).
+function addLayerBefore(map, layer, beforeId) {
+  if (beforeId && map.getLayer(beforeId)) {
+    map.addLayer(layer, beforeId);
+  } else {
+    map.addLayer(layer);
+  }
+}
+
 export function addBaseLayers(map) {
   // Terrain DEM
   map.addSource("terrain-dem", {
@@ -33,17 +47,18 @@ export function addBaseLayers(map) {
   });
   map.setTerrain({ source: "terrain-dem", exaggeration: 1.2 });
 
-  // Hillshade
-  map.addLayer({
+  // Hillshade — pushed harder now that the basemap is neutral grey.
+  // Shadows are a warm brown to mimic openskimap's "alpine" feel.
+  addLayerBefore(map, {
     id: "hillshade-layer",
     type: "hillshade",
     source: "terrain-dem",
     paint: {
-      "hillshade-shadow-color": "#4a3e30",
+      "hillshade-shadow-color": "#3a2e22",
       "hillshade-highlight-color": "#ffffff",
-      "hillshade-accent-color": "#a08770",
+      "hillshade-accent-color": "#8d6f55",
       "hillshade-illumination-direction": 335,
-      "hillshade-exaggeration": 0.65,
+      "hillshade-exaggeration": 0.95,
     },
   }, "park");
 
@@ -78,23 +93,26 @@ export function addBaseLayers(map) {
     ],
     maxzoom: 15,
   });
-  map.addLayer({
+  addLayerBefore(map, {
     id: "contour-lines",
     type: "line",
     source: "contour-source",
     "source-layer": "contours",
     paint: {
+      // Slightly darker + more opaque now that we sit on positron's
+      // pale background — contours need to read clearly without being
+      // shouty.
       "line-color": [
         "case",
         ["==", ["get", "level"], 1],
-        "rgba(80, 60, 40, 0.75)",
-        "rgba(80, 60, 40, 0.45)",
+        "rgba(55, 40, 25, 0.85)",
+        "rgba(75, 55, 35, 0.55)",
       ],
       "line-width": [
         "interpolate", ["linear"], ["zoom"],
-        10, ["case", ["==", ["get", "level"], 1], 0.7, 0.3],
-        14, ["case", ["==", ["get", "level"], 1], 1.3, 0.6],
-        18, ["case", ["==", ["get", "level"], 1], 2.0, 1.0],
+        10, ["case", ["==", ["get", "level"], 1], 0.8, 0.3],
+        14, ["case", ["==", ["get", "level"], 1], 1.5, 0.7],
+        18, ["case", ["==", ["get", "level"], 1], 2.2, 1.1],
       ],
     },
   }, "road_minor");
