@@ -196,27 +196,7 @@ export const WORLDS = {
     initialView: { center: [6.460, 45.170], zoom: 12, pitch: 0, bearing: 0 },
   },
 
-  // ────── Stitched mega-worlds ──────
-  "tignes-three-valleys": {
-    id: "tignes-three-valleys",
-    name: "Tignes + Trois Vallées",
-    region: "Stitched",
-    bannerClass: "mega",
-    description:
-      "Espace Killy connected to the Trois Vallées by two synthetic cable cars across the Vanoise.",
-    data: "./data/tignes-three-valleys.json",
-    stats: { nodes: "≈ 1,250", edges: "≈ 5,000", villages: 17 },
-    initialView: { center: [6.830, 45.440], zoom: 11.3, pitch: 0, bearing: 0 },
-  },
-  "savoie-16": {
-    id: "savoie-16",
-    name: "Savoie 16-resort mega",
-    region: "Stitched",
-    bannerClass: "mega",
-    description:
-      "Sixteen real French Alpine resorts stitched into one connected network. The biggest hypothetical lift-linked area on earth.",
-    data: "./data/savoie-16.json",
-    stats: { nodes: "≈ 3,300", edges: "≈ 13,700", villages: 50 },
-    initialView: { center: [6.750, 45.450], zoom: 10.5, pitch: 0, bearing: 0 },
-  },
+  // Synthetic-connector mega-worlds (Tignes+Trois Vallées, Savoie-16)
+  // were experimental and removed — the cable cars over the Vanoise
+  // didn't route in a useful way. Only contiguous real resorts above.
 };

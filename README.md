@@ -12,13 +12,23 @@ see sun shadows for any time of day. Built on
 
 ## Worlds available
 
-| World | Nodes | Edges | Villages |
-|---|---|---|---|
-| Tignes / Val d'Isère | 374 | 1,311 | 7 |
-| Tignes + Trois Vallées *(stitched)* | ~1,250 | ~5,000 | 17 |
-| Savoie 16-resort mega *(stitched)* | ~3,300 | ~13,700 | 50 |
+Sixteen contiguous Savoie ski areas, each a standalone routable graph
+in `data/`.
 
-Each world is a pre-built JSON graph living in `data/`.
+| Region | Resorts |
+|---|---|
+| Tarentaise | Tignes / Val d'Isère · Trois Vallées · Les Arcs · La Plagne · La Rosière · Sainte-Foy Tarentaise |
+| Vanoise west | Valmorel · Pralognan-la-Vanoise |
+| Beaufortain | Espace Diamant · Arêches-Beaufort |
+| Maurienne | Val Cenis · Bonneval-sur-Arc · Aussois · La Norma · Valfréjus · Galibier-Thabor (Valloire/Valmeinier) |
+
+Earlier versions of this site included two stitched mega-worlds — Tignes
+plus Trois Vallées (via two synthetic cable cars over the Vanoise) and
+a 16-resort Savoie mega-network. They were removed because the synthetic
+connectors didn't produce realistic routes: queries either ignored the
+cable cars entirely or sent skiers on absurd continent-spanning rides.
+The stitching code is preserved in `skiroute.stitch` for future
+experiments with a better connector cost model.
 
 ## How it works
 

@@ -7,13 +7,10 @@ Usage:
     pip install skiroute
     SKIROUTE_GPKG=/path/to/openskidata.gpkg python3 scripts/build_data.py
 
-Builds:
-    data/tignes.json                 Tignes / Val d'Isère
-    data/tignes-three-valleys.json   Tignes stitched to Trois Vallées
-    data/savoie-16.json              16-resort Savoie mega-network
+Builds 16 standalone Savoie resorts (one JSON each). Experimental
+stitched worlds were removed — see note further down.
 
-Add new worlds at the bottom by appending to WORLDS. After running,
-commit the updated data/*.json files.
+Add new worlds by appending to SINGLE_RESORT_SLUGS + RESORTS.
 """
 
 from __future__ import annotations
@@ -194,10 +191,19 @@ RESORTS: list[ResortSpec] = [
     ),
 ]
 
-# Index aliases for readability when defining connectors
+# Index aliases match RESORTS order (kept for documentation, not used)
 (TIGNES, TROIS_VALLEES, ARCS, PLAGNE, ROSIERE, STE_FOY,
  VALMOREL, DIAMANT, PRALOGNAN, VAL_CENIS,
  BONNEVAL, GALIBIER, VALFREJUS, NORMA, AUSSOIS, ARECHES) = range(16)
+
+
+# NOTE: the previous experimental stitched worlds (Tignes + Trois Vallées,
+# Savoie-16 mega) lived here and used the connector + auto-piste-connector
+# functions below. They were removed because the synthetic cable cars
+# across the Vanoise National Park didn't produce useful routing — most
+# queries either ignored the connectors entirely or sent you on an
+# unrealistic continent-spanning ride. The code is kept for reference
+# in case we want to bring them back with a different connector model.
 
 
 def make_savoie_connectors() -> list[Connector]:
@@ -432,13 +438,13 @@ def build_savoie_16() -> skiroute.Graph:
 # ---------------------------------------------------------------------------
 
 
-# Single-resort builders, then the two stitched mega-worlds.
+# Single-resort builders only. The previous stitched worlds
+# (tignes-three-valleys, savoie-16) were removed — their build functions
+# are still defined above for reference but no longer wired in.
 WORLDS: dict = {
     slug: (lambda i=i: _build_resort(i))
     for i, slug in enumerate(SINGLE_RESORT_SLUGS)
 }
-WORLDS["tignes-three-valleys"] = build_tignes_three_valleys
-WORLDS["savoie-16"] = build_savoie_16
 
 
 def main() -> None:
