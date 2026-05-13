@@ -354,6 +354,54 @@ body.bottom-closed #bottom-pane {
 #user-route-info { margin-top: 8px; font-size: 12px; line-height: 1.5; }
 #user-route-info .muted { color: #888; font-style: italic; }
 
+/* ───── Elevation profile ───── */
+
+.elevation-profile {
+  position: relative;
+  margin-top: 10px;
+  padding: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #1a1c22 0%, #14161c 100%);
+  overflow: hidden;
+}
+.elevation-profile[hidden] { display: none; }
+.elevation-profile svg { cursor: crosshair; }
+#elev-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(20, 22, 28, 0.96);
+  border: 1px solid var(--panel-border);
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: 11px;
+  color: #eee;
+  line-height: 1.35;
+  min-width: 110px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 5;
+}
+#elev-tooltip[hidden] { display: none; }
+.elev-tt-dist {
+  font-family: ui-monospace, monospace;
+  color: var(--route-colour);
+  font-weight: 600;
+}
+.elev-tt-name {
+  margin-top: 3px;
+  padding-left: 6px;
+  color: #ccc;
+}
+.elev-map-marker {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--route-colour);
+  border: 2px solid #000;
+  box-shadow: 0 0 8px rgba(255, 224, 0, 0.7);
+  pointer-events: none;
+}
+
 /* ───── Rail toggles ───── */
 
 .rail-toggle {

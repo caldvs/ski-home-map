@@ -9,6 +9,7 @@ import {
   DijkstraRunner, AstarRunner, BidirRunner, edgeCost,
   reachableCount,
 } from "./routing.js";
+import { renderElevationProfile, disposeElevationProfile } from "./elevation.js";
 
 export function wireRouting(map, graph) {
   let startPin = null, endPin = null;
@@ -44,6 +45,7 @@ export function wireRouting(map, graph) {
       map.getSource("anim-settled").setData({ type: "FeatureCollection", features: [] });
     }
     stopAnimation();
+    disposeElevationProfile(document.getElementById("elevation-profile"));
     document.getElementById("user-route-info").innerHTML =
       '<em class="muted">Click the map to place a start pin.</em>';
     document.getElementById("anim-stats").innerHTML =
@@ -125,6 +127,10 @@ export function wireRouting(map, graph) {
         mins + " min · " + result.path.length + " edges</div>" +
         '<div style="font-size:11px;color:#999">' +
         "Dijkstra visited " + result.visited + " nodes in " + tMs + " ms</div>";
+      renderElevationProfile(
+        document.getElementById("elevation-profile"),
+        map, graph, result.path,
+      );
       return;
     }
     clearUserRoute();
@@ -202,6 +208,10 @@ export function wireRouting(map, graph) {
       if (runner.done) {
         if (runner.foundPath && runner.foundPath.length) {
           drawRoute(map, graph, runner.foundPath);
+          renderElevationProfile(
+            document.getElementById("elevation-profile"),
+            map, graph, runner.foundPath,
+          );
           let totalSec = 0;
           runner.foundPath.forEach((eIdx) => {
             totalSec += edgeCost(graph.routingEdges[eIdx], mode);
