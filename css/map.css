@@ -238,6 +238,66 @@ body.sidebar-closed #sidebar {
   margin-top: 14px;
 }
 
+/* ───── Mode picker (Layers / Route / Sun) ───── */
+
+.mode-picker {
+  display: flex;
+  gap: 4px;
+  padding: 14px 18px 0;
+  background: var(--l-bg);
+}
+.mode-picker button {
+  flex: 1;
+  background: transparent !important;
+  border: 1px solid var(--l-line) !important;
+  color: var(--l-text-2) !important;
+  font: inherit;
+  font-family: inherit;
+  font-size: 11px !important;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 7px 0 !important;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+}
+.mode-picker button:hover {
+  background: var(--l-bg-2) !important;
+}
+.mode-picker button.on {
+  background: var(--l-text) !important;
+  border-color: var(--l-text) !important;
+  color: var(--l-bg) !important;
+}
+
+.mode-pane[hidden] { display: none; }
+.mode-pane > .sidebar-section:first-child {
+  border-top: none;
+}
+.mode-pane-hint {
+  font-size: 12px;
+  color: var(--l-text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+.route-summary-side {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--l-line);
+}
+
+/* Bottom pane visibility per mode. */
+body.mode-layers #bottom-pane,
+body.mode-sun #bottom-pane {
+  flex: 0 0 0;
+  height: 0;
+  border-top: none;
+  overflow: hidden;
+}
+body.mode-layers #bottom-toggle,
+body.mode-sun #bottom-toggle { display: none; }
+
 .sidebar-section {
   padding: 16px 20px;
   border-bottom: 1px solid var(--l-line);

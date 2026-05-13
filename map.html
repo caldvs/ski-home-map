@@ -176,6 +176,24 @@
     </div>
   </header>
 
+  <div class="mode-picker" id="mode-picker" role="tablist" aria-label="Mode">
+    <button type="button" data-mode="layers" role="tab" aria-selected="false">Layers</button>
+    <button type="button" data-mode="route"  role="tab" aria-selected="true" class="on">Route</button>
+    <button type="button" data-mode="sun"    role="tab" aria-selected="false">Sun</button>
+  </div>
+
+  <div class="mode-pane" data-mode-pane="route">
+    <section class="sidebar-section">
+      <h3>Route finder</h3>
+      <p class="mode-pane-hint">
+        Drop two pins on the map — or click a town name / lift label — to plot a route.
+        Details (itinerary, elevation, algorithm) appear in the bottom panel.
+      </p>
+      <div id="route-summary-side" class="route-summary-side" hidden></div>
+    </section>
+  </div>
+
+  <div class="mode-pane" data-mode-pane="layers" hidden>
   <section class="sidebar-section">
     <details id="layers-section">
       <summary>Layers</summary>
@@ -231,7 +249,9 @@
     </div>
     </details>
   </section>
+  </div>
 
+  <div class="mode-pane" data-mode-pane="sun" hidden>
   <section class="sidebar-section" id="sun-panel">
     <h3 id="sun-section-heading">Sun &amp; shadows</h3>
     <input type="date" class="date-input" id="sun-date">
@@ -256,6 +276,7 @@
     </div>
     <div id="sun-status"></div>
   </section>
+  </div>
 
   <div class="attribution">
     Map © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors via
@@ -347,6 +368,37 @@
       localStorage.setItem("ski:layers-open", layersDetails.open ? "1" : "0");
     });
   }
+
+  // ── Mode picker: Layers / Route / Sun ─────────────────────────────
+  // Switches what fills the sidebar below the header AND what's in
+  // the bottom pane.
+  //   Layers → sidebar shows layer toggles, bottom pane hides
+  //   Route  → sidebar shows a hint, bottom pane shows route tabs
+  //   Sun    → sidebar shows sun controls, bottom pane hides (for now)
+  const modePicker = document.getElementById("mode-picker");
+  const modeBtns   = modePicker.querySelectorAll("button[data-mode]");
+  const modePanes  = document.querySelectorAll(".mode-pane[data-mode-pane]");
+  const VALID_MODES = ["layers", "route", "sun"];
+  function setMode(name) {
+    if (!VALID_MODES.includes(name)) name = "route";
+    modeBtns.forEach((b) => {
+      const on = b.dataset.mode === name;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    modePanes.forEach((p) => { p.hidden = p.dataset.modePane !== name; });
+    document.body.classList.remove("mode-layers", "mode-route", "mode-sun");
+    document.body.classList.add("mode-" + name);
+    localStorage.setItem("ski:mode", name);
+    // Map needs a resize tick because the bottom pane appears / hides.
+    setTimeout(() => {
+      const m = window._skihomeMap;
+      if (m && typeof m.resize === "function") m.resize();
+    }, 240);
+  }
+  modeBtns.forEach((b) =>
+    b.addEventListener("click", () => setMode(b.dataset.mode)));
+  setMode(localStorage.getItem("ski:mode") || "route");
 </script>
 </body>
 </html>

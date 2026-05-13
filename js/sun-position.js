@@ -78,19 +78,17 @@ export function sunPosition(date, lat, lon) {
   const zenith = Math.acos(Math.max(-1, Math.min(1, cosZ))) * DEG;
   const altitude = 90 - zenith;
 
-  // Solar azimuth (deg, clockwise from north)
+  // Solar azimuth (deg, clockwise from north). Following NOAA's
+  // spreadsheet formulation verbatim — the numerator sign matters!
   let azimuth = 0;
   const sinZ = Math.sin(zenith * RAD);
   if (sinZ > 1e-9) {
     const cosA =
-      (Math.sin(declination * RAD) - Math.sin(lat * RAD) * cosZ) /
+      (Math.sin(lat * RAD) * cosZ - Math.sin(declination * RAD)) /
       (Math.cos(lat * RAD) * sinZ);
-    azimuth = Math.acos(Math.max(-1, Math.min(1, cosA))) * DEG;
-    // NOAA: H > 0 (after noon) → 360 − az; H < 0 → az (still need
-    // to add 180 because NOAA measures azimuth from south.) The form
-    // below gives clockwise-from-north convention.
-    if (H > 0) azimuth = (azimuth + 180) % 360;
-    else azimuth = (540 - azimuth) % 360;
+    const acosA = Math.acos(Math.max(-1, Math.min(1, cosA))) * DEG;
+    // H > 0 = afternoon (west of meridian); H ≤ 0 = morning.
+    azimuth = (H > 0) ? (acosA + 180) % 360 : (540 - acosA) % 360;
   }
 
   return { altitude, azimuth, declination, hourAngle: H };

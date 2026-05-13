@@ -164,7 +164,7 @@ uniform vec3 u_sunStep;   // per-step delta: (du, dv, delev_m)
 uniform float u_stepCount;
 uniform float u_maxElev;
 uniform vec4 u_color;     // shadow rgba
-uniform float u_softness;
+uniform int u_debugMode;  // 0 = shadow, 1 = solid red quad, 2 = DEM elev
 
 float decodeElev(vec3 rgb) {
   // terrarium: (R*256 + G + B/256) - 32768, where channels are 0..255
@@ -172,14 +172,23 @@ float decodeElev(vec3 rgb) {
 }
 
 void main() {
-  if (v_uv.x < 0.0 || v_uv.x > 1.0 || v_uv.y < 0.0 || v_uv.y > 1.0) {
-    discard;
+  if (u_debugMode == 1) {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 0.5);
+    return;
   }
+  if (u_debugMode == 2) {
+    float e = decodeElev(texture2D(u_dem, v_uv).rgb);
+    float g = clamp(e / 3500.0, 0.0, 1.0);
+    gl_FragColor = vec4(g, g, g, 0.7);
+    return;
+  }
+  if (v_uv.x < 0.0 || v_uv.x > 1.0 || v_uv.y < 0.0 || v_uv.y > 1.0) discard;
+
+  // Binary cast-shadow ray-march.
   float startElev = decodeElev(texture2D(u_dem, v_uv).rgb);
   vec2 uv = v_uv;
-  float rayElev = startElev + 0.5; // tiny lift to avoid self-shadowing
-  float occlude = 0.0;             // 0 = lit, 1 = full shadow
-  // Fixed loop bound — early break on conditions.
+  float rayElev = startElev + 0.5;
+  float occlude = 0.0;
   for (int i = 0; i < 512; i++) {
     if (float(i) >= u_stepCount) break;
     uv      += u_sunStep.xy;
@@ -187,16 +196,10 @@ void main() {
     if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) break;
     if (rayElev > u_maxElev) break;
     float terrain = decodeElev(texture2D(u_dem, uv).rgb);
-    float delta = terrain - rayElev;
-    if (delta > 0.0) {
-      // Soft transition based on how much the terrain exceeds the ray
-      // — makes the umbra/penumbra boundary slightly less binary.
-      occlude = clamp(delta / u_softness, 0.0, 1.0);
-      break;
-    }
+    if (terrain > rayElev) { occlude = 1.0; break; }
   }
   if (occlude <= 0.0) discard;
-  gl_FragColor = vec4(u_color.rgb, u_color.a * occlude);
+  gl_FragColor = u_color;
 }`;
 
 
@@ -221,10 +224,10 @@ export class ShadowLayer {
     this.renderingMode = "2d";
 
     this.opacity   = opts.opacity ?? 0.55;
-    this.colorRgb  = opts.color   || [0.02, 0.07, 0.20]; // deep cool blue
-    this.stepM     = opts.stepM   || 35;   // ray-march step (metres)
-    this.stepCount = opts.stepCount || 384;
-    this.softness  = opts.softness  || 12; // metres — penumbra band
+    this.colorRgb  = opts.color   || [0.01, 0.04, 0.16]; // deep cool blue
+    this.stepM     = opts.stepM   || 18;   // ray-march step (metres)
+    this.stepCount = opts.stepCount || 512;
+    this.softness  = opts.softness  || 0;  // unused now — binary shadow
 
     this.dem        = null;
     this.azimuth    = 180;
@@ -284,7 +287,7 @@ export class ShadowLayer {
     this._uniforms.u_stepCount = gl.getUniformLocation(prog, "u_stepCount");
     this._uniforms.u_maxElev   = gl.getUniformLocation(prog, "u_maxElev");
     this._uniforms.u_color     = gl.getUniformLocation(prog, "u_color");
-    this._uniforms.u_softness  = gl.getUniformLocation(prog, "u_softness");
+    this._uniforms.u_debugMode = gl.getUniformLocation(prog, "u_debugMode");
 
     this._buf = gl.createBuffer();
 
@@ -315,7 +318,7 @@ export class ShadowLayer {
 
   render(gl, matrix) {
     if (!this.dem || !this._program) return;
-    if (this.altitude <= 0) return; // night — sun below horizon
+    if (this.altitude <= 0) return;          // sun below horizon → nothing to render
 
     if (this._demDirty) this._uploadDEM(gl);
 
@@ -324,13 +327,11 @@ export class ShadowLayer {
     const az  = this.azimuth  * rad;
     const alt = this.altitude * rad;
     const cosA = Math.cos(alt);
-    const eastUnit  = cosA * Math.sin(az);   // metres east per metre along ray
+    const eastUnit  = cosA * Math.sin(az);
     const northUnit = cosA * Math.cos(az);
     const upUnit    = Math.sin(alt);
 
     const du =  (eastUnit  * this.stepM) / this.dem.widthM;
-    // V increases SOUTHWARD in our DEM canvas (image y), so going
-    // NORTH (positive north) decreases V.
     const dv = -(northUnit * this.stepM) / this.dem.heightM;
     const dh =   upUnit    * this.stepM;
 
@@ -340,20 +341,21 @@ export class ShadowLayer {
     gl.uniform3f(this._uniforms.u_sunStep, du, dv, dh);
     gl.uniform1f(this._uniforms.u_stepCount, this.stepCount);
     gl.uniform1f(this._uniforms.u_maxElev,  this.dem.maxElev + 50);
-    gl.uniform1f(this._uniforms.u_softness, this.softness);
     gl.uniform4f(this._uniforms.u_color,
       this.colorRgb[0], this.colorRgb[1], this.colorRgb[2], this.opacity);
+    gl.uniform1i(this._uniforms.u_debugMode, this.debugMode || 0);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this._texture);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._buf);
-    const stride = 4 * 4; // 4 floats per vertex × 4 bytes
+    const stride = 4 * 4;
     gl.enableVertexAttribArray(this._attribs.a_merc);
     gl.vertexAttribPointer(this._attribs.a_merc, 2, gl.FLOAT, false, stride, 0);
     gl.enableVertexAttribArray(this._attribs.a_uv);
     gl.vertexAttribPointer(this._attribs.a_uv,   2, gl.FLOAT, false, stride, 8);
 
+    gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
