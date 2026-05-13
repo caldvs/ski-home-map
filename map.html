@@ -150,6 +150,8 @@
         <div class="pane-empty">Alternates aren't computed yet — coming soon.</div>
       </div>
     </div>
+
+    <div id="time-scrubber" class="time-scrubber" hidden></div>
   </div>
 
 </div>
@@ -390,7 +392,20 @@
     document.body.classList.remove("mode-layers", "mode-route", "mode-sun");
     document.body.classList.add("mode-" + name);
     localStorage.setItem("ski:mode", name);
-    // Map needs a resize tick because the bottom pane appears / hides.
+
+    // Bottom-pane content swap by mode.
+    const topbar    = document.querySelector(".bottom-topbar");
+    const tabs      = document.getElementById("route-tabs");
+    const tabbedAll = document.querySelector(".tab-content");
+    const scrubber  = document.getElementById("time-scrubber");
+    const showRouteUI = (name === "route");
+    const showScrub   = (name === "sun");
+    if (topbar)    topbar.style.display    = showRouteUI ? ""   : "none";
+    if (tabs)      tabs.style.display      = showRouteUI ? ""   : "none";
+    if (tabbedAll) tabbedAll.style.display = showRouteUI ? ""   : "none";
+    if (scrubber)  scrubber.hidden         = !showScrub;
+    if (showScrub && window._renderTimeScrubber) window._renderTimeScrubber();
+
     setTimeout(() => {
       const m = window._skihomeMap;
       if (m && typeof m.resize === "function") m.resize();

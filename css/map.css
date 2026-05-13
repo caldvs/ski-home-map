@@ -288,15 +288,18 @@ body.sidebar-closed #sidebar {
 }
 
 /* Bottom pane visibility per mode. */
-body.mode-layers #bottom-pane,
-body.mode-sun #bottom-pane {
+body.mode-layers #bottom-pane {
   flex: 0 0 0;
   height: 0;
   border-top: none;
   overflow: hidden;
 }
-body.mode-layers #bottom-toggle,
-body.mode-sun #bottom-toggle { display: none; }
+body.mode-layers #bottom-toggle { display: none; }
+/* Sun-mode bottom pane is shorter — just the scrubber height. */
+body.mode-sun #bottom-pane {
+  flex: 0 0 160px;
+  height: 160px;
+}
 
 /* Route mode: signal "drop a pin" with a crosshair cursor. MapLibre
    sets cursor inline during drag (→ grabbing) which beats this; the
@@ -304,6 +307,100 @@ body.mode-sun #bottom-toggle { display: none; }
    So the crosshair only shows when the user is idle on empty map. */
 body.mode-route .maplibregl-canvas-container,
 body.mode-route .maplibregl-canvas { cursor: crosshair; }
+
+/* ───── Time scrubber (Sun mode) ───── */
+
+.time-scrubber {
+  padding: 14px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+.time-scrubber[hidden] { display: none; }
+
+.scrub-head {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.scrub-date {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--l-text);
+}
+.scrub-date #sc-time {
+  color: var(--accent);
+  font-weight: 700;
+  margin-left: 4px;
+}
+.scrub-stats {
+  font-size: 11.5px;
+  color: var(--l-text-3);
+  flex: 1;
+}
+.scrub-actions {
+  display: flex;
+  gap: 4px;
+}
+.scrub-btn {
+  appearance: none;
+  background: var(--l-bg-2);
+  border: 1px solid var(--l-line);
+  color: var(--l-text);
+  font: inherit;
+  font-size: 11px;
+  padding: 5px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+}
+.scrub-btn:hover { background: var(--l-bg-3); }
+.scrub-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.scrub-strip {
+  position: relative;
+  flex: 1;
+  min-height: 56px;
+  max-height: 64px;
+  background: var(--l-bg-2);
+  border: 1px solid var(--l-line);
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.scrub-strip.dragging { cursor: grabbing; }
+.scrub-svg { display: block; width: 100%; height: 100%; }
+.scrub-needle {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--route);
+  box-shadow: 0 0 6px rgba(240, 179, 35, 0.7);
+  pointer-events: none;
+}
+.scrub-needle::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, 0) rotate(45deg);
+  background: var(--route);
+  box-shadow: 0 0 6px rgba(240, 179, 35, 0.7);
+}
 
 .sidebar-section {
   padding: 16px 20px;

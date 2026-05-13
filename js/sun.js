@@ -14,9 +14,18 @@
 import { SHADEMAP_API_KEY } from "./config.js";
 import { sunPosition } from "./sun-position.js";
 import { ShadowLayer } from "./shadow-layer.js";
+import { TimeScrubber } from "./time-scrubber.js";
 
-const DEFAULT_DATE = "2026-02-15";
-const DEFAULT_MINUTES = 720; // 12:00 noon
+// Default: today's date + the current wall-clock minute. Scrubber lets
+// the user drag forwards / backwards from there indefinitely.
+function todayISODate() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function nowMinutes() {
+  const d = new Date();
+  return d.getHours() * 60 + d.getMinutes();
+}
 
 // Toggle the experimental custom WebGL shadow renderer instead of
 // ShadeMap. Flip with ?shadows=custom (or ?shadows=shademap to force
@@ -61,8 +70,8 @@ export function wireSun(map) {
   const playBtn = document.getElementById("sun-play");
   const gearBtn = document.getElementById("sun-key-gear");
 
-  dateEl.value = DEFAULT_DATE;
-  let sunMinutes = DEFAULT_MINUTES;
+  dateEl.value = todayISODate();
+  let sunMinutes = nowMinutes();
   let shadowsWanted = shadowsCheckbox.checked;
   let shadowsCurrentlyAdded = false;
   let playTimer = null;
@@ -342,7 +351,7 @@ export function wireSun(map) {
   document.getElementById("sun-h-plus") .addEventListener("click", withEngage(() => setSunMinutes(sunMinutes + 60)));
   document.getElementById("sun-m-minus").addEventListener("click", withEngage(() => setSunMinutes(sunMinutes - 15)));
   document.getElementById("sun-m-plus") .addEventListener("click", withEngage(() => setSunMinutes(sunMinutes + 15)));
-  document.getElementById("sun-now")    .addEventListener("click", withEngage(() => setSunMinutes(DEFAULT_MINUTES)));
+  document.getElementById("sun-now")    .addEventListener("click", withEngage(() => setSunMinutes(nowMinutes())));
   dateEl.addEventListener("change", () => {
     engageSunMode();
     updateExternalSunChrome();
@@ -437,4 +446,46 @@ export function wireSun(map) {
   applyShadowVisibility();
   // Fire pre-warm a tick later so it doesn't block first paint.
   setTimeout(prewarmDemTiles, 300);
+
+  // ── Time scrubber (Sun mode's primary time control) ───────────────
+  const scrubberContainer = document.getElementById("time-scrubber");
+  let scrubber = null;
+  if (scrubberContainer) {
+    scrubber = new TimeScrubber({
+      container: scrubberContainer,
+      onChange: (date) => {
+        // Mirror the new date into the sidebar's date input + minutes
+        // so the existing sun controls stay consistent.
+        const local = new Date(date.getTime());
+        const yyyy = local.getFullYear();
+        const mm = String(local.getMonth() + 1).padStart(2, "0");
+        const dd = String(local.getDate()).padStart(2, "0");
+        dateEl.value = `${yyyy}-${mm}-${dd}`;
+        const newMinutes = local.getHours() * 60 + local.getMinutes();
+        sunMinutes = newMinutes;
+        updateExternalSunChrome();
+        if (shadeMap) shadeMap.setDate(date);
+        updateCustomShadowSun();
+        // Make sure shadows are showing as the user explores.
+        engageSunMode();
+      },
+      sunPositionFn: (date) => sunPosition(date, centerLat, centerLon),
+    });
+    // Seed with "now" (or current date input + sunMinutes if already set).
+    scrubber.setDate(currentSunDate(), { silent: true });
+
+    // Expose a render-trigger so setMode in map.html can call it when
+    // switching to Sun mode (the strip width is 0 while hidden).
+    window._renderTimeScrubber = () => {
+      if (scrubber) {
+        // Re-seed with the latest sidebar state in case the user used
+        // the sidebar buttons while in another mode.
+        scrubber.setDate(currentSunDate(), { silent: true });
+      }
+    };
+
+    // Resize observer so the SVG redraws to container width when the
+    // bottom pane shows up or the window resizes.
+    new ResizeObserver(() => scrubber.render()).observe(scrubberContainer);
+  }
 }
