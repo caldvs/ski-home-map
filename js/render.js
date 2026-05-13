@@ -295,29 +295,27 @@ export function addGraphLayers(map, graph) {
     },
   });
 
-  // Lift labels — dark-grey uppercase along the lift line, single
-  // label per lift placed at the centre. line-center prevents the
-  // "letters stacked on top of each other" artefact you can get with
-  // `line` placement when MapLibre tries to repeat-fit text along a
-  // short/kinky polyline.
+  // Lift labels — rendered as POINT symbols at each lift's midpoint
+  // (pre-computed in graph.js). Both rotation and pitch alignment use
+  // the viewport so the label always reads horizontally on screen,
+  // unaffected by 3D terrain bumps or the lift cable's slope.
+  map.addSource("lift-labels-source", { type: "geojson", data: graph.liftLabelsFC });
   map.addLayer({
     id: "lift-labels",
+    source: "lift-labels-source",
     type: "symbol",
-    source: "lifts",
     minzoom: 13,
-    filter: ["!=", ["get", "display_name"], ""],
     layout: {
-      "symbol-placement": "line-center",
       "text-field": ["get", "display_name"],
       "text-font": ["Noto Sans Bold"],
       "text-size": ["interpolate", ["linear"], ["zoom"], 12, 9, 18, 14],
       "text-transform": "uppercase",
       "text-letter-spacing": 0.06,
       "text-padding": 6,
-      "text-max-angle": 25,
-      "text-rotation-alignment": "map",
+      "text-rotation-alignment": "viewport",
       "text-pitch-alignment": "viewport",
-      "text-keep-upright": true,
+      "text-anchor": "center",
+      "text-justify": "center",
     },
     paint: {
       "text-color": "#222",

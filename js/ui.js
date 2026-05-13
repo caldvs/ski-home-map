@@ -5,7 +5,8 @@
  */
 
 import {
-  runDijkstra, nearestNodeId, nearestPisteOrLiftNodeId, describeNode,
+  runDijkstra, nearestNodeId, nearestPisteOrLiftNodeId,
+  nearestPisteLineProjection, describeNode,
   DijkstraRunner, AstarRunner, BidirRunner, edgeCost,
   reachableCount,
 } from "./routing.js";
@@ -241,21 +242,20 @@ export function wireRouting(map, graph) {
   // approach line bridges them. forceNid lets the caller pass the node
   // explicitly when startNodeId hasn't been written yet (placePin runs
   // before handlePinClick assigns the global).
-  function setStartApproach(forceNid) {
+  // Draw the dashed approach line. We bridge from the click location
+  // (startDisplay) straight to startEntry — the perpendicular foot on
+  // the nearest piste/lift. That's the actual "you ski straight onto
+  // the piste here" visualisation. The route itself then continues
+  // from the matching graph node.
+  function setStartApproach() {
     const src = map.getSource("start-approach");
     if (!src) return;
-    const nid = (forceNid != null) ? forceNid : startNodeId;
-    if (!startDisplay || nid == null) {
+    if (!startDisplay || !startEntry) {
       src.setData({ type: "FeatureCollection", features: [] });
       return;
     }
-    const node = graph.routingNodes[nid];
-    if (!node) {
-      src.setData({ type: "FeatureCollection", features: [] });
-      return;
-    }
-    const dLon = Math.abs(node[0] - startDisplay.lon);
-    const dLat = Math.abs(node[1] - startDisplay.lat);
+    const dLon = Math.abs(startEntry.lon - startDisplay.lon);
+    const dLat = Math.abs(startEntry.lat - startDisplay.lat);
     if (dLon < 1e-6 && dLat < 1e-6) {
       src.setData({ type: "FeatureCollection", features: [] });
       return;
@@ -268,7 +268,7 @@ export function wireRouting(map, graph) {
           type: "LineString",
           coordinates: [
             [startDisplay.lon, startDisplay.lat],
-            [node[0], node[1]],
+            [startEntry.lon,   startEntry.lat],
           ],
         },
         properties: {},
@@ -279,17 +279,25 @@ export function wireRouting(map, graph) {
   // Build a pin marker. kind = "start" → free-form, displayed at
   // (displayLat, displayLon). kind = "end" → snapped to a piste/lift
   // node, displayed at that node's coordinates.
+  // Pin A's projected entry point onto a piste (perpendicular foot
+  // along the nearest piste/lift line). Used to draw the dashed
+  // approach line from the free-form pin to the actual on-piste
+  // entry, NOT to the nearest fork/join.
+  let startEntry = null;  // { lat, lon }
+
   function placePin(lat, lon, kind) {
     if (kind === "start") {
       // Pin A is free-form: the visible marker sits where the user
-      // clicked, but the route source is always a piste / lift node
-      // (so the algorithm has something to start from). The dashed
-      // approach line bridges the two.
-      const nid = nearestPisteOrLiftNodeId(graph, lat, lon);
-      if (nid === null) return null;
+      // clicked. We project that click onto the nearest piste / lift
+      // line (perpendicular foot), use that projection as the visual
+      // "entry point" on the piste, and use the edge's nearer
+      // endpoint as the routing source.
+      const proj = nearestPisteLineProjection(graph, lat, lon);
+      if (!proj) return null;
       startDisplay = { lat, lon };
-      const r = buildMarker(lat, lon, kind, nid);
-      setStartApproach(nid);
+      startEntry = { lat: proj.projLat, lon: proj.projLon };
+      const r = buildMarker(lat, lon, kind, proj.nodeId);
+      setStartApproach();
       return r;
     }
     // Pin B: visibly snaps to the nearest piste / lift node.
@@ -323,25 +331,25 @@ export function wireRouting(map, graph) {
       const point = map.project(ll);
       const { lat: nlat, lon: nlon } = pickCoordAtPoint(point, ll);
 
-      // Both pins use the piste/lift node filter — pin A is just
-      // additionally free in WHERE its visible marker sits.
-      const newNid = nearestPisteOrLiftNodeId(graph, nlat, nlon);
-      if (newNid === null) {
-        // No valid node — snap pin back to the previous position.
-        marker.setLngLat([lon, lat]);
-        return;
-      }
-      const newN = graph.routingNodes[newNid];
+      let newNid;
       if (kind === "start") {
-        // Free-form: leave the pin wherever the user dropped it
-        // (snapped to point-feature if relevant), update routing source.
+        // Pin A: project drop onto nearest piste/lift line. Marker stays
+        // at the drop; approach line goes perpendicular onto the piste;
+        // routing source = nearer endpoint of that edge.
+        const proj = nearestPisteLineProjection(graph, nlat, nlon);
+        if (!proj) { marker.setLngLat([lon, lat]); return; }
+        newNid = proj.nodeId;
         marker.setLngLat([nlon, nlat]);
         startDisplay = { lat: nlat, lon: nlon };
+        startEntry   = { lat: proj.projLat, lon: proj.projLon };
         startNodeId = newNid;
         popup.setText(describeNode(graph, newNid));
-        setStartApproach(newNid);
+        setStartApproach();
       } else {
-        // Pin B always sits AT the snapped node.
+        // Pin B: snap visibly to the nearest piste/lift node.
+        newNid = nearestPisteOrLiftNodeId(graph, nlat, nlon);
+        if (newNid === null) { marker.setLngLat([lon, lat]); return; }
+        const newN = graph.routingNodes[newNid];
         marker.setLngLat([newN[0], newN[1]]);
         popup.setText(describeNode(graph, newNid));
         endNodeId = newNid;
@@ -357,6 +365,7 @@ export function wireRouting(map, graph) {
     if (endPin) { endPin.remove(); endPin = null; }
     startNodeId = null; endNodeId = null;
     startDisplay = null;
+    startEntry = null;
     if (map.getSource("start-approach")) {
       map.getSource("start-approach").setData({ type: "FeatureCollection", features: [] });
     }
@@ -724,6 +733,9 @@ export function wirePerfOverlay(map, getShadeMap) {
   const frameMsEl = document.getElementById("perf-frame-ms");
   const shadowMsEl = document.getElementById("perf-shadow-ms");
   const tilesEl = document.getElementById("perf-tiles");
+  // Perf overlay is dev-only chrome — if its DOM isn't present, skip
+  // setting up any of the listeners.
+  if (!fpsEl || !frameMsEl || !shadowMsEl || !tilesEl) return;
 
   let frameCount = 0, frameAccum = 0;
   let lastTickMs = performance.now();

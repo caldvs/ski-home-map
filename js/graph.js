@@ -125,12 +125,48 @@ export async function loadGraph(url) {
   return reshapeGraph(await resp.json());
 }
 
+// Cumulative-length midpoint along a polyline. Returns [lon, lat] at
+// the point that's half-way along the line by metric distance, OR
+// null if the line is degenerate. Used for placing lift labels as
+// points so they don't get warped by 3D terrain.
+function lineMidpoint(coords) {
+  if (!coords || coords.length === 0) return null;
+  if (coords.length === 1) return [coords[0][0], coords[0][1]];
+  const segLens = [];
+  let total = 0;
+  for (let i = 1; i < coords.length; i++) {
+    const dx = coords[i][0] - coords[i - 1][0];
+    const dy = coords[i][1] - coords[i - 1][1];
+    const len = Math.sqrt(dx * dx + dy * dy);
+    segLens.push(len);
+    total += len;
+  }
+  if (total === 0) return [coords[0][0], coords[0][1]];
+  const halfway = total / 2;
+  let acc = 0;
+  for (let i = 0; i < segLens.length; i++) {
+    if (acc + segLens[i] >= halfway) {
+      const t = (halfway - acc) / segLens[i];
+      return [
+        coords[i][0] + t * (coords[i + 1][0] - coords[i][0]),
+        coords[i][1] + t * (coords[i + 1][1] - coords[i][1]),
+      ];
+    }
+    acc += segLens[i];
+  }
+  return coords[Math.floor(coords.length / 2)];
+}
+
 function reshapeGraph(raw) {
   // --- Layer data: GeoJSON FeatureCollections ---
   const pistesFC = { type: "FeatureCollection", features: [] };
   const liftsFC = { type: "FeatureCollection", features: [] };
   const liftsDownFC = { type: "FeatureCollection", features: [] };
   const skatesFC = { type: "FeatureCollection", features: [] };
+  // Label points: one per lift / piste, placed at the line midpoint.
+  // Rendered as point symbols so 3D terrain doesn't drape the text.
+  const liftLabelsFC  = { type: "FeatureCollection", features: [] };
+  const pisteLabelsFC = { type: "FeatureCollection", features: [] };
 
   // --- Routing payload ---
   const routingNodes = {};      // id → [lon, lat, elev, name]
@@ -197,6 +233,16 @@ function reshapeGraph(raw) {
 
     if (e.type === "lift") {
       liftsFC.features.push(feature);
+      if (displayName) {
+        const mid = lineMidpoint(geom);
+        if (mid) {
+          liftLabelsFC.features.push({
+            type: "Feature",
+            geometry: { type: "Point", coordinates: mid },
+            properties: { name: e.name, display_name: displayName, lift_type: e.lift_type || "" },
+          });
+        }
+      }
     } else if (e.type === "lift_down") {
       liftsDownFC.features.push(feature);
     } else if (e.type === "run" || e.type === "connection") {
@@ -286,6 +332,8 @@ function reshapeGraph(raw) {
     liftsFC,
     liftsDownFC,
     skatesFC,
+    liftLabelsFC,
+    pisteLabelsFC,
     villagesFC,
     stationsFC,
     routingNodes,

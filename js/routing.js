@@ -297,6 +297,57 @@ export function nearestPisteOrLiftNodeId(graph, lat, lon) {
   return nearestNodeId(graph, lat, lon, filter);
 }
 
+// Project (lat, lon) onto the nearest piste / lift / connection /
+// lift_down edge in the graph. Used to find a perpendicular "entry
+// point" onto a piste when pin A is dropped in a snowfield — the
+// nearest endpoint of that specific edge is a much better routing
+// source than the L2-nearest node across the entire graph (which can
+// be a far-uphill fork on a totally unrelated piste).
+//
+// Returns { edgeIdx, projLat, projLon, t, nodeId, distance } or null.
+// `nodeId` is the edge endpoint closer to the projection — the route
+// source. `t` ∈ [0,1] is where along the edge the projection lies.
+export function nearestPisteLineProjection(graph, lat, lon) {
+  const RUNS_LIFTS = new Set(["run", "connection", "lift", "lift_down"]);
+  let best = null;
+  let bestD2 = Infinity;
+  const edges = graph.routingEdges;
+  for (let ei = 0; ei < edges.length; ei++) {
+    const e = edges[ei];
+    if (!RUNS_LIFTS.has(e.ty)) continue;
+    const g = e.g;
+    if (!g || g.length < 2) continue;
+    // edge.g is [[lat, lon], ...]
+    for (let i = 1; i < g.length; i++) {
+      const aLat = g[i-1][0], aLon = g[i-1][1];
+      const bLat = g[i][0],   bLon = g[i][1];
+      const dLat = bLat - aLat, dLon = bLon - aLon;
+      const len2 = dLat * dLat + dLon * dLon;
+      let t = 0;
+      if (len2 > 0) {
+        t = ((lat - aLat) * dLat + (lon - aLon) * dLon) / len2;
+        t = Math.max(0, Math.min(1, t));
+      }
+      const pLat = aLat + t * dLat;
+      const pLon = aLon + t * dLon;
+      const eLat = pLat - lat, eLon = pLon - lon;
+      const d2 = eLat * eLat + eLon * eLon;
+      if (d2 < bestD2) {
+        bestD2 = d2;
+        // Position along the WHOLE edge geometry as a fraction.
+        // Used to decide which endpoint is closer.
+        const wholeT = (i - 1 + t) / (g.length - 1);
+        best = {
+          edgeIdx: ei, projLat: pLat, projLon: pLon,
+          wholeT, distance: Math.sqrt(d2),
+          nodeId: wholeT < 0.5 ? e.f : e.t,
+        };
+      }
+    }
+  }
+  return best;
+}
+
 export function describeNode(graph, id) {
   const n = graph.routingNodes[id];
   return (n[3] || ("node " + id)) + " (" + Math.round(n[2]) + "m)";
