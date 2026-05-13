@@ -21,7 +21,13 @@ const DIFFICULTY_PENALTY = {
     expert: 60, freeride: 120,
   },
 };
-const LIFT_DOWN_DISCOUNT = 420;
+
+// Riding a lift downhill is a last-resort move — only acceptable when
+// no skiable route exists between two pocket areas. The graph builder
+// already gives lift_down edges a high base cost; we add another fixed
+// penalty here in EVERY mode so even big-detour piste routes win over
+// "just take the cable car down".
+const LIFT_DOWN_PENALTY = 1200;
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371000;
@@ -39,7 +45,7 @@ function edgeCost(edge, mode) {
   if (edge.d && (edge.ty === "run" || edge.ty === "connection")) {
     c += DIFFICULTY_PENALTY[mode][edge.d] || 0;
   }
-  if (mode === "prefer-easy" && edge.ty === "lift_down") c -= LIFT_DOWN_DISCOUNT;
+  if (edge.ty === "lift_down") c += LIFT_DOWN_PENALTY;
   return c;
 }
 
