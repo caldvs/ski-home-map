@@ -357,8 +357,18 @@
     document.body.classList.add("mode-" + name);
     localStorage.setItem("ski:mode", name);
     if (name === "sun" && window._renderTimeScrubber) window._renderTimeScrubber();
+
+    // Route mode auto-flattens to 2D — pin placement is much easier
+    // without 3D perspective foreshortening. User can re-enable 3D
+    // from the toolbar at any time.
+    const m = window._skihomeMap;
+    if (m && name === "route" && m.getPitch() > 1) {
+      m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
+      const btn3d = document.getElementById("toggle-3d");
+      if (btn3d) btn3d.textContent = "3D · 42°";
+    }
+
     setTimeout(() => {
-      const m = window._skihomeMap;
       if (m && typeof m.resize === "function") m.resize();
     }, 240);
   }
