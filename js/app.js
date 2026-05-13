@@ -6,10 +6,10 @@
  * sun controls + the chrome readouts (tag, stats, layer counts).
  */
 
-import { WORLDS } from "./worlds.js";
+import { WORLDS } from "./worlds.js?v=20260513c";
 import { loadGraph } from "./graph.js";
 import { initMap, addBaseLayers, addGraphLayers, wireLayerToggles } from "./render.js";
-import { wireRouting, wirePerfOverlay } from "./ui.js";
+import { wireRouting, wirePerfOverlay } from "./ui.js?v=20260513";
 import { wireSun, getShadeMap } from "./sun.js";
 
 const params = new URLSearchParams(window.location.search);

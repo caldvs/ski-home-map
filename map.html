@@ -147,9 +147,28 @@
           </div>
 
           <div class="difficulty-seg" id="user-difficulty-seg">
-            <button type="button" data-mode="prefer-easy" class="on">Greens &amp; blues</button>
-            <button type="button" data-mode="reds-if-needed">Reds OK</button>
-            <button type="button" data-mode="any-piste">Fastest</button>
+            <button type="button" data-mode="prefer-easy" class="on">
+              <span class="seg-pips">
+                <span class="pip" style="background:#00b050"></span>
+                <span class="pip" style="background:#1e88e5"></span>
+              </span>
+              <span class="seg-label">Greens &amp; blues</span>
+            </button>
+            <button type="button" data-mode="reds-if-needed">
+              <span class="seg-pips">
+                <span class="pip" style="background:#e53935"></span>
+              </span>
+              <span class="seg-label">Reds OK</span>
+            </button>
+            <button type="button" data-mode="any-piste">
+              <span class="seg-pips">
+                <span class="pip" style="background:#00b050"></span>
+                <span class="pip" style="background:#1e88e5"></span>
+                <span class="pip" style="background:#e53935"></span>
+                <span class="pip" style="background:#2c2c2c"></span>
+              </span>
+              <span class="seg-label">Fastest</span>
+            </button>
           </div>
           <select id="user-difficulty" hidden>
             <option value="prefer-easy" selected>Prefer greens &amp; blues</option>
@@ -255,7 +274,7 @@
 <span id="sun-set-time" hidden></span>
 <span id="sun-status" hidden></span>
 
-<script type="module" src="./js/app.js"></script>
+<script type="module" src="./js/app.js?v=20260513c"></script>
 <script>
   // ── Tab switching inside the Route section ──
   const tabBar  = document.getElementById("route-tabs");

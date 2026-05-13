@@ -62,11 +62,13 @@ export class TimeScrubber {
         <div class="scrub-date mono"><span id="sc-date">—</span> · <span id="sc-time">—</span></div>
         <div class="scrub-stats mono"><span id="sc-stats">—</span></div>
         <div class="scrub-actions">
+          <button class="scrub-btn" data-action="wk-back"  title="−1 week">‹‹‹ Wk</button>
           <button class="scrub-btn" data-action="day-back" title="−1 day">‹‹ Day</button>
           <button class="scrub-btn" data-action="hr-back"  title="−1 hour">‹ Hr</button>
           <button class="scrub-btn" data-action="now"      title="Reset to now">Now</button>
           <button class="scrub-btn" data-action="hr-fwd"   title="+1 hour">Hr ›</button>
           <button class="scrub-btn" data-action="day-fwd"  title="+1 day">Day ››</button>
+          <button class="scrub-btn" data-action="wk-fwd"   title="+1 week">Wk ›››</button>
           <button class="scrub-btn primary" data-action="play" title="Animate one day">▶ Day</button>
         </div>
       </div>
@@ -92,6 +94,8 @@ export class TimeScrubber {
         else if (a === "hr-fwd")  this._shift(+60);
         else if (a === "day-back") this._shift(-60 * 24);
         else if (a === "day-fwd")  this._shift(+60 * 24);
+        else if (a === "wk-back")  this._shift(-60 * 24 * 7);
+        else if (a === "wk-fwd")   this._shift(+60 * 24 * 7);
         else if (a === "play") this._togglePlay();
       });
     });

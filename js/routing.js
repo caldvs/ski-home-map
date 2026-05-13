@@ -310,6 +310,14 @@ export function nearestPisteOrLiftNodeId(graph, lat, lon) {
 // For lifts / lift_down: pick whichever endpoint the projection is
 // closer to — usually the bottom station the user just exited.
 //
+// Scoring isn't pure 2D distance: a piste that's a bit further but
+// horizontal-or-downhill is preferred over a closer one that's uphill
+// (no-one in a snowfield walks back up to a piste). The uphill penalty
+// is BOUNDED — we never go more than a fixed extra horizontal budget
+// to avoid uphill, so a click in a snowfield ringed by uphill pistes
+// still snaps to one of them rather than running off to a far-away
+// gondola just because that one happens to be downhill.
+//
 // Returns:
 //   { edgeIdx, projLat, projLon, nodeId,
 //     approachGeom: [[lat, lon], ...]   // starts at projection,
@@ -318,14 +326,89 @@ export function nearestPisteOrLiftNodeId(graph, lat, lon) {
 // or null if no edge geometry was usable.
 export function nearestPisteLineProjection(graph, lat, lon) {
   const RUNS_LIFTS = new Set(["run", "connection", "lift", "lift_down"]);
+
+  // Click-elevation: prefer the real DEM if it has been streamed in,
+  // otherwise fall back to the nearest routing node's elevation. The
+  // DEM gives the click point's actual terrain height (correct even
+  // mid-snowfield); the node fallback is a coarser proxy.
+  let userElev = null;
+  if (typeof window !== "undefined" && window._shadowDem
+      && typeof window._shadowDem.sampleElevation === "function") {
+    const e = window._shadowDem.sampleElevation(lat, lon);
+    if (Number.isFinite(e)) userElev = e;
+  }
+  if (userElev == null) {
+    let nearestD2 = Infinity;
+    for (let i = 0; i < graph.routingNodes.length; i++) {
+      const n = graph.routingNodes[i];
+      const dLat = n[1] - lat, dLon = n[0] - lon;
+      const d2 = dLat * dLat + dLon * dLon;
+      if (d2 < nearestD2) { nearestD2 = d2; userElev = n[2]; }
+    }
+  }
+
+  // Equirectangular metres-per-degree at this latitude — used to put
+  // horizontal distance and elevation gain on the same scale.
+  const M_PER_DEG_LAT = 111320;
+  const M_PER_DEG_LON = 111320 * Math.cos(lat * Math.PI / 180);
+
+  // Uphill penalty: 25 m of effective walking per metre of climb, but
+  // bounded so a click ringed entirely by uphill pistes still snaps to
+  // the closest one rather than running off to a far-away downhill
+  // gondola. No downhill bonus — the goal is "nearest tarmac, just
+  // don't make me walk up", not "find the lowest piste on the mountain".
+  const UPHILL_M_PER_M = 25;
+  const MAX_UPHILL_PENALTY_M = 120;
+
+  // Score one candidate snap point against the running best.
+  function consider(ei, e, pLat, pLon, segIdx, t, wholeT, projElev) {
+    const dxM = (pLon - lon) * M_PER_DEG_LON;
+    const dyM = (pLat - lat) * M_PER_DEG_LAT;
+    const horizM = Math.sqrt(dxM * dxM + dyM * dyM);
+    const dh = projElev - userElev;
+    const uphillPenalty = dh > 0
+      ? Math.min(MAX_UPHILL_PENALTY_M, dh * UPHILL_M_PER_M) : 0;
+    const score = horizM + uphillPenalty;
+    if (score < bestScore) {
+      bestScore = score;
+      best = {
+        edgeIdx: ei, edge: e,
+        projLat: pLat, projLon: pLon,
+        segIdx, t, wholeT,
+        distance: horizM,
+      };
+    }
+  }
+
   let best = null;
-  let bestD2 = Infinity;
+  let bestScore = Infinity;
   const edges = graph.routingEdges;
   for (let ei = 0; ei < edges.length; ei++) {
     const e = edges[ei];
     if (!RUNS_LIFTS.has(e.ty)) continue;
     const g = e.g;
     if (!g || g.length < 2) continue;
+    const elevF = graph.routingNodes[e.f][2];
+    const elevT = graph.routingNodes[e.t][2];
+    const isLift = e.ty === "lift" || e.ty === "lift_down";
+
+    if (isLift) {
+      // Lifts can only be boarded at their stations — never mid-cable.
+      // Consider only the bottom (f) and top (t) endpoint coordinates;
+      // the routing layer decides whether the user goes up or down based
+      // on which edges are available out of that station.
+      const fLon = graph.routingNodes[e.f][0];
+      const fLat = graph.routingNodes[e.f][1];
+      const tLon = graph.routingNodes[e.t][0];
+      const tLat = graph.routingNodes[e.t][1];
+      consider(ei, e, fLat, fLon, 1,           0, 0, elevF);
+      consider(ei, e, tLat, tLon, g.length - 1, 1, 1, elevT);
+      continue;
+    }
+
+    // Pistes / connections — project onto every segment of the line.
+    // Skiers can enter a piste anywhere along its length by skiing in
+    // from the surrounding snowfield.
     for (let i = 1; i < g.length; i++) {
       const aLat = g[i-1][0], aLon = g[i-1][1];
       const bLat = g[i][0],   bLon = g[i][1];
@@ -338,18 +421,9 @@ export function nearestPisteLineProjection(graph, lat, lon) {
       }
       const pLat = aLat + t * dLat;
       const pLon = aLon + t * dLon;
-      const eLat = pLat - lat, eLon = pLon - lon;
-      const d2 = eLat * eLat + eLon * eLon;
-      if (d2 < bestD2) {
-        bestD2 = d2;
-        const wholeT = (i - 1 + t) / (g.length - 1);
-        best = {
-          edgeIdx: ei, edge: e,
-          projLat: pLat, projLon: pLon,
-          segIdx: i, t, wholeT,
-          distance: Math.sqrt(d2),
-        };
-      }
+      const wholeT = (i - 1 + t) / (g.length - 1);
+      const projElev = elevF + (elevT - elevF) * wholeT;
+      consider(ei, e, pLat, pLon, i, t, wholeT, projElev);
     }
   }
   if (!best) return null;
@@ -362,22 +436,26 @@ export function nearestPisteLineProjection(graph, lat, lon) {
   const nodeId = goToEnd ? e.t : e.f;
 
   // Build approach geometry from the projection point along the edge
-  // toward the chosen endpoint.
+  // toward the chosen endpoint. For lifts the projection IS the station
+  // (we never mid-cable-snap), so the approach is just that point — the
+  // route line takes over from the station onward.
   const approach = [[best.projLat, best.projLon]];
-  if (goToEnd) {
-    for (let i = best.segIdx; i < g.length; i++) {
-      const c = g[i];
-      const prev = approach[approach.length - 1];
-      if (Math.abs(c[0] - prev[0]) > 1e-9 || Math.abs(c[1] - prev[1]) > 1e-9) {
-        approach.push([c[0], c[1]]);
+  if (!isLift) {
+    if (goToEnd) {
+      for (let i = best.segIdx; i < g.length; i++) {
+        const c = g[i];
+        const prev = approach[approach.length - 1];
+        if (Math.abs(c[0] - prev[0]) > 1e-9 || Math.abs(c[1] - prev[1]) > 1e-9) {
+          approach.push([c[0], c[1]]);
+        }
       }
-    }
-  } else {
-    for (let i = best.segIdx - 1; i >= 0; i--) {
-      const c = g[i];
-      const prev = approach[approach.length - 1];
-      if (Math.abs(c[0] - prev[0]) > 1e-9 || Math.abs(c[1] - prev[1]) > 1e-9) {
-        approach.push([c[0], c[1]]);
+    } else {
+      for (let i = best.segIdx - 1; i >= 0; i--) {
+        const c = g[i];
+        const prev = approach[approach.length - 1];
+        if (Math.abs(c[0] - prev[0]) > 1e-9 || Math.abs(c[1] - prev[1]) > 1e-9) {
+          approach.push([c[0], c[1]]);
+        }
       }
     }
   }

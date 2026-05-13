@@ -1,25 +1,35 @@
 /**
  * Worlds available in this deployment.
  *
- * The dashboard probes each `data` URL on load and greys out any
- * world whose graph JSON hasn't been built yet. Run
- * `scripts/build_data.py` to populate.
+ * Each world has a `status`:
+ *   "built"       — graph JSON is present and the tile is clickable.
+ *   "planned"     — registered but not built; tile shows "Coming soon".
+ *   "needs-data"  — registered, build attempted, but graph has known
+ *                   gaps; tile shows "Data fixes pending".
  *
- * Banner classes group resorts by sub-region for visual cohesion:
- *   tarentaise   — north central (Tignes, 3V, Les Arcs, La Plagne, La Rosière, Ste-Foy)
- *   maurienne    — southern (Val Cenis and friends)
- *   beaufortain  — north (Arêches, Espace Diamant)
- *   vanoise      — central (Pralognan, Valmorel)
- *   mega         — the two stitched mega-worlds
+ * Add new worlds by appending to this object. The dashboard will pick
+ * up the new entry and render it correctly based on `status` alone — no
+ * probe round-trip needed.
+ *
+ * Banner / marker classes group resorts visually. Existing palette plus
+ * regional additions for nationwide coverage:
+ *   tarentaise · vanoise · beaufortain · maurienne (Savoie — built)
+ *   haute-savoie · isere · hautes-alpes · southern-alps  (rest of Alps)
+ *   pyrenees · jura · vosges · massif-central             (other ranges)
  */
 
 export const WORLDS = {
+  // ═════════════════════════════════════════════════════════════════════
+  // SAVOIE — all built
+  // ═════════════════════════════════════════════════════════════════════
+
   // ────── Tarentaise ──────
   tignes: {
     id: "tignes",
     name: "Tignes / Val d'Isère",
     region: "Tarentaise",
     bannerClass: "tarentaise",
+    status: "built",
     description:
       "Espace Killy — 8 villages across two valleys, the Grande Motte glacier, 1550–3450 m.",
     data: "./data/tignes.json",
@@ -31,6 +41,7 @@ export const WORLDS = {
     name: "Trois Vallées",
     region: "Tarentaise",
     bannerClass: "tarentaise",
+    status: "built",
     description:
       "Méribel · Courchevel · Val Thorens · Les Menuires. The largest linked area in France today.",
     data: "./data/trois-vallees.json",
@@ -42,6 +53,7 @@ export const WORLDS = {
     name: "Les Arcs",
     region: "Tarentaise",
     bannerClass: "tarentaise",
+    status: "built",
     description:
       "Paradiski half. Arc 1600 / 1800 / 1950 / 2000 plus Peisey-Vallandry.",
     data: "./data/les-arcs.json",
@@ -53,6 +65,7 @@ export const WORLDS = {
     name: "La Plagne",
     region: "Tarentaise",
     bannerClass: "tarentaise",
+    status: "built",
     description:
       "Paradiski's other half. Eight high-altitude villages around the Glaciers de Bellecôte.",
     data: "./data/la-plagne.json",
@@ -64,6 +77,7 @@ export const WORLDS = {
     name: "La Rosière",
     region: "Tarentaise",
     bannerClass: "tarentaise",
+    status: "built",
     description:
       "South-facing Tarentaise resort linking to La Thuile (Italy) over the Petit-Saint-Bernard.",
     data: "./data/la-rosiere.json",
@@ -75,6 +89,7 @@ export const WORLDS = {
     name: "Sainte-Foy Tarentaise",
     region: "Tarentaise",
     bannerClass: "tarentaise",
+    status: "built",
     description:
       "Small, cult-favourite off-piste resort sitting between Tignes and Les Arcs.",
     data: "./data/sainte-foy.json",
@@ -88,6 +103,7 @@ export const WORLDS = {
     name: "Valmorel / Le Grand Domaine",
     region: "Vanoise west",
     bannerClass: "vanoise",
+    status: "built",
     description:
       "Linked with Saint-François-Longchamp. Family-oriented; gentler than Three Valleys next door.",
     data: "./data/valmorel.json",
@@ -99,6 +115,7 @@ export const WORLDS = {
     name: "Pralognan-la-Vanoise",
     region: "Vanoise",
     bannerClass: "vanoise",
+    status: "built",
     description:
       "Inside the Vanoise National Park boundary. Small, scenic, very quiet.",
     data: "./data/pralognan.json",
@@ -112,6 +129,7 @@ export const WORLDS = {
     name: "Espace Diamant",
     region: "Beaufortain",
     bannerClass: "beaufortain",
+    status: "built",
     description:
       "Les Saisies · Notre-Dame-de-Bellecombe · Crest-Voland. Mont Blanc views.",
     data: "./data/espace-diamant.json",
@@ -123,6 +141,7 @@ export const WORLDS = {
     name: "Arêches-Beaufort",
     region: "Beaufortain",
     bannerClass: "beaufortain",
+    status: "built",
     description:
       "Cult Beaufortain resort. Small lift network, lots of ski touring around it.",
     data: "./data/areches-beaufort.json",
@@ -136,6 +155,7 @@ export const WORLDS = {
     name: "Val Cenis",
     region: "Haute-Maurienne",
     bannerClass: "maurienne",
+    status: "built",
     description:
       "Espace Haute Maurienne Vanoise. Lanslebourg · Lanslevillard · Termignon.",
     data: "./data/val-cenis.json",
@@ -147,6 +167,7 @@ export const WORLDS = {
     name: "Bonneval-sur-Arc",
     region: "Haute-Maurienne",
     bannerClass: "maurienne",
+    status: "built",
     description:
       "End of the Iseran road. Highest commune in the Maurienne; the most photogenic village in Savoie.",
     data: "./data/bonneval-sur-arc.json",
@@ -158,6 +179,7 @@ export const WORLDS = {
     name: "Aussois",
     region: "Maurienne",
     bannerClass: "maurienne",
+    status: "built",
     description:
       "Compact Maurienne resort with direct trail access into the Vanoise National Park.",
     data: "./data/aussois.json",
@@ -169,6 +191,7 @@ export const WORLDS = {
     name: "La Norma",
     region: "Maurienne",
     bannerClass: "maurienne",
+    status: "built",
     description: "Purpose-built car-free resort on the south side of the Maurienne.",
     data: "./data/la-norma.json",
     stats: { nodes: "≈ 55", edges: "≈ 225", villages: 1 },
@@ -179,6 +202,7 @@ export const WORLDS = {
     name: "Valfréjus",
     region: "Maurienne",
     bannerClass: "maurienne",
+    status: "built",
     description: "Modjon plateau and the Punta Bagna ridge above the Maurienne.",
     data: "./data/valfrejus.json",
     stats: { nodes: "≈ 49", edges: "≈ 220", villages: 1 },
@@ -189,6 +213,7 @@ export const WORLDS = {
     name: "Galibier-Thabor",
     region: "Maurienne",
     bannerClass: "maurienne",
+    status: "built",
     description:
       "Valloire + Valmeinier linked. The Col du Galibier above; full Mont Thabor traverse below.",
     data: "./data/galibier-thabor.json",
@@ -196,7 +221,572 @@ export const WORLDS = {
     initialView: { center: [6.460, 45.170], zoom: 12, pitch: 0, bearing: 0 },
   },
 
-  // Synthetic-connector mega-worlds (Tignes+Trois Vallées, Savoie-16)
-  // were experimental and removed — the cable cars over the Vanoise
-  // didn't route in a useful way. Only contiguous real resorts above.
+  // ═════════════════════════════════════════════════════════════════════
+  // HAUTE-SAVOIE — planned
+  // ═════════════════════════════════════════════════════════════════════
+  "portes-du-soleil": {
+    id: "portes-du-soleil",
+    name: "Portes du Soleil (French side)",
+    region: "Haute-Savoie",
+    bannerClass: "haute-savoie",
+    status: "needs-data",
+    description:
+      "Avoriaz · Morzine · Les Gets · Châtel · Abondance. Cross-border with Switzerland; needs a multi-pattern union.",
+    data: "./data/portes-du-soleil.json",
+    initialView: { center: [6.770, 46.205], zoom: 11.5, pitch: 0, bearing: 0 },
+  },
+  "grand-massif": {
+    id: "grand-massif",
+    name: "Grand Massif",
+    region: "Haute-Savoie",
+    bannerClass: "haute-savoie",
+    status: "planned",
+    description:
+      "Flaine · Les Carroz · Morillon · Samoëns · Sixt. One of France's largest linked areas.",
+    data: "./data/grand-massif.json",
+    initialView: { center: [6.690, 46.020], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  "evasion-mont-blanc": {
+    id: "evasion-mont-blanc",
+    name: "Évasion Mont-Blanc",
+    region: "Haute-Savoie",
+    bannerClass: "haute-savoie",
+    status: "planned",
+    description:
+      "Megève · Saint-Gervais · Saint-Nicolas · Les Contamines · Combloux · La Giettaz · Cordon.",
+    data: "./data/evasion-mont-blanc.json",
+    initialView: { center: [6.620, 45.850], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  "chamonix-valley": {
+    id: "chamonix-valley",
+    name: "Chamonix-Mont-Blanc Valley",
+    region: "Haute-Savoie",
+    bannerClass: "haute-savoie",
+    status: "needs-data",
+    description:
+      "Brévent-Flégère · Grands Montets · Le Tour-Balme · Les Houches. Four separate sub-areas in one valley.",
+    data: "./data/chamonix-valley.json",
+    initialView: { center: [6.870, 45.950], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  aravis: {
+    id: "aravis",
+    name: "Aravis",
+    region: "Haute-Savoie",
+    bannerClass: "haute-savoie",
+    status: "planned",
+    description: "La Clusaz · Le Grand-Bornand · Manigod. Annecy's home mountains.",
+    data: "./data/aravis.json",
+    initialView: { center: [6.470, 45.920], zoom: 12, pitch: 0, bearing: 0 },
+  },
+
+  // ═════════════════════════════════════════════════════════════════════
+  // ISÈRE — planned
+  // ═════════════════════════════════════════════════════════════════════
+  "alpe-d-huez": {
+    id: "alpe-d-huez",
+    name: "Alpe d'Huez Grand Domaine",
+    region: "Isère",
+    bannerClass: "isere",
+    status: "planned",
+    description:
+      "1860 m village, the Pic Blanc at 3330 m, and 'La Sarenne' — the longest black run in the Alps.",
+    data: "./data/alpe-d-huez.json",
+    initialView: { center: [6.071, 45.092], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  "les-deux-alpes": {
+    id: "les-deux-alpes",
+    name: "Les Deux Alpes",
+    region: "Isère",
+    bannerClass: "isere",
+    status: "planned",
+    description: "Europe's largest skiable glacier. Open most of the year.",
+    data: "./data/les-deux-alpes.json",
+    initialView: { center: [6.124, 45.013], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  "sept-laux": {
+    id: "sept-laux",
+    name: "Les 7 Laux",
+    region: "Isère",
+    bannerClass: "isere",
+    status: "planned",
+    description: "Belledonne range above Grenoble. Prapoutel · Pipay · Le Pleynet.",
+    data: "./data/sept-laux.json",
+    initialView: { center: [5.974, 45.246], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  chamrousse: {
+    id: "chamrousse",
+    name: "Chamrousse",
+    region: "Isère",
+    bannerClass: "isere",
+    status: "planned",
+    description: "Belledonne south. Hosted the 1968 Winter Olympics downhill.",
+    data: "./data/chamrousse.json",
+    initialView: { center: [5.871, 45.116], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "villard-de-lans": {
+    id: "villard-de-lans",
+    name: "Villard-de-Lans / Corrençon",
+    region: "Isère",
+    bannerClass: "isere",
+    status: "planned",
+    description: "Vercors high plateau. Family resort with extensive Nordic skiing.",
+    data: "./data/villard-de-lans.json",
+    initialView: { center: [5.546, 45.071], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+
+  // ═════════════════════════════════════════════════════════════════════
+  // HAUTES-ALPES — planned
+  // ═════════════════════════════════════════════════════════════════════
+  "serre-chevalier": {
+    id: "serre-chevalier",
+    name: "Serre Chevalier",
+    region: "Hautes-Alpes",
+    bannerClass: "hautes-alpes",
+    status: "planned",
+    description:
+      "Four villages along the Guisane: Briançon · Chantemerle · Villeneuve · Le Monêtier. 250 km of pistes.",
+    data: "./data/serre-chevalier.json",
+    initialView: { center: [6.555, 44.940], zoom: 11.5, pitch: 0, bearing: 0 },
+  },
+  "vars-risoul": {
+    id: "vars-risoul",
+    name: "Vars / Risoul (Forêt Blanche)",
+    region: "Hautes-Alpes",
+    bannerClass: "hautes-alpes",
+    status: "planned",
+    description: "Linked larchwood resorts in the Queyras. Long sunny pistes.",
+    data: "./data/vars-risoul.json",
+    initialView: { center: [6.706, 44.585], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  montgenevre: {
+    id: "montgenevre",
+    name: "Montgenèvre (Voie Lactée)",
+    region: "Hautes-Alpes",
+    bannerClass: "hautes-alpes",
+    status: "needs-data",
+    description:
+      "Italian-border resort linking into Sestriere / Sansicario. French side only — cross-border needs careful handling.",
+    data: "./data/montgenevre.json",
+    initialView: { center: [6.726, 44.932], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  "orcieres-merlette": {
+    id: "orcieres-merlette",
+    name: "Orcières-Merlette 1850",
+    region: "Hautes-Alpes",
+    bannerClass: "hautes-alpes",
+    status: "planned",
+    description: "Champsaur valley. Open Alpine skiing above 1850 m.",
+    data: "./data/orcieres-merlette.json",
+    initialView: { center: [6.330, 44.700], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "les-orres": {
+    id: "les-orres",
+    name: "Les Orres",
+    region: "Hautes-Alpes",
+    bannerClass: "hautes-alpes",
+    status: "planned",
+    description: "Above the Lac de Serre-Ponçon. South-facing, larchwood-shaded.",
+    data: "./data/les-orres.json",
+    initialView: { center: [6.566, 44.500], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "puy-saint-vincent": {
+    id: "puy-saint-vincent",
+    name: "Puy-Saint-Vincent",
+    region: "Hautes-Alpes",
+    bannerClass: "hautes-alpes",
+    status: "planned",
+    description: "Vallée de la Vallouise gateway. Écrins National Park views.",
+    data: "./data/puy-saint-vincent.json",
+    initialView: { center: [6.502, 44.840], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "le-devoluy": {
+    id: "le-devoluy",
+    name: "Le Dévoluy",
+    region: "Hautes-Alpes",
+    bannerClass: "hautes-alpes",
+    status: "planned",
+    description: "Superdévoluy + La Joue-du-Loup. Limestone karst between Gap and Grenoble.",
+    data: "./data/le-devoluy.json",
+    initialView: { center: [5.918, 44.665], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+
+  // ═════════════════════════════════════════════════════════════════════
+  // SOUTHERN ALPS — planned
+  // ═════════════════════════════════════════════════════════════════════
+  "pra-loup": {
+    id: "pra-loup",
+    name: "Pra Loup",
+    region: "Alpes-de-Haute-Provence",
+    bannerClass: "southern-alps",
+    status: "planned",
+    description: "Ubaye valley resort linking with Val d'Allos (Espace Lumière).",
+    data: "./data/pra-loup.json",
+    initialView: { center: [6.591, 44.366], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "val-d-allos": {
+    id: "val-d-allos",
+    name: "Val d'Allos (La Foux + Le Seignus)",
+    region: "Alpes-de-Haute-Provence",
+    bannerClass: "southern-alps",
+    status: "planned",
+    description: "Verdon valley resort. Espace Lumière links over to Pra Loup.",
+    data: "./data/val-d-allos.json",
+    initialView: { center: [6.580, 44.232], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  auron: {
+    id: "auron",
+    name: "Auron",
+    region: "Alpes-Maritimes",
+    bannerClass: "southern-alps",
+    status: "planned",
+    description: "Mercantour. Closest big mountain resort to the Côte d'Azur.",
+    data: "./data/auron.json",
+    initialView: { center: [6.948, 44.116], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "isola-2000": {
+    id: "isola-2000",
+    name: "Isola 2000",
+    region: "Alpes-Maritimes",
+    bannerClass: "southern-alps",
+    status: "planned",
+    description: "Italian-border resort on a high plateau. Snowsure thanks to altitude.",
+    data: "./data/isola-2000.json",
+    initialView: { center: [7.155, 44.181], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "valberg-beuil": {
+    id: "valberg-beuil",
+    name: "Valberg / Beuil",
+    region: "Alpes-Maritimes",
+    bannerClass: "southern-alps",
+    status: "planned",
+    description: "Linked Niçois resort above the Gorges du Cians.",
+    data: "./data/valberg-beuil.json",
+    initialView: { center: [6.943, 44.090], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+
+  // ═════════════════════════════════════════════════════════════════════
+  // PYRÉNÉES — planned
+  // ═════════════════════════════════════════════════════════════════════
+  "grand-tourmalet": {
+    id: "grand-tourmalet",
+    name: "Grand Tourmalet (La Mongie + Barèges)",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "The Pyrenees' largest linked area. Foot of the Pic du Midi.",
+    data: "./data/grand-tourmalet.json",
+    initialView: { center: [0.020, 42.910], zoom: 12, pitch: 0, bearing: 0 },
+  },
+  "saint-lary-soulan": {
+    id: "saint-lary-soulan",
+    name: "Saint-Lary-Soulan",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Aure valley. Pla d'Adet + Espiaube + Vallon du Portet, 1700–2515 m.",
+    data: "./data/saint-lary-soulan.json",
+    initialView: { center: [0.323, 42.806], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  peyragudes: {
+    id: "peyragudes",
+    name: "Peyragudes",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Linked Peyresourde + Les Agudes. Straddles Haute-Garonne / Hautes-Pyrénées.",
+    data: "./data/peyragudes.json",
+    initialView: { center: [0.460, 42.798], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  cauterets: {
+    id: "cauterets",
+    name: "Cauterets",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Cirque du Lys above the spa village, plus a Nordic area at the Pont d'Espagne.",
+    data: "./data/cauterets.json",
+    initialView: { center: [-0.103, 42.851], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  "luz-ardiden": {
+    id: "luz-ardiden",
+    name: "Luz-Ardiden",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Above Luz-Saint-Sauveur. Famous Tour de France climb in summer.",
+    data: "./data/luz-ardiden.json",
+    initialView: { center: [-0.027, 42.872], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "piau-engaly": {
+    id: "piau-engaly",
+    name: "Piau-Engaly",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Highest village in the French Pyrenees. Aragnouet, head of the Aure.",
+    data: "./data/piau-engaly.json",
+    initialView: { center: [0.158, 42.789], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  gavarnie: {
+    id: "gavarnie",
+    name: "Gavarnie-Gèdre",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Below the Cirque de Gavarnie (UNESCO). Small resort, dramatic setting.",
+    data: "./data/gavarnie.json",
+    initialView: { center: [-0.022, 42.736], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "luchon-superbagneres": {
+    id: "luchon-superbagneres",
+    name: "Luchon-Superbagnères",
+    region: "Haute-Garonne",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Access by gondola from the spa town of Bagnères-de-Luchon.",
+    data: "./data/luchon-superbagneres.json",
+    initialView: { center: [0.585, 42.770], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  hautacam: {
+    id: "hautacam",
+    name: "Hautacam",
+    region: "Hautes-Pyrénées",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Plateau above Argelès-Gazost. Mid-altitude, family-oriented.",
+    data: "./data/hautacam.json",
+    initialView: { center: [-0.052, 42.985], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "ax-3-domaines": {
+    id: "ax-3-domaines",
+    name: "Ax-3 Domaines",
+    region: "Ariège",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Three sectors (Bonascre · Saquet · Campels) above Ax-les-Thermes.",
+    data: "./data/ax-3-domaines.json",
+    initialView: { center: [1.840, 42.732], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  guzet: {
+    id: "guzet",
+    name: "Guzet",
+    region: "Ariège",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Couserans / Ustou valley. Three sectors connected by lifts and footbridge.",
+    data: "./data/guzet.json",
+    initialView: { center: [1.290, 42.781], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  gourette: {
+    id: "gourette",
+    name: "Gourette",
+    region: "Pyrénées-Atlantiques",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Béarn / Vallée d'Ossau. Below the Pic de Ger.",
+    data: "./data/gourette.json",
+    initialView: { center: [-0.337, 42.953], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  artouste: {
+    id: "artouste",
+    name: "Artouste",
+    region: "Pyrénées-Atlantiques",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "High Ossau. Famous summer tourist train, smaller winter resort.",
+    data: "./data/artouste.json",
+    initialView: { center: [-0.430, 42.886], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "la-pierre-saint-martin": {
+    id: "la-pierre-saint-martin",
+    name: "La Pierre Saint-Martin",
+    region: "Pyrénées-Atlantiques",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Spanish-border resort in the Soule. Limestone karst landscape.",
+    data: "./data/la-pierre-saint-martin.json",
+    initialView: { center: [-0.776, 42.989], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "font-romeu": {
+    id: "font-romeu",
+    name: "Font-Romeu / Pyrénées 2000",
+    region: "Pyrénées-Orientales",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Cerdagne plateau resort. Famously sunny — also a high-altitude training centre.",
+    data: "./data/font-romeu.json",
+    initialView: { center: [2.040, 42.510], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  "les-angles": {
+    id: "les-angles",
+    name: "Les Angles",
+    region: "Pyrénées-Orientales",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Capcir plateau, above the Matemale reservoir.",
+    data: "./data/les-angles.json",
+    initialView: { center: [2.092, 42.566], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  formigueres: {
+    id: "formigueres",
+    name: "Formiguères",
+    region: "Pyrénées-Orientales",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Capcir. Quieter neighbour to Les Angles.",
+    data: "./data/formigueres.json",
+    initialView: { center: [2.107, 42.620], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "porte-puymorens": {
+    id: "porte-puymorens",
+    name: "Porté-Puymorens",
+    region: "Pyrénées-Orientales",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Andorran-border resort on the Col de Puymorens.",
+    data: "./data/porte-puymorens.json",
+    initialView: { center: [1.804, 42.547], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "cambre-d-aze": {
+    id: "cambre-d-aze",
+    name: "Cambre d'Aze",
+    region: "Pyrénées-Orientales",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "Eyne + Saint-Pierre-dels-Forcats, in the heart of the Cerdagne.",
+    data: "./data/cambre-d-aze.json",
+    initialView: { center: [2.087, 42.476], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  puyvalador: {
+    id: "puyvalador",
+    name: "Puyvalador",
+    region: "Pyrénées-Orientales",
+    bannerClass: "pyrenees",
+    status: "planned",
+    description: "North-eastern corner of the Capcir.",
+    data: "./data/puyvalador.json",
+    initialView: { center: [2.030, 42.692], zoom: 13, pitch: 0, bearing: 0 },
+  },
+
+  // ═════════════════════════════════════════════════════════════════════
+  // JURA — planned
+  // ═════════════════════════════════════════════════════════════════════
+  metabief: {
+    id: "metabief",
+    name: "Métabief / Mont d'Or",
+    region: "Jura (Doubs)",
+    bannerClass: "jura",
+    status: "planned",
+    description: "Above the Lac de Saint-Point. The biggest Alpine resort in the Jura.",
+    data: "./data/metabief.json",
+    initialView: { center: [6.345, 46.770], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "les-rousses": {
+    id: "les-rousses",
+    name: "Les Rousses",
+    region: "Jura",
+    bannerClass: "jura",
+    status: "planned",
+    description: "Four-village resort straddling Jura and Ain. Famed Nordic skiing.",
+    data: "./data/les-rousses.json",
+    initialView: { center: [6.064, 46.504], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  "monts-jura": {
+    id: "monts-jura",
+    name: "Monts Jura",
+    region: "Ain",
+    bannerClass: "jura",
+    status: "planned",
+    description: "Lélex · Crozet · Mijoux. View of Mont Blanc from the Crêt de la Neige.",
+    data: "./data/monts-jura.json",
+    initialView: { center: [5.937, 46.355], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+
+  // ═════════════════════════════════════════════════════════════════════
+  // VOSGES — planned
+  // ═════════════════════════════════════════════════════════════════════
+  gerardmer: {
+    id: "gerardmer",
+    name: "Gérardmer / La Mauselaine",
+    region: "Vosges",
+    bannerClass: "vosges",
+    status: "planned",
+    description: "Lakeside town with the largest Vosges Alpine area on La Mauselaine.",
+    data: "./data/gerardmer.json",
+    initialView: { center: [6.853, 48.075], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "la-bresse-hohneck": {
+    id: "la-bresse-hohneck",
+    name: "La Bresse-Hohneck",
+    region: "Vosges",
+    bannerClass: "vosges",
+    status: "planned",
+    description: "Three sectors below the Hohneck — the biggest skiable area in the Vosges.",
+    data: "./data/la-bresse-hohneck.json",
+    initialView: { center: [6.984, 48.000], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "le-markstein": {
+    id: "le-markstein",
+    name: "Le Markstein-Grand Ballon",
+    region: "Haut-Rhin",
+    bannerClass: "vosges",
+    status: "planned",
+    description: "Linked area on the Route des Crêtes, below the Grand Ballon (1424 m).",
+    data: "./data/le-markstein.json",
+    initialView: { center: [7.045, 47.913], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  ventron: {
+    id: "ventron",
+    name: "Ventron / L'Ermitage",
+    region: "Vosges",
+    bannerClass: "vosges",
+    status: "planned",
+    description: "Quiet south-Vosges resort below the Drumont and Rouge-Gazon.",
+    data: "./data/ventron.json",
+    initialView: { center: [6.881, 47.946], zoom: 13, pitch: 0, bearing: 0 },
+  },
+
+  // ═════════════════════════════════════════════════════════════════════
+  // MASSIF CENTRAL — planned
+  // ═════════════════════════════════════════════════════════════════════
+  "le-mont-dore": {
+    id: "le-mont-dore",
+    name: "Le Mont-Dore",
+    region: "Puy-de-Dôme",
+    bannerClass: "massif-central",
+    status: "planned",
+    description: "Beneath the Puy de Sancy (1885 m), the highest summit in the Massif Central.",
+    data: "./data/le-mont-dore.json",
+    initialView: { center: [2.808, 45.580], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "super-besse": {
+    id: "super-besse",
+    name: "Super-Besse",
+    region: "Puy-de-Dôme",
+    bannerClass: "massif-central",
+    status: "planned",
+    description: "South side of the Sancy massif, linked to Le Mont-Dore by lift.",
+    data: "./data/super-besse.json",
+    initialView: { center: [2.857, 45.510], zoom: 13, pitch: 0, bearing: 0 },
+  },
+  "le-lioran": {
+    id: "le-lioran",
+    name: "Le Lioran",
+    region: "Cantal",
+    bannerClass: "massif-central",
+    status: "planned",
+    description: "Plomb du Cantal massif — the biggest ski area in the Massif Central.",
+    data: "./data/le-lioran.json",
+    initialView: { center: [2.747, 45.082], zoom: 12.5, pitch: 0, bearing: 0 },
+  },
+  "chastreix-sancy": {
+    id: "chastreix-sancy",
+    name: "Chastreix-Sancy",
+    region: "Puy-de-Dôme",
+    bannerClass: "massif-central",
+    status: "planned",
+    description: "Quieter, west-facing flank of the Sancy massif.",
+    data: "./data/chastreix-sancy.json",
+    initialView: { center: [2.764, 45.541], zoom: 13, pitch: 0, bearing: 0 },
+  },
 };

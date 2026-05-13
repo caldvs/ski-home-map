@@ -9,9 +9,22 @@ import {
   nearestPisteLineProjection, describeNode,
   DijkstraRunner, AstarRunner, BidirRunner, edgeCost,
   reachableCount,
-} from "./routing.js";
+} from "./routing.js?v=20260513";
 import { renderElevationProfile, disposeElevationProfile } from "./elevation.js";
 import { renderItinerary, disposeItinerary } from "./itinerary.js";
+
+// Mirrors graph.js's DIFF_COLOURS — kept here so the route-finder UI can
+// colour the piste icon without depending on the graph module's internal
+// constants. Black covers both `advanced` and `expert` because in
+// OpenSkiData both are drawn as a black piste.
+const DIFF_COLOURS_UI = {
+  novice: "#00b050",
+  easy: "#1e88e5",
+  intermediate: "#e53935",
+  advanced: "#2c2c2c",
+  expert: "#2c2c2c",
+  freeride: "#ff8800",
+};
 
 // ── Pin marker SVG: "node + chip" variant from the design canvas.
 // Ground node + dashed halo, with a small chip floating above on a
@@ -59,6 +72,56 @@ function describeNodeShort(graph, id) {
   return raw.replace(/\s+\(?(top|bottom)\)?\s*$/i, "");
 }
 
+// Pick a "representative" edge for a node so the route-finder can show
+// what the user has snapped to. Pin B's node may sit at the bottom of
+// a piste AND at the bottom of a lift — we prefer to describe it as the
+// piste, since that's almost always what the user clicked towards.
+// Priority: run/connection touching this node → lift touching this node
+// → fall back to anything.
+function pickRepresentativeEdge(graph, nodeId) {
+  const out = graph.adj[nodeId] || [];
+  const inc = graph.reverseAdj[nodeId] || [];
+  const all = [...out.map((i) => [i, true]), ...inc.map((i) => [i, false])];
+  const byType = (types) => all.find(([i]) =>
+    types.includes(graph.routingEdges[i].ty),
+  );
+  const piste = byType(["run", "connection"]);
+  if (piste) return graph.routingEdges[piste[0]];
+  const lift = byType(["lift", "lift_down"]);
+  if (lift) return graph.routingEdges[lift[0]];
+  return null;
+}
+
+// Tiny inline SVG that distinguishes piste vs lift in the route finder.
+// Piste: filled triangle in the difficulty colour.
+// Lift bottom (this node is e.f, lift goes up from here): up arrow.
+// Lift top (this node is e.t, lift terminates here): down arrow.
+// The lift/piste distinction matters because French resorts often name
+// the piste and the lift identically, so just the name isn't enough.
+function featureIcon(edge, nodeId) {
+  if (!edge) return "";
+  const isLift = edge.ty === "lift" || edge.ty === "lift_down";
+  if (isLift) {
+    const isBottom = edge.f === nodeId;  // standing where the lift starts
+    const up = `
+      <svg class="feat-ic lift" viewBox="0 0 12 12" width="12" height="12" aria-label="lift bottom">
+        <path d="M6 1.5 L6 10.5 M2.5 5 L6 1.5 L9.5 5"
+          stroke="#000" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+    const down = `
+      <svg class="feat-ic lift" viewBox="0 0 12 12" width="12" height="12" aria-label="lift top">
+        <path d="M6 1.5 L6 10.5 M2.5 7 L6 10.5 L9.5 7"
+          stroke="#000" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+    return isBottom ? up : down;
+  }
+  const colour = DIFF_COLOURS_UI[edge.d] || "#666";
+  return `
+    <svg class="feat-ic" viewBox="0 0 12 12" width="12" height="12" aria-label="piste">
+      <path d="M1.5 2.5 L10.5 2.5 L6 10.5 Z" fill="${colour}" stroke="#fff" stroke-width="0.8"/>
+    </svg>`;
+}
+
 function summariseRoute(graph, path, totalSeconds) {
   let dist = 0, up = 0, down = 0, lifts = new Set();
   for (const ei of path) {
@@ -101,7 +164,7 @@ function setEmptyUI() {
   if (elevEmpty) elevEmpty.hidden = false;
 }
 
-function setRouteUI(graph, startId, endId, result) {
+function setRouteUI(graph, startId, endId, result, startEdge, endEdge) {
   const summary = summariseRoute(graph, result.path, result.totalSeconds);
 
   // A→B status line
@@ -109,9 +172,11 @@ function setRouteUI(graph, startId, endId, result) {
   info.innerHTML = `
     <div class="ab-status">
       <span class="pin-dot">A</span>
+      ${featureIcon(startEdge, startId)}
       <span>${describeNodeShort(graph, startId)}</span>
       <span class="arrow">→</span>
       <span class="pin-dot b">B</span>
+      ${featureIcon(endEdge, endId)}
       <span>${describeNodeShort(graph, endId)}</span>
     </div>`;
 
@@ -141,7 +206,7 @@ function setRouteUI(graph, startId, endId, result) {
   if (typeof window.activateRouteTab === "function") window.activateRouteTab("itin");
 }
 
-function setNoRouteUI(graph, startId, endId, fwd, rev, threshold, total) {
+function setNoRouteUI(graph, startId, endId, fwd, rev, threshold, total, startEdge, endEdge) {
   const info = document.getElementById("user-route-info");
   let why;
   if (fwd <= threshold && rev > threshold) {
@@ -156,9 +221,11 @@ function setNoRouteUI(graph, startId, endId, fwd, rev, threshold, total) {
   info.innerHTML = `
     <div class="ab-status">
       <span class="pin-dot">A</span>
+      ${featureIcon(startEdge, startId)}
       <span>${describeNodeShort(graph, startId)}</span>
       <span class="arrow">→</span>
       <span class="pin-dot b">B</span>
+      ${featureIcon(endEdge, endId)}
       <span>${describeNodeShort(graph, endId)}</span>
     </div>
     <div style="margin-top:6px;font-size:11.5px;color:var(--accent);font-family:Geist,sans-serif">${why}</div>`;
@@ -167,6 +234,9 @@ function setNoRouteUI(graph, startId, endId, fwd, rev, threshold, total) {
 export function wireRouting(map, graph) {
   let startPin = null, endPin = null;
   let startNodeId = null, endNodeId = null;
+  // Representative edges for each pin's snapped node — drives the small
+  // piste/lift icon shown next to each pin's name in the route finder.
+  let startEdge = null, endEdge = null;
   let itinHoverMarker = null;
 
   function setItinSelect(leg) {
@@ -303,6 +373,7 @@ export function wireRouting(map, graph) {
       startDisplay = { lat, lon };
       startEntry = { lat: proj.projLat, lon: proj.projLon };
       startApproachGeom = proj.approachGeom;
+      startEdge = graph.routingEdges[proj.edgeIdx] || null;
       const r = buildMarker(lat, lon, kind, proj.nodeId);
       setStartApproach();
       return r;
@@ -311,6 +382,7 @@ export function wireRouting(map, graph) {
     const nid = nearestPisteOrLiftNodeId(graph, lat, lon);
     if (nid === null) return null;
     const n = graph.routingNodes[nid];
+    endEdge = pickRepresentativeEdge(graph, nid);
     return buildMarker(n[1], n[0], kind, nid);
   }
 
@@ -348,6 +420,7 @@ export function wireRouting(map, graph) {
         startEntry   = { lat: proj.projLat, lon: proj.projLon };
         startApproachGeom = proj.approachGeom;
         startNodeId = newNid;
+        startEdge = graph.routingEdges[proj.edgeIdx] || null;
         popup.setText(describeNode(graph, newNid));
         setStartApproach();
       } else {
@@ -358,6 +431,7 @@ export function wireRouting(map, graph) {
         marker.setLngLat([newN[0], newN[1]]);
         popup.setText(describeNode(graph, newNid));
         endNodeId = newNid;
+        endEdge = pickRepresentativeEdge(graph, newNid);
       }
       if (startNodeId !== null && endNodeId !== null) recomputeRoute();
     });
@@ -369,6 +443,7 @@ export function wireRouting(map, graph) {
     if (startPin) { startPin.remove(); startPin = null; }
     if (endPin) { endPin.remove(); endPin = null; }
     startNodeId = null; endNodeId = null;
+    startEdge = null; endEdge = null;
     startDisplay = null;
     startEntry = null;
     startApproachGeom = null;
@@ -437,7 +512,7 @@ export function wireRouting(map, graph) {
       const totalNodes = graph.routingNodes.length;
       const fwd = reachableCount(graph, startNodeId, { limit: PROBE });
       const rev = reachableCount(graph, endNodeId,   { limit: PROBE, reverse: true });
-      setNoRouteUI(graph, startNodeId, endNodeId, fwd, rev, POCKET_THRESHOLD, totalNodes);
+      setNoRouteUI(graph, startNodeId, endNodeId, fwd, rev, POCKET_THRESHOLD, totalNodes, startEdge, endEdge);
       if (map.getSource("user-route")) {
         map.getSource("user-route").setData({ type: "FeatureCollection", features: [] });
       }
@@ -446,7 +521,7 @@ export function wireRouting(map, graph) {
       return;
     }
     drawRoute(map, graph, result.path, startApproachGeom);
-    setRouteUI(graph, startNodeId, endNodeId, result);
+    setRouteUI(graph, startNodeId, endNodeId, result, startEdge, endEdge);
     renderElevationProfile(
       document.getElementById("elevation-profile"), map, graph, result.path,
     );
@@ -473,6 +548,7 @@ export function wireRouting(map, graph) {
       info.innerHTML = `
         <div class="ab-status">
           <span class="pin-dot">A</span>
+          ${featureIcon(startEdge, r.nodeId)}
           <span>${describeNodeShort(graph, r.nodeId)}</span>
           <span class="arrow">→</span>
           <span class="empty">Click again to place pin B.</span>
@@ -495,6 +571,7 @@ export function wireRouting(map, graph) {
     info3.innerHTML = `
       <div class="ab-status">
         <span class="pin-dot">A</span>
+        ${featureIcon(startEdge, r3.nodeId)}
         <span>${describeNodeShort(graph, r3.nodeId)}</span>
         <span class="arrow">→</span>
         <span class="empty">Click again to place pin B.</span>
@@ -502,7 +579,7 @@ export function wireRouting(map, graph) {
   }
   map.on("click", (ev) => handlePinClick(pickClickCoord(ev)));
 
-  for (const layerId of SNAP_LAYERS) {
+  for (const layerId of POINT_SNAP_LAYERS) {
     map.on("mouseenter", layerId, () => { map.getCanvas().style.cursor = "pointer"; });
     map.on("mouseleave", layerId, () => { map.getCanvas().style.cursor = ""; });
   }
@@ -510,6 +587,14 @@ export function wireRouting(map, graph) {
   // Optional Clear button (hidden in new chrome but still wired for safety)
   const clearBtn = document.getElementById("clear-route-btn");
   if (clearBtn) clearBtn.addEventListener("click", clearUserRoute);
+
+  // Recompute the live route whenever the user switches difficulty mode.
+  const diffSelect = document.getElementById("user-difficulty");
+  if (diffSelect) {
+    diffSelect.addEventListener("change", () => {
+      if (startNodeId !== null && endNodeId !== null) recomputeRoute();
+    });
+  }
 
   // ───── Algorithm animation with hero overlay ─────
 
