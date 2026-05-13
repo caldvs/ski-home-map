@@ -80,6 +80,7 @@ export function buildItinerary(graph, path) {
       cur.endElev = elevB;
       cur.endNodeId = e.t;
       cur.edgeCount += 1;
+      cur.edges.push(ei);
     } else {
       if (cur) legs.push(finalise(cur));
       cur = {
@@ -88,6 +89,7 @@ export function buildItinerary(graph, path) {
         startElev: elevA, endElev: elevB,
         startNodeId: e.f, endNodeId: e.t,
         distM: len, edgeCount: 1,
+        edges: [ei],
       };
     }
   }

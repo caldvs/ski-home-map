@@ -20,10 +20,13 @@ const LIFT_COLOUR  = "#ff6f00";
 const SKATE_COLOUR = "#9aa3aa";
 const WALK_COLOUR  = "#7c4dff";
 
-const CHART_H = 130;
-const PAD = { top: 10, right: 12, bottom: 22, left: 36 };
+const CHART_H = 230;
+const PAD = { top: 12, right: 16, bottom: 24, left: 44 };
 
 let hoverMarker = null;
+// Most-recent render args so the ResizeObserver can re-draw without
+// requiring the caller to hold onto graph/path.
+const _state = new WeakMap();
 
 function edgeColour(edge) {
   if (edge.ty === "lift" || edge.ty === "lift_down") return LIFT_COLOUR;
@@ -115,8 +118,34 @@ function escapeHtml(s) {
 /**
  * Render the chart into `container` (an empty <div>) and wire hover to
  * `map`. Returns a `dispose()` function that clears everything.
+ *
+ * Renders at the container's actual pixel width so text inside the SVG
+ * stays at its native size (no aspect-ratio stretching). A ResizeObserver
+ * triggers a re-draw when the container's width changes — important
+ * because the elevation tab starts at width=0 (display:none) and only
+ * gets its real width when the user switches to it.
  */
 export function renderElevationProfile(container, map, graph, path) {
+  // Cache for later re-renders (tab activation, window resize).
+  _state.set(container, { map, graph, path });
+
+  // Attach a ResizeObserver once per container.
+  if (!container._elevObs) {
+    let lastW = -1;
+    container._elevObs = new ResizeObserver((entries) => {
+      const w = Math.round(entries[0].contentRect.width);
+      if (w === lastW || w < 100) return;
+      lastW = w;
+      const s = _state.get(container);
+      if (s) drawChart(container, s.map, s.graph, s.path);
+    });
+    container._elevObs.observe(container);
+  }
+  drawChart(container, map, graph, path);
+  return () => disposeElevationProfile(container);
+}
+
+function drawChart(container, map, graph, path) {
   container.innerHTML = "";
   container.hidden = false;
 
@@ -147,14 +176,17 @@ export function renderElevationProfile(container, map, graph, path) {
     + `<span class="route-dot">● route</span>`
     + `</div>`;
 
-  // Build SVG with viewBox so it scales to the container's width.
-  // We use a logical 600-wide canvas; CSS makes it fill.
-  const W = 600, H = CHART_H;
+  // Render at the container's REAL pixel width so text inside the SVG
+  // isn't stretched. Subtract the .elev-pane horizontal padding (36 px
+  // total) so the SVG fits cleanly inside.
+  const cw = container.clientWidth || 600;
+  const W = Math.max(360, cw - 36);
+  const H = CHART_H;
   const xs = (d) => PAD.left + (d / maxDist) * (W - PAD.left - PAD.right);
   const ys = (e) => H - PAD.bottom - ((e - eLo) / (eHi - eLo)) * (H - PAD.top - PAD.bottom);
 
-  let svg = metaHtml + `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" `
-          + `style="width:100%;height:${H}px;display:block">`;
+  let svg = metaHtml + `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" `
+          + `style="display:block">`;
 
   // Y-axis grid lines every ~250m, rounded to nearest 100
   const gridStep = elevSpan > 1500 ? 500 : elevSpan > 600 ? 250 : 100;
@@ -302,6 +334,11 @@ export function renderElevationProfile(container, map, graph, path) {
 export function disposeElevationProfile(container) {
   if (hoverMarker) { hoverMarker.remove(); hoverMarker = null; }
   if (container) {
+    if (container._elevObs) {
+      container._elevObs.disconnect();
+      delete container._elevObs;
+    }
+    _state.delete(container);
     container.innerHTML = "";
     container.hidden = true;
   }

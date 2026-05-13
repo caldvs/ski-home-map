@@ -328,9 +328,40 @@ export function addGraphLayers(map, graph) {
     source: "user-route",
     type: "line",
     paint: {
-      "line-color": "#ffe000",
+      "line-color": "#f0b323",
       "line-width": 5,
       "line-opacity": 0.95,
+    },
+    layout: { "line-cap": "round", "line-join": "round" },
+  });
+
+  // Highlighted itinerary-leg source — populated on hover of a leg row
+  // in the itinerary list. Rendered ON TOP of user-route-layer so the
+  // brighter halo + thicker line stands out against the rest of the route.
+  map.addSource("route-leg-highlight", {
+    type: "geojson",
+    data: { type: "FeatureCollection", features: [] },
+  });
+  map.addLayer({
+    id: "route-leg-highlight-halo",
+    source: "route-leg-highlight",
+    type: "line",
+    paint: {
+      "line-color": "#ffd45a",
+      "line-width": 14,
+      "line-opacity": 0.35,
+      "line-blur": 2,
+    },
+    layout: { "line-cap": "round", "line-join": "round" },
+  });
+  map.addLayer({
+    id: "route-leg-highlight-layer",
+    source: "route-leg-highlight",
+    type: "line",
+    paint: {
+      "line-color": "#fff8dc",
+      "line-width": 6,
+      "line-opacity": 1,
     },
     layout: { "line-cap": "round", "line-join": "round" },
   });

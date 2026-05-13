@@ -162,8 +162,10 @@ export function wireRouting(map, graph) {
   let itinHoverMarker = null;
 
   function setItinHover(leg, lat, lon) {
+    const highlightSrc = map.getSource("route-leg-highlight");
     if (!leg) {
       if (itinHoverMarker) { itinHoverMarker.remove(); itinHoverMarker = null; }
+      if (highlightSrc) highlightSrc.setData({ type: "FeatureCollection", features: [] });
       return;
     }
     if (!itinHoverMarker) {
@@ -173,6 +175,33 @@ export function wireRouting(map, graph) {
         .setLngLat([lon, lat]).addTo(map);
     } else {
       itinHoverMarker.setLngLat([lon, lat]);
+    }
+    // Build the merged geometry from all edges that make up this leg and
+    // push it to the highlight source. The line sits on top of the
+    // route-yellow line, so the segment glows against the rest.
+    if (highlightSrc && Array.isArray(leg.edges)) {
+      const coords = [];
+      for (const ei of leg.edges) {
+        const e = graph.routingEdges[ei];
+        if (!e || !e.g) continue;
+        for (const c of e.g) {
+          const lonLat = [c[1], c[0]];
+          if (coords.length &&
+              coords[coords.length - 1][0] === lonLat[0] &&
+              coords[coords.length - 1][1] === lonLat[1]) continue;
+          coords.push(lonLat);
+        }
+      }
+      if (coords.length >= 2) {
+        highlightSrc.setData({
+          type: "FeatureCollection",
+          features: [{
+            type: "Feature",
+            geometry: { type: "LineString", coordinates: coords },
+            properties: {},
+          }],
+        });
+      }
     }
   }
 
@@ -204,6 +233,9 @@ export function wireRouting(map, graph) {
     }
     if (map.getSource("anim-settled")) {
       map.getSource("anim-settled").setData({ type: "FeatureCollection", features: [] });
+    }
+    if (map.getSource("route-leg-highlight")) {
+      map.getSource("route-leg-highlight").setData({ type: "FeatureCollection", features: [] });
     }
     stopAnimation();
     disposeElevationProfile(document.getElementById("elevation-profile"));
