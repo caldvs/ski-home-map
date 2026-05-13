@@ -303,32 +303,84 @@ export function wireRouting(map, graph) {
     if (statsEl) statsEl.innerHTML = "Drop two pins, then press Animate to watch the search expand.";
   }
 
-  const SNAP_LAYERS = [
+  // Point-feature snap layers (village dots, lift labels) — drop the
+  // pin AT this feature's coordinate.
+  const POINT_SNAP_LAYERS = [
     "villages-layer", "villages-label",
     "stations-layer", "lift-labels",
   ];
+  // Line-feature snap layers (pistes, lifts) — drop the pin AT the
+  // nearest point ALONG this line. Distance-based: nearer to a piste
+  // line wins over a far-away node.
+  const LINE_SNAP_LAYERS = [
+    "pistes-layer", "pistes-outline",
+    "lifts-layer", "lifts-casing",
+    "skates-layer",
+  ];
 
-  // Given a screen point (plus a fallback LngLat for when no feature
-  // is hit), pick the coordinate to snap a pin to. Used by both the
-  // map-click handler AND the marker-drag handler.
+  // Project a point onto a polyline; return the nearest point on the
+  // line and the distance² (in degree-space) to it.
+  function nearestPointOnLine(targetLon, targetLat, coords) {
+    let best = null, bestD2 = Infinity;
+    for (let i = 1; i < coords.length; i++) {
+      const a = coords[i - 1], b = coords[i];
+      const ax = a[0], ay = a[1], bx = b[0], by = b[1];
+      const dx = bx - ax, dy = by - ay;
+      const len2 = dx * dx + dy * dy;
+      let t = len2 ? ((targetLon - ax) * dx + (targetLat - ay) * dy) / len2 : 0;
+      t = Math.max(0, Math.min(1, t));
+      const px = ax + t * dx, py = ay + t * dy;
+      const ex = px - targetLon, ey = py - targetLat;
+      const d2 = ex * ex + ey * ey;
+      if (d2 < bestD2) { bestD2 = d2; best = [px, py]; }
+    }
+    return best ? { lon: best[0], lat: best[1], d2: bestD2 } : null;
+  }
+
+  // Given a screen point (plus a fallback LngLat), pick the coordinate
+  // to snap a pin to. Priority:
+  //   1. A point feature (village / station / lift label) within ~8 px.
+  //   2. The nearest line feature (piste / lift / skate) within ~14 px,
+  //      projecting the click onto the line.
+  //   3. The raw drop lat/lon (caller's fallback).
   function pickCoordAtPoint(point, fallbackLngLat) {
-    const layers = SNAP_LAYERS.filter((id) => map.getLayer(id));
-    if (layers.length) {
-      // Query a few pixels around the point so a slightly-imprecise
-      // drag still snaps to nearby villages / lift labels.
+    // 1. Point features first.
+    const ptLayers = POINT_SNAP_LAYERS.filter((id) => map.getLayer(id));
+    if (ptLayers.length) {
       const r = 8;
-      const bbox = [
-        [point.x - r, point.y - r],
-        [point.x + r, point.y + r],
-      ];
-      const feats = map.queryRenderedFeatures(bbox, { layers });
+      const feats = map.queryRenderedFeatures(
+        [[point.x - r, point.y - r], [point.x + r, point.y + r]],
+        { layers: ptLayers },
+      );
       if (feats.length) {
         const c = feats[0].geometry && feats[0].geometry.coordinates;
         if (c && c.length >= 2) return { lat: c[1], lon: c[0] };
       }
     }
-    const ll = fallbackLngLat || map.unproject(point);
-    return { lat: ll.lat, lon: ll.lng };
+    // 2. Line features. Project onto whichever line is geometrically
+    //    closest within the search box, not just the first feature
+    //    MapLibre happens to return.
+    const lnLayers = LINE_SNAP_LAYERS.filter((id) => map.getLayer(id));
+    const fallback = fallbackLngLat || map.unproject(point);
+    if (lnLayers.length) {
+      const r = 14;
+      const feats = map.queryRenderedFeatures(
+        [[point.x - r, point.y - r], [point.x + r, point.y + r]],
+        { layers: lnLayers },
+      );
+      let best = null, bestD2 = Infinity;
+      for (const f of feats) {
+        const g = f.geometry;
+        if (!g) continue;
+        const lines = g.type === "MultiLineString" ? g.coordinates : [g.coordinates];
+        for (const line of lines) {
+          const proj = nearestPointOnLine(fallback.lng, fallback.lat, line);
+          if (proj && proj.d2 < bestD2) { bestD2 = proj.d2; best = proj; }
+        }
+      }
+      if (best) return { lat: best.lat, lon: best.lon };
+    }
+    return { lat: fallback.lat, lon: fallback.lng };
   }
 
   function pickClickCoord(ev) {

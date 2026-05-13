@@ -277,14 +277,15 @@ export function addGraphLayers(map, graph) {
       "symbol-placement": "line",
       "symbol-spacing": 350,
       "text-field": ["get", "display_name"],
-      // OpenFreeMap's font server lacks Open Sans Semibold (openskimap's
-      // pick); Noto Sans Bold reads near-identically at map zooms.
       "text-font": ["Noto Sans Bold"],
       "text-size": ["interpolate", ["linear"], ["zoom"], 11, 8, 18, 15],
       "text-offset": [0, 0.15],
-      "text-padding": 0,
+      "text-padding": 4,
+      "text-max-angle": 30,
+      "text-letter-spacing": 0.02,
       "text-rotation-alignment": "map",
       "text-pitch-alignment": "viewport",
+      "text-keep-upright": true,
     },
     paint: {
       "text-color": ["get", "colour"],
@@ -294,27 +295,32 @@ export function addGraphLayers(map, graph) {
     },
   });
 
-  // Lift labels — matched to openskimap.org's lift-names: dark grey text,
-  // uppercase, white halo. Appears from z12.
+  // Lift labels — dark-grey uppercase along the lift line, single
+  // label per lift placed at the centre. line-center prevents the
+  // "letters stacked on top of each other" artefact you can get with
+  // `line` placement when MapLibre tries to repeat-fit text along a
+  // short/kinky polyline.
   map.addLayer({
     id: "lift-labels",
     type: "symbol",
     source: "lifts",
-    minzoom: 12,
+    minzoom: 13,
     filter: ["!=", ["get", "display_name"], ""],
     layout: {
-      "symbol-placement": "line",
-      "symbol-spacing": 400,
+      "symbol-placement": "line-center",
       "text-field": ["get", "display_name"],
       "text-font": ["Noto Sans Bold"],
-      "text-size": ["interpolate", ["linear"], ["zoom"], 11, 8, 18, 15],
+      "text-size": ["interpolate", ["linear"], ["zoom"], 12, 9, 18, 14],
       "text-transform": "uppercase",
-      "text-padding": 0,
+      "text-letter-spacing": 0.06,
+      "text-padding": 6,
+      "text-max-angle": 25,
       "text-rotation-alignment": "map",
       "text-pitch-alignment": "viewport",
+      "text-keep-upright": true,
     },
     paint: {
-      "text-color": "#333",
+      "text-color": "#222",
       "text-halo-color": "#fff",
       "text-halo-width": 2,
       "text-halo-blur": 0.3,
