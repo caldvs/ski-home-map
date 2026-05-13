@@ -283,7 +283,8 @@ export function wireRouting(map, graph) {
   // along the nearest piste/lift line). Used to draw the dashed
   // approach line from the free-form pin to the actual on-piste
   // entry, NOT to the nearest fork/join.
-  let startEntry = null;  // { lat, lon }
+  let startEntry = null;  // { lat, lon } — perpendicular foot on the nearest piste
+  let startApproachGeom = null;  // [[lat, lon], ...] from startEntry to startNodeId
 
   function placePin(lat, lon, kind) {
     if (kind === "start") {
@@ -296,6 +297,7 @@ export function wireRouting(map, graph) {
       if (!proj) return null;
       startDisplay = { lat, lon };
       startEntry = { lat: proj.projLat, lon: proj.projLon };
+      startApproachGeom = proj.approachGeom;
       const r = buildMarker(lat, lon, kind, proj.nodeId);
       setStartApproach();
       return r;
@@ -333,15 +335,13 @@ export function wireRouting(map, graph) {
 
       let newNid;
       if (kind === "start") {
-        // Pin A: project drop onto nearest piste/lift line. Marker stays
-        // at the drop; approach line goes perpendicular onto the piste;
-        // routing source = nearer endpoint of that edge.
         const proj = nearestPisteLineProjection(graph, nlat, nlon);
         if (!proj) { marker.setLngLat([lon, lat]); return; }
         newNid = proj.nodeId;
         marker.setLngLat([nlon, nlat]);
         startDisplay = { lat: nlat, lon: nlon };
         startEntry   = { lat: proj.projLat, lon: proj.projLon };
+        startApproachGeom = proj.approachGeom;
         startNodeId = newNid;
         popup.setText(describeNode(graph, newNid));
         setStartApproach();
@@ -366,6 +366,7 @@ export function wireRouting(map, graph) {
     startNodeId = null; endNodeId = null;
     startDisplay = null;
     startEntry = null;
+    startApproachGeom = null;
     if (map.getSource("start-approach")) {
       map.getSource("start-approach").setData({ type: "FeatureCollection", features: [] });
     }
@@ -439,7 +440,7 @@ export function wireRouting(map, graph) {
       disposeItinerary(document.getElementById("itinerary"));
       return;
     }
-    drawRoute(map, graph, result.path);
+    drawRoute(map, graph, result.path, startApproachGeom);
     setRouteUI(graph, startNodeId, endNodeId, result);
     renderElevationProfile(
       document.getElementById("elevation-profile"), map, graph, result.path,
@@ -639,7 +640,7 @@ export function wireRouting(map, graph) {
 
       if (runner.done) {
         if (runner.foundPath && runner.foundPath.length) {
-          drawRoute(map, graph, runner.foundPath);
+          drawRoute(map, graph, runner.foundPath, startApproachGeom);
           renderElevationProfile(
             document.getElementById("elevation-profile"),
             map, graph, runner.foundPath,
@@ -702,8 +703,21 @@ export function wireRouting(map, graph) {
   setEmptyUI();
 }
 
-function drawRoute(map, graph, path) {
+function drawRoute(map, graph, path, approachGeom) {
   const coords = [];
+  // Optional approach prefix — when pin A is free-form, this is the
+  // partial-piste polyline from the perpendicular foot to the routing
+  // source node. Yellow line then starts at the projection point so
+  // there's no visible gap between the dashed bridge and the route.
+  if (approachGeom && approachGeom.length >= 2) {
+    for (const c of approachGeom) {
+      const lonLat = [c[1], c[0]];
+      if (coords.length &&
+          coords[coords.length - 1][0] === lonLat[0] &&
+          coords[coords.length - 1][1] === lonLat[1]) continue;
+      coords.push(lonLat);
+    }
+  }
   path.forEach((eIdx) => {
     const e = graph.routingEdges[eIdx];
     if (!e.g) return;

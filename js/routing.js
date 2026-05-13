@@ -298,15 +298,24 @@ export function nearestPisteOrLiftNodeId(graph, lat, lon) {
 }
 
 // Project (lat, lon) onto the nearest piste / lift / connection /
-// lift_down edge in the graph. Used to find a perpendicular "entry
-// point" onto a piste when pin A is dropped in a snowfield — the
-// nearest endpoint of that specific edge is a much better routing
-// source than the L2-nearest node across the entire graph (which can
-// be a far-uphill fork on a totally unrelated piste).
+// lift_down edge. Returns the projection point + routing endpoint +
+// the "approach geometry" — the portion of the edge from the
+// projection along the line to the chosen endpoint. The yellow
+// route line is prepended with this approach so it visually starts
+// at the projection (where the dashed perpendicular bridge ends).
 //
-// Returns { edgeIdx, projLat, projLon, t, nodeId, distance } or null.
-// `nodeId` is the edge endpoint closer to the projection — the route
-// source. `t` ∈ [0,1] is where along the edge the projection lies.
+// For pistes / connections: always pick e.t (downhill end). The
+// approach traces from the projection point down the rest of the
+// piste to its bottom.
+// For lifts / lift_down: pick whichever endpoint the projection is
+// closer to — usually the bottom station the user just exited.
+//
+// Returns:
+//   { edgeIdx, projLat, projLon, nodeId,
+//     approachGeom: [[lat, lon], ...]   // starts at projection,
+//                                       // ends at routingNodes[nodeId]
+//     distance }
+// or null if no edge geometry was usable.
 export function nearestPisteLineProjection(graph, lat, lon) {
   const RUNS_LIFTS = new Set(["run", "connection", "lift", "lift_down"]);
   let best = null;
@@ -317,7 +326,6 @@ export function nearestPisteLineProjection(graph, lat, lon) {
     if (!RUNS_LIFTS.has(e.ty)) continue;
     const g = e.g;
     if (!g || g.length < 2) continue;
-    // edge.g is [[lat, lon], ...]
     for (let i = 1; i < g.length; i++) {
       const aLat = g[i-1][0], aLon = g[i-1][1];
       const bLat = g[i][0],   bLon = g[i][1];
@@ -334,18 +342,54 @@ export function nearestPisteLineProjection(graph, lat, lon) {
       const d2 = eLat * eLat + eLon * eLon;
       if (d2 < bestD2) {
         bestD2 = d2;
-        // Position along the WHOLE edge geometry as a fraction.
-        // Used to decide which endpoint is closer.
         const wholeT = (i - 1 + t) / (g.length - 1);
         best = {
-          edgeIdx: ei, projLat: pLat, projLon: pLon,
-          wholeT, distance: Math.sqrt(d2),
-          nodeId: wholeT < 0.5 ? e.f : e.t,
+          edgeIdx: ei, edge: e,
+          projLat: pLat, projLon: pLon,
+          segIdx: i, t, wholeT,
+          distance: Math.sqrt(d2),
         };
       }
     }
   }
-  return best;
+  if (!best) return null;
+
+  const e = best.edge;
+  const g = e.g;
+  // Pick the routing endpoint per edge type.
+  const isLift = e.ty === "lift" || e.ty === "lift_down";
+  const goToEnd = isLift ? best.wholeT >= 0.5 : true;  // pistes → always e.t
+  const nodeId = goToEnd ? e.t : e.f;
+
+  // Build approach geometry from the projection point along the edge
+  // toward the chosen endpoint.
+  const approach = [[best.projLat, best.projLon]];
+  if (goToEnd) {
+    for (let i = best.segIdx; i < g.length; i++) {
+      const c = g[i];
+      const prev = approach[approach.length - 1];
+      if (Math.abs(c[0] - prev[0]) > 1e-9 || Math.abs(c[1] - prev[1]) > 1e-9) {
+        approach.push([c[0], c[1]]);
+      }
+    }
+  } else {
+    for (let i = best.segIdx - 1; i >= 0; i--) {
+      const c = g[i];
+      const prev = approach[approach.length - 1];
+      if (Math.abs(c[0] - prev[0]) > 1e-9 || Math.abs(c[1] - prev[1]) > 1e-9) {
+        approach.push([c[0], c[1]]);
+      }
+    }
+  }
+
+  return {
+    edgeIdx: best.edgeIdx,
+    projLat: best.projLat,
+    projLon: best.projLon,
+    nodeId,
+    approachGeom: approach,
+    distance: best.distance,
+  };
 }
 
 export function describeNode(graph, id) {
