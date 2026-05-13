@@ -37,23 +37,24 @@
   --d-text-2:#a89b7e;
   --d-text-3:#6e6450;
 
-  /* chrome — cool neutral light (left panel, bottom pane).
-     The MAP itself stays paper-warm via --paper; only the UI chrome
-     uses these. Cool neutral reads less yellowed and makes the
-     burnt-orange accent pop. */
-  --l-bg:    #f6f7f9;
-  --l-bg-2:  #eceef2;
-  --l-bg-3:  #dfe3ea;
-  --l-line:  #d3d8df;
+  /* chrome — off-white light surfaces. The MAP stays paper-warm via
+     --paper; only the UI chrome uses these. */
+  --l-bg:    #fafafa;
+  --l-bg-2:  #f3f4f6;
+  --l-bg-3:  #e5e7eb;
+  --l-line:  #d1d5db;
   --l-line-2:#b8bec8;
   --l-text:  #1a1d23;
   --l-text-2:#4d525c;
   --l-text-3:#7a8189;
 
-  --accent:  #c14b1d;
-  /* Highlight colour for "selected on map" — clearly distinct from the
-     yellow route so a hovered/clicked leg reads instantly. */
-  --highlight:      #0ea5e9;   /* sky blue */
+  /* Single app accent — matches the homepage's Tiles ↔ Map switcher. */
+  --accent:        #2466ff;
+  --accent-hover:  #4a83ff;
+  /* Map-side highlight for "selected on map" — clearly distinct from
+     the yellow route so a hovered/clicked leg reads instantly. Kept
+     in the same blue family as --accent. */
+  --highlight:      #0ea5e9;
   --highlight-soft: #38bdf8;
 
   --sidebar-w: 320px;
@@ -138,7 +139,7 @@ body.ui-hidden .attribution-corner { display: none !important; }
   color: #fff;
   font-weight: 500;
 }
-.floating-btn.primary:hover { background: #a73f17; }
+.floating-btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 .floating-btn.ghost {
   background: rgba(21, 19, 15, 0.55);
 }
@@ -345,7 +346,7 @@ body.ui-hidden .attribution-corner { display: none !important; }
   bottom: 32px;
   z-index: 1400;
   width: 220px;
-  background: rgba(246, 247, 249, 0.96);
+  background: rgba(250, 250, 250, 0.96);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--l-text);
@@ -358,8 +359,9 @@ body.ui-hidden .attribution-corner { display: none !important; }
   transition: width 220ms ease;
 }
 body.mode-route .left-panel { width: 340px; }
-body.mode-sun   .left-panel { width: 220px; }
-body.mode-sun   .left-panel { bottom: 196px; }  /* leave room for scrubber */
+/* Sun mode: hide the left panel entirely — there are no layer
+   toggles to surface here, and the scrubber owns the bottom. */
+body.mode-sun   .left-panel { display: none; }
 
 .left-section {
   display: flex;
