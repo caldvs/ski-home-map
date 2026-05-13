@@ -1,20 +1,31 @@
 /**
  * ShadeMap (sun-shadow plugin) integration + time-of-day controls.
  *
- * Shadows only render in 2D (pitch < 25°). The product is a binary
- * between two modes:
- *   - 2D + shadows: any sun-control touch snaps the map flat and
- *     turns shadows on.
- *   - 3D + no shadows: entering 3D turns shadows off.
- * API key is baked in at deploy time via js/config.js. If empty,
- * falls back to localStorage / ?shademap_key= URL param.
+ * Shadows render at any pitch — 2D and 3D both work. Render cost is
+ * kept manageable by the resort-bbox mask in render.js (only the
+ * pixels inside the resort polygon get visible shadow), the lower
+ * ShadeMap maxZoom (wider per-tile coverage so distant peaks
+ * contribute to low-sun rays), and the DEM pre-warm in prewarmDemTiles.
+ *
+ * API key is injected at deploy time via js/config.js. Locally,
+ * sibling js/config.local.js can override (gitignored).
  */
 
 import { SHADEMAP_API_KEY } from "./config.js";
+import { sunPosition } from "./sun-position.js";
+import { ShadowLayer } from "./shadow-layer.js";
 
-const SHADOW_PITCH_LIMIT = 25;
 const DEFAULT_DATE = "2026-02-15";
 const DEFAULT_MINUTES = 720; // 12:00 noon
+
+// Toggle the experimental custom WebGL shadow renderer instead of
+// ShadeMap. Flip with ?shadows=custom (or ?shadows=shademap to force
+// the old one). Defaults to "custom" while we A/B.
+const SHADOW_ENGINE = (() => {
+  const p = new URLSearchParams(window.location.search);
+  const v = (p.get("shadows") || localStorage.getItem("ski:shadows") || "custom").toLowerCase();
+  return v === "shademap" ? "shademap" : "custom";
+})();
 
 let shadeMap = null;
 
@@ -57,6 +68,18 @@ export function wireSun(map) {
   let playTimer = null;
   let apiKey = getApiKey();
 
+  // Resort centroid — for sun-position math. Always available because
+  // render.js stashes it before sun.js runs.
+  const resortBbox = map._resortBbox || { minLon: 6.9, maxLon: 7.0, minLat: 45.4, maxLat: 45.5 };
+  const centerLon = (resortBbox.minLon + resortBbox.maxLon) / 2;
+  const centerLat = (resortBbox.minLat + resortBbox.maxLat) / 2;
+
+  // Custom WebGL shadow layer (alternative to ShadeMap).
+  let customShadow = null;
+  if (SHADOW_ENGINE === "custom") {
+    customShadow = new ShadowLayer({ opacity: 0.50 });
+  }
+
   function currentSunDate() {
     const d = dateEl.valueAsDate || new Date();
     return new Date(Date.UTC(
@@ -64,6 +87,12 @@ export function wireSun(map) {
       Math.floor(sunMinutes / 60) - 1, // CET → UTC
       sunMinutes % 60, 0, 0,
     ));
+  }
+
+  function updateCustomShadowSun() {
+    if (!customShadow) return;
+    const pos = sunPosition(currentSunDate(), centerLat, centerLon);
+    customShadow.setSun(pos.azimuth, pos.altitude);
   }
   function fmtTime(m) {
     return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
@@ -92,62 +121,87 @@ export function wireSun(map) {
     sunMinutes = ((m % 1440) + 1440) % 1440;
     updateExternalSunChrome();
     if (shadeMap) shadeMap.setDate(currentSunDate());
+    updateCustomShadowSun();
   }
   function shouldShowShadows() {
-    return shadowsWanted && shadeMap && map.getPitch() < SHADOW_PITCH_LIMIT;
+    if (SHADOW_ENGINE === "custom") return shadowsWanted && customShadow;
+    return shadowsWanted && shadeMap;
   }
   function updateSunStatus() {
     let state = "off";
-    if (!shadeMap) state = "no key";
-    else if (!shadowsWanted) state = "off";
-    else if (map.getPitch() >= SHADOW_PITCH_LIMIT) state = "hidden in 3D";
-    else state = "active";
+    if (SHADOW_ENGINE === "custom") {
+      if (!customShadow) state = "off";
+      else if (!customShadow.dem) state = "loading DEM…";
+      else if (!shadowsWanted) state = "off";
+      else state = "active (custom)";
+    } else {
+      if (!shadeMap) state = "no key";
+      else if (!shadowsWanted) state = "off";
+      else state = "active";
+    }
     if (sunStatus) sunStatus.textContent = "Shadows " + state;
     if (sunShadowState) sunShadowState.textContent = state;
   }
-  // Find the most-recently-added custom layer — ShadeMap's layer.
-  // Brittle but the plugin is closed-source so it's the only handle.
-  function findShadeMapLayerId() {
-    try {
-      const layers = map.getStyle().layers || [];
-      for (let i = layers.length - 1; i >= 0; i--) {
-        if (layers[i].type === "custom") return layers[i].id;
+  // Layers we always want on top of the ShadeMap render — the resort
+  // mask first (so it hides shadows outside the resort), then the
+  // graph overlays so they stay visible above the masked shadow.
+  // Order in the array = paint order in the stack (later = on top).
+  const TOP_LAYERS = [
+    "shadow-mask-layer",
+    "contour-lines", "contour-labels",
+    "pistes-outline", "pistes-layer", "piste-labels",
+    "lifts-casing", "lifts-layer", "lifts-down-layer", "lift-labels",
+    "skates-layer",
+    "stations-layer", "villages-layer", "villages-label",
+    "user-route-layer", "route-leg-highlight-halo", "route-leg-highlight-layer",
+    "anim-settled-layer",
+  ];
+
+  function promoteOverlaysAboveShade() {
+    // ShadeMap was just added to the top of the layer stack. Move our
+    // mask + every overlay to the very top in order, so each ends up
+    // above ShadeMap (which then sits below them all).
+    for (const id of TOP_LAYERS) {
+      if (map.getLayer(id)) {
+        try { map.moveLayer(id); } catch (e) {}
       }
-    } catch (e) {}
-    return null;
+    }
   }
 
   function applyShadowVisibility() {
+    // Custom WebGL renderer path.
+    if (SHADOW_ENGINE === "custom") {
+      if (!customShadow) return;
+      const want = shadowsWanted;
+      if (want && !shadowsCurrentlyAdded) {
+        if (!map.getLayer(customShadow.id)) map.addLayer(customShadow);
+        shadowsCurrentlyAdded = true;
+        promoteOverlaysAboveShade();
+        if (map.getLayer("hillshade")) {
+          map.setLayoutProperty("hillshade", "visibility", "none");
+        }
+        updateCustomShadowSun();
+      } else if (!want && shadowsCurrentlyAdded) {
+        if (map.getLayer(customShadow.id)) map.removeLayer(customShadow.id);
+        shadowsCurrentlyAdded = false;
+        if (map.getLayer("hillshade")) {
+          map.setLayoutProperty("hillshade", "visibility", "visible");
+        }
+      }
+      updateSunStatus();
+      return;
+    }
+
+    // ShadeMap path (legacy / fallback).
     if (!shadeMap) return;
     const want = shouldShowShadows();
     if (want && !shadowsCurrentlyAdded) {
       shadeMap.addTo(map);
       shadowsCurrentlyAdded = true;
-
-      // Tuck the ShadeMap layer underneath our resort mask so the
-      // shadow's outer cutoff is hidden behind a paper-coloured donut.
-      // Then re-promote our overlay layers (mask + pistes/lifts/etc.)
-      // so they stay on top of the shadow.
-      const shadeId = findShadeMapLayerId();
-      if (shadeId && map.getLayer("shadow-mask-layer")) {
-        try { map.moveLayer(shadeId, "shadow-mask-layer"); } catch (e) {}
+      if (map.getLayer("shadow-mask-layer")) {
         map.setLayoutProperty("shadow-mask-layer", "visibility", "visible");
       }
-      // Bring all the overlay layers back on top of the shadow.
-      const PROMOTE = [
-        "shadow-mask-layer",
-        "contour-lines", "contour-labels",
-        "pistes-outline", "pistes-layer", "piste-labels",
-        "lifts-casing", "lifts-layer", "lifts-down-layer", "lift-labels",
-        "skates-layer",
-        "stations-layer", "villages-layer", "villages-label",
-        "user-route-layer", "route-leg-highlight-halo", "route-leg-highlight-layer",
-        "anim-settled-layer",
-      ];
-      for (const id of PROMOTE) {
-        if (map.getLayer(id)) { try { map.moveLayer(id); } catch (e) {} }
-      }
-
+      promoteOverlaysAboveShade();
       if (map.getLayer("hillshade")) {
         map.setLayoutProperty("hillshade", "visibility", "none");
       }
@@ -173,8 +227,8 @@ export function wireSun(map) {
   function prewarmDemTiles() {
     const bbox = map._resortBbox;
     if (!bbox) return;
-    const Z = 11;           // matches ShadeMap's terrainSource.maxZoom
-    const BUFFER_TILES = 2; // ~20 km of buffer beyond the resort at z11
+    const Z = 9;            // matches ShadeMap's terrainSource.maxZoom
+    const BUFFER_TILES = 1; // ~76 km of buffer beyond the resort at z9
     function lon2tx(lon, z) {
       return Math.floor(((lon + 180) / 360) * Math.pow(2, z));
     }
@@ -202,7 +256,30 @@ export function wireSun(map) {
     console.log(`[sun] pre-warmed ${count} DEM tiles around resort at z${Z}`);
   }
 
+  async function initCustomShadows() {
+    if (!customShadow) return;
+    // Add the layer up front so it's part of the style. It renders
+    // nothing until DEM finishes loading + visibility is set.
+    if (!map.getLayer(customShadow.id)) map.addLayer(customShadow);
+    promoteOverlaysAboveShade();
+    updateSunStatus();
+    try {
+      await customShadow.setBbox(resortBbox, { bufferKm: 12 });
+      console.log(`[shadow] DEM ready: ${customShadow.dem.tilesLoaded} tiles, `
+        + `maxElev ${Math.round(customShadow.dem.maxElev)}m`);
+    } catch (e) {
+      console.error("[shadow] DEM load failed:", e);
+    }
+    updateCustomShadowSun();
+    applyShadowVisibility();
+    updateSunStatus();
+  }
+
   function initShadows() {
+    if (SHADOW_ENGINE === "custom") {
+      initCustomShadows();
+      return;
+    }
     if (!apiKey) {
       sunStatus.innerHTML =
         'No key. <a href="#" id="enter-key-link" style="color:#88c">Enter key</a> · ' +
@@ -223,14 +300,13 @@ export function wireSun(map) {
       apiKey,
       terrainSource: {
         tileSize: 512,
-        // maxZoom dropped from 13 → 11 so each DEM tile covers ~9.6 km
-        // instead of ~2.4 km. The plugin's "viewport + N-tile buffer"
-        // padding now reaches much farther out, so peaks 5–15 km away
-        // contribute to low-sun shadows and the harsh cutoff line
-        // disappears. We lose some shadow-edge precision at extreme
-        // zoom-in, but for a ski-resort scale (z 12–14) it's not
-        // visible.
-        maxZoom: 11,
+        // maxZoom 9 means each DEM tile covers ~76 km — wide enough
+        // that the resort and ALL the peaks that cast shadows into it
+        // share a single tile. ShadeMap doesn't have to stitch
+        // shadows across tile boundaries, which is what was causing
+        // the harsh seams. Cost: shadow-edge precision goes to ~74 m
+        // per pixel. For 3D alpine shadows that's fine.
+        maxZoom: 9,
         getSourceUrl: ({ x, y, z }) => `https://tiles.mapterhorn.com/${z}/${x}/${y}.webp`,
         getElevation: ({ r, g, b }) => r * 256 + g + b / 256 - 32768,
       },
@@ -238,19 +314,16 @@ export function wireSun(map) {
     // applyShadowVisibility decides whether to actually attach
   }
 
-  // ── Binary 2D-shadows ↔ 3D-no-shadows mode ──
-  //
-  // Touching ANY sun control is "I want to explore lighting" → flatten
-  // the map and turn shadows on. Returning to 3D (via pitch drag or the
-  // 3D button) flips the shadows off. Exposed on the map instance so
-  // app.js's 3D button can call disengageSunMode().
+  // Touching any sun control turns shadows on (if they're off), but
+  // doesn't change pitch — 3D + shadows is fine. The "binary 2D/3D"
+  // behaviour we used to have is gone now that shadow rendering is
+  // bounded to the resort domain and feasible in 3D.
   function engageSunMode() {
-    shadowsWanted = true;
-    shadowsCheckbox.checked = true;
-    if (map.getPitch() >= SHADOW_PITCH_LIMIT) {
-      map.easeTo({ pitch: 0, bearing: 0, duration: 500 });
+    if (!shadowsWanted) {
+      shadowsWanted = true;
+      shadowsCheckbox.checked = true;
+      applyShadowVisibility();
     }
-    applyShadowVisibility();
   }
   function disengageSunMode() {
     shadowsWanted = false;
@@ -296,15 +369,10 @@ export function wireSun(map) {
     if (e.target.checked) engageSunMode();
     else disengageSunMode();
   });
-  // Returning to 3D (drag or programmatic) auto-disables shadows so the
-  // checkbox always reflects the active mode.
-  map.on("pitchend", () => {
-    if (map.getPitch() >= SHADOW_PITCH_LIMIT && shadowsWanted) {
-      disengageSunMode();
-    } else {
-      applyShadowVisibility();
-    }
-  });
+  // Re-apply on pitch end purely to update the status text. We don't
+  // auto-toggle shadows on pitch changes anymore — 3D shadows are
+  // allowed.
+  map.on("pitchend", updateSunStatus);
   map.on("pitch", updateSunStatus);
 
   gearBtn.addEventListener("click", showKeyPrompt);

@@ -145,14 +145,15 @@ export function addGraphLayers(map, graph) {
   // Pad by ~1 km — enough to keep on-piste landmarks inside without
   // bleeding the mask into distant terrain. 0.01 deg ≈ 1.1 km at lat 45.
   const PAD_DEG = 0.012;
-  const inner = [
-    [minLon - PAD_DEG, minLat - PAD_DEG],
-    [maxLon + PAD_DEG, minLat - PAD_DEG],
-    [maxLon + PAD_DEG, maxLat + PAD_DEG],
-    [minLon - PAD_DEG, maxLat + PAD_DEG],
-    [minLon - PAD_DEG, minLat - PAD_DEG],
-  ];
+  // GeoJSON polygon-with-hole: outer ring CCW, inner ring CW (right-hand rule).
   const outer = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
+  const inner = [
+    [minLon - PAD_DEG, minLat - PAD_DEG],   // SW
+    [minLon - PAD_DEG, maxLat + PAD_DEG],   // NW
+    [maxLon + PAD_DEG, maxLat + PAD_DEG],   // NE
+    [maxLon + PAD_DEG, minLat - PAD_DEG],   // SE
+    [minLon - PAD_DEG, minLat - PAD_DEG],   // SW (close)
+  ];
   map._resortBbox = { minLon, maxLon, minLat, maxLat };
 
   // Shadow mask: a "donut" polygon covering everywhere EXCEPT the
@@ -175,8 +176,7 @@ export function addGraphLayers(map, graph) {
     type: "fill",
     paint: {
       "fill-color": "#ecdfc5",   // matches --paper basemap background
-      "fill-opacity": 0.92,
-      "fill-antialias": false,
+      "fill-opacity": 1,
     },
     layout: { visibility: "none" },
   });
