@@ -143,6 +143,13 @@ export function wireSun(map) {
       await customShadow.setBbox(bbox, { bufferKm: 12 });
       console.log(`[shadow] DEM ready: ${customShadow.dem.tilesLoaded} tiles, `
         + `maxElev ${Math.round(customShadow.dem.maxElev)}m`);
+      // Expose to elevation.js for per-pixel piste profile sampling.
+      window._shadowDem = customShadow;
+      // If a route was already plotted before the DEM finished loading,
+      // re-render the elevation profile so it picks up real samples.
+      if (typeof window._refreshElevation === "function") {
+        try { window._refreshElevation(); } catch (e) {}
+      }
     } catch (e) {
       console.error("[shadow] DEM load failed:", e);
     }

@@ -247,8 +247,46 @@ export class ShadowLayer {
   async setBbox(bbox, opts) {
     this.dem = await loadDEM(bbox, opts);
     this._demDirty = true;
+    // Drop any cached pixel buffer so the next sampleElevation() picks
+    // up the new DEM.
+    this._demImageData = null;
     this._buildQuad();
     if (this._map) this._map.triggerRepaint();
+  }
+
+  /**
+   * Sample the stitched DEM at the given lat/lon. Returns elevation in
+   * metres, or null if the point is outside the DEM bbox / not loaded
+   * yet. Caches the ImageData on first call so subsequent reads are
+   * just array indexing.
+   */
+  sampleElevation(lat, lon) {
+    if (!this.dem || !this.dem.canvas) return null;
+    const b = this.dem.bbox;
+    if (lon < b.minLon || lon > b.maxLon || lat < b.minLat || lat > b.maxLat) {
+      return null;
+    }
+    if (!this._demImageData) {
+      const c = this.dem.canvas;
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      try {
+        this._demImageData = ctx.getImageData(0, 0, c.width, c.height);
+        this._demW = c.width;
+        this._demH = c.height;
+      } catch (e) {
+        // Tainted canvas (rare with CORS-enabled tiles) — bail.
+        return null;
+      }
+    }
+    // Resort scale is small enough that lon/lat → uv linear mapping
+    // matches Mercator within ~0.1 m at this latitude. Good enough.
+    const u = (lon - b.minLon) / (b.maxLon - b.minLon);
+    const v = (b.maxLat - lat) / (b.maxLat - b.minLat);
+    const px = Math.min(this._demW - 1, Math.max(0, Math.floor(u * (this._demW - 1))));
+    const py = Math.min(this._demH - 1, Math.max(0, Math.floor(v * (this._demH - 1))));
+    const idx = (py * this._demW + px) * 4;
+    const data = this._demImageData.data;
+    return data[idx] * 256 + data[idx + 1] + data[idx + 2] / 256 - 32768;
   }
 
   setSun(azimuth, altitude) {

@@ -62,13 +62,22 @@ function haversine(lat1, lon1, lat2, lon2) {
 
 /**
  * Build a dense set of profile points: for every coordinate inside every
- * edge's geometry, interpolate the elevation linearly between the two
- * node elevations. Gives smooth-looking profiles even for long edges.
+ * edge's geometry, sample the actual DEM elevation when available, so
+ * pistes show their real undulations instead of a straight slope from
+ * top-node to bottom-node. Falls back to linear interpolation when the
+ * DEM isn't loaded yet, or for lift edges (lifts go in a straight line
+ * through the air — DEM under them is ground, not the cable height).
  *
  * Returns [{ d, e, lon, lat, ei, edge }] where d=cumulative distance (m),
  * e=elevation (m), ei=edge index.
  */
 function buildProfile(graph, path) {
+  // Optional DEM sampler exposed by sun.js once the shadow DEM is loaded.
+  const dem = (typeof window !== "undefined") ? window._shadowDem : null;
+  const sampleDEM = (dem && dem.dem && typeof dem.sampleElevation === "function")
+    ? (lat, lon) => dem.sampleElevation(lat, lon)
+    : null;
+
   const points = [];
   let cumDist = 0;
 
@@ -77,14 +86,15 @@ function buildProfile(graph, path) {
     const edge = graph.routingEdges[ei];
     const startElev = graph.routingNodes[edge.f][2];
     const endElev   = graph.routingNodes[edge.t][2];
-    const geom = edge.g;   // [[lat, lon], ...]
+    const geom = edge.g;
+    const isLift = edge.ty === "lift" || edge.ty === "lift_down";
+    const useDEM = !!sampleDEM && !isLift;
 
-    // Edge total length (along geometry)
     let edgeLen = 0;
     for (let j = 1; j < geom.length; j++) {
       edgeLen += haversine(geom[j-1][0], geom[j-1][1], geom[j][0], geom[j][1]);
     }
-    if (edgeLen === 0) edgeLen = 1; // avoid /0
+    if (edgeLen === 0) edgeLen = 1;
 
     if (i === 0) {
       points.push({
@@ -99,8 +109,27 @@ function buildProfile(graph, path) {
       const segLen = haversine(geom[j-1][0], geom[j-1][1], geom[j][0], geom[j][1]);
       segCum += segLen;
       const frac = segCum / edgeLen;
-      const elev = startElev + (endElev - startElev) * frac;
       cumDist += segLen;
+
+      let elev;
+      if (j === geom.length - 1) {
+        // Last point of the edge — keep the node elevation so adjacent
+        // edges line up cleanly at the join.
+        elev = endElev;
+      } else if (useDEM) {
+        const sampled = sampleDEM(geom[j][0], geom[j][1]);
+        // Sanity-cap: huge deltas mean the DEM missed (out of bbox /
+        // partial load) — fall back to interpolation in that case.
+        if (sampled != null && Math.abs(sampled - startElev) < 600 &&
+            Math.abs(sampled - endElev) < 600) {
+          elev = sampled;
+        } else {
+          elev = startElev + (endElev - startElev) * frac;
+        }
+      } else {
+        elev = startElev + (endElev - startElev) * frac;
+      }
+
       points.push({
         d: cumDist, e: elev,
         lat: geom[j][0], lon: geom[j][1],
@@ -128,8 +157,16 @@ function escapeHtml(s) {
  * gets its real width when the user switches to it.
  */
 export function renderElevationProfile(container, map, graph, path) {
-  // Cache for later re-renders (tab activation, window resize).
+  // Cache for later re-renders (tab activation, window resize, DEM-ready).
   _state.set(container, { map, graph, path });
+
+  // Expose a refresh hook so sun.js can trigger a redraw when the DEM
+  // finishes loading. Idempotent — always points at the most recent
+  // container we rendered into.
+  window._refreshElevation = () => {
+    const s = _state.get(container);
+    if (s) drawChart(container, s.map, s.graph, s.path);
+  };
 
   // Attach a ResizeObserver once per container. Redraw on either
   // width or height change so the chart fills whatever box we get.
