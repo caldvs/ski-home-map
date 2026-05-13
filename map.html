@@ -177,7 +177,8 @@
   </header>
 
   <section class="sidebar-section">
-    <h3>Layers</h3>
+    <details id="layers-section">
+      <summary>Layers</summary>
     <div class="layer-list">
       <label class="layer">
         <input type="checkbox" class="checkbox" id="lyr-pistes" checked>
@@ -228,6 +229,7 @@
         <span class="count mono">DEM</span>
       </label>
     </div>
+    </details>
   </section>
 
   <section class="sidebar-section" id="sun-panel">
@@ -334,6 +336,17 @@
     if (m && typeof m.resize === "function") m.resize();
   });
   ro.observe(mapEl);
+
+  // Persist Layers collapse state across reloads
+  const layersDetails = document.getElementById("layers-section");
+  if (layersDetails) {
+    const saved = localStorage.getItem("ski:layers-open");
+    if (saved !== null) layersDetails.open = saved === "1";
+    else layersDetails.open = true; // default open on first visit
+    layersDetails.addEventListener("toggle", () => {
+      localStorage.setItem("ski:layers-open", layersDetails.open ? "1" : "0");
+    });
+  }
 </script>
 </body>
 </html>
