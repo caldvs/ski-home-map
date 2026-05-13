@@ -1,9 +1,16 @@
 /**
  * ShadeMap (sun-shadow plugin) integration + time-of-day controls.
  *
- * Shadows only render in 2D (pitch < 25°). API key is fetched from
- * localStorage (or `?shademap_key=` URL parameter on first visit).
+ * Shadows only render in 2D (pitch < 25°). The product is a binary
+ * between two modes:
+ *   - 2D + shadows: any sun-control touch snaps the map flat and
+ *     turns shadows on.
+ *   - 3D + no shadows: entering 3D turns shadows off.
+ * API key is baked in at deploy time via js/config.js. If empty,
+ * falls back to localStorage / ?shademap_key= URL param.
  */
+
+import { SHADEMAP_API_KEY } from "./config.js";
 
 const SHADOW_PITCH_LIMIT = 25;
 const DEFAULT_DATE = "2026-02-15";
@@ -14,6 +21,9 @@ let shadeMap = null;
 export function getShadeMap() { return shadeMap; }
 
 function getApiKey() {
+  // 1. Baked-in build config wins — that's how deploys ship.
+  if (SHADEMAP_API_KEY && SHADEMAP_API_KEY.trim()) return SHADEMAP_API_KEY.trim();
+  // 2. ?shademap_key= URL param (legacy, also caches to localStorage).
   const params = new URLSearchParams(window.location.search);
   if (params.has("shademap_key")) {
     const k = params.get("shademap_key").trim();
@@ -28,6 +38,7 @@ function getApiKey() {
       return k;
     }
   }
+  // 3. localStorage (legacy).
   return (localStorage.getItem("shademap_api_key") || "").trim();
 }
 
@@ -142,16 +153,44 @@ export function wireSun(map) {
     // applyShadowVisibility decides whether to actually attach
   }
 
-  // Discrete time buttons
-  document.getElementById("sun-h-minus").addEventListener("click", () => setSunMinutes(sunMinutes - 60));
-  document.getElementById("sun-h-plus").addEventListener("click", () => setSunMinutes(sunMinutes + 60));
-  document.getElementById("sun-m-minus").addEventListener("click", () => setSunMinutes(sunMinutes - 15));
-  document.getElementById("sun-m-plus").addEventListener("click", () => setSunMinutes(sunMinutes + 15));
-  document.getElementById("sun-now").addEventListener("click", () => setSunMinutes(DEFAULT_MINUTES));
+  // ── Binary 2D-shadows ↔ 3D-no-shadows mode ──
+  //
+  // Touching ANY sun control is "I want to explore lighting" → flatten
+  // the map and turn shadows on. Returning to 3D (via pitch drag or the
+  // 3D button) flips the shadows off. Exposed on the map instance so
+  // app.js's 3D button can call disengageSunMode().
+  function engageSunMode() {
+    shadowsWanted = true;
+    shadowsCheckbox.checked = true;
+    if (map.getPitch() >= SHADOW_PITCH_LIMIT) {
+      map.easeTo({ pitch: 0, bearing: 0, duration: 500 });
+    }
+    applyShadowVisibility();
+  }
+  function disengageSunMode() {
+    shadowsWanted = false;
+    shadowsCheckbox.checked = false;
+    applyShadowVisibility();
+  }
+  map._engageSunMode    = engageSunMode;
+  map._disengageSunMode = disengageSunMode;
+
+  function withEngage(fn) {
+    return (...args) => { engageSunMode(); return fn(...args); };
+  }
+
+  // Discrete time buttons — each one also flips to 2D + shadows-on.
+  document.getElementById("sun-h-minus").addEventListener("click", withEngage(() => setSunMinutes(sunMinutes - 60)));
+  document.getElementById("sun-h-plus") .addEventListener("click", withEngage(() => setSunMinutes(sunMinutes + 60)));
+  document.getElementById("sun-m-minus").addEventListener("click", withEngage(() => setSunMinutes(sunMinutes - 15)));
+  document.getElementById("sun-m-plus") .addEventListener("click", withEngage(() => setSunMinutes(sunMinutes + 15)));
+  document.getElementById("sun-now")    .addEventListener("click", withEngage(() => setSunMinutes(DEFAULT_MINUTES)));
   dateEl.addEventListener("change", () => {
+    engageSunMode();
     updateExternalSunChrome();
     if (shadeMap) shadeMap.setDate(currentSunDate());
   });
+  dateEl.addEventListener("focus", engageSunMode);
 
   // Play / stop
   function stopPlay() {
@@ -162,16 +201,25 @@ export function wireSun(map) {
   }
   playBtn.addEventListener("click", () => {
     if (playTimer) { stopPlay(); return; }
+    engageSunMode();
     playBtn.textContent = "⏸";
     playBtn.title = "Pause";
     playTimer = setInterval(() => setSunMinutes(sunMinutes + 5), 400);
   });
 
   shadowsCheckbox.addEventListener("change", (e) => {
-    shadowsWanted = e.target.checked;
-    applyShadowVisibility();
+    if (e.target.checked) engageSunMode();
+    else disengageSunMode();
   });
-  map.on("pitchend", applyShadowVisibility);
+  // Returning to 3D (drag or programmatic) auto-disables shadows so the
+  // checkbox always reflects the active mode.
+  map.on("pitchend", () => {
+    if (map.getPitch() >= SHADOW_PITCH_LIMIT && shadowsWanted) {
+      disengageSunMode();
+    } else {
+      applyShadowVisibility();
+    }
+  });
   map.on("pitch", updateSunStatus);
 
   gearBtn.addEventListener("click", showKeyPrompt);

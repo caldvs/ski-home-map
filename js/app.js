@@ -109,6 +109,12 @@ map.on("load", async () => {
       });
       const btn = document.getElementById("toggle-3d");
       btn.textContent = goingIn3D ? "2D · top-down" : "3D · 42°";
+      // Binary: 3D mode means no shadows. 2D mode auto-engages them.
+      if (goingIn3D && typeof map._disengageSunMode === "function") {
+        map._disengageSunMode();
+      } else if (!goingIn3D && typeof map._engageSunMode === "function") {
+        map._engageSunMode();
+      }
     });
     document.getElementById("reset-view").addEventListener("click", () => {
       map.flyTo({
