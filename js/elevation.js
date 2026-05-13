@@ -20,8 +20,10 @@ const LIFT_COLOUR  = "#ff6f00";
 const SKATE_COLOUR = "#9aa3aa";
 const WALK_COLOUR  = "#7c4dff";
 
-const CHART_H = 230;
-const PAD = { top: 12, right: 16, bottom: 24, left: 44 };
+// Chart dimensions: width matches the container (no horizontal scroll);
+// height tracks the container too if it gives us one, otherwise a sane default.
+const CHART_H_DEFAULT = 200;
+const PAD = { top: 10, right: 10, bottom: 22, left: 38 };
 
 let hoverMarker = null;
 // Most-recent render args so the ResizeObserver can re-draw without
@@ -129,13 +131,17 @@ export function renderElevationProfile(container, map, graph, path) {
   // Cache for later re-renders (tab activation, window resize).
   _state.set(container, { map, graph, path });
 
-  // Attach a ResizeObserver once per container.
+  // Attach a ResizeObserver once per container. Redraw on either
+  // width or height change so the chart fills whatever box we get.
   if (!container._elevObs) {
-    let lastW = -1;
+    let lastW = -1, lastH = -1;
     container._elevObs = new ResizeObserver((entries) => {
-      const w = Math.round(entries[0].contentRect.width);
-      if (w === lastW || w < 100) return;
-      lastW = w;
+      const r = entries[0].contentRect;
+      const w = Math.round(r.width);
+      const h = Math.round(r.height);
+      if (w < 100) return;
+      if (w === lastW && h === lastH) return;
+      lastW = w; lastH = h;
       const s = _state.get(container);
       if (s) drawChart(container, s.map, s.graph, s.path);
     });
@@ -176,12 +182,16 @@ function drawChart(container, map, graph, path) {
     + `<span class="route-dot">● route</span>`
     + `</div>`;
 
-  // Render at the container's REAL pixel width so text inside the SVG
-  // isn't stretched. Subtract the .elev-pane horizontal padding (36 px
-  // total) so the SVG fits cleanly inside.
-  const cw = container.clientWidth || 600;
-  const W = Math.max(360, cw - 36);
-  const H = CHART_H;
+  // Render at the container's REAL pixel size so text inside the SVG
+  // isn't stretched AND nothing overflows. Subtract the .elev-pane
+  // padding (set in CSS as 14/12/18 px) — leave a small margin so the
+  // SVG fits cleanly inside the rounded border.
+  const cw = container.clientWidth  || 600;
+  const ch = container.clientHeight || CHART_H_DEFAULT;
+  const PAD_H = 28;   // matches .elev-pane horizontal padding
+  const PAD_V = 32;   // top + bottom padding + room for meta row
+  const W = Math.max(180, cw - PAD_H);
+  const H = Math.max(120, Math.min(CHART_H_DEFAULT, ch - PAD_V));
   const xs = (d) => PAD.left + (d / maxDist) * (W - PAD.left - PAD.right);
   const ys = (e) => H - PAD.bottom - ((e - eLo) / (eHi - eLo)) * (H - PAD.top - PAD.bottom);
 

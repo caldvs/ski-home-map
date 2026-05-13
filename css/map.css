@@ -831,28 +831,48 @@ body.bottom-closed #bottom-pane {
 .itin-step .gain.up   { color: var(--green); }
 .itin-step .gain.down { color: var(--red); }
 
-/* Elevation profile */
+/* Elevation profile — fits the container, no horizontal scroll. */
 .elev-pane {
   background: linear-gradient(180deg, #15130f 0%, #1a1611 100%);
   color: var(--d-text);
-  padding: 14px 18px 12px;
+  padding: 12px 14px 10px;
   border-bottom: 1px solid var(--d-line);
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .elev-pane[hidden] { display: none; }
 .elev-pane .meta {
   display: flex;
-  gap: 16px;
+  gap: 10px;
   font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--d-text-2);
   margin-bottom: 6px;
   flex-wrap: wrap;
+  flex: 0 0 auto;
 }
 .elev-pane .meta .route-dot {
   margin-left: auto;
   color: var(--route);
 }
-.elev-pane svg { display: block; cursor: crosshair; }
+.elev-pane svg {
+  display: block;
+  cursor: crosshair;
+  max-width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The elevation tab pane in the left panel needs to confine its own
+   height so the chart can size to it. */
+.tab-pane[data-tab-pane="elev"] {
+  height: 100%;
+  display: none;
+}
+.tab-pane[data-tab-pane="elev"].on { display: flex; flex-direction: column; }
+.tab-pane[data-tab-pane="elev"] > #elevation-profile { flex: 1 1 auto; min-height: 0; }
 
 #elev-tooltip {
   position: absolute;
