@@ -1,14 +1,24 @@
 /**
- * Build-time config baked into the static deploy.
+ * Build-time config injected at deploy time from the SHADEMAP_API_KEY
+ * repo secret (.github/workflows/deploy.yml). The committed value is
+ * empty so the JWT never lives in git.
  *
- * The ShadeMap JWT goes here so users don't need to bring their own.
- * It WILL be visible in the deployed source — this is fine for the
- * free educational tier but worth keeping in mind if you see abuse.
- * If this string is empty, sun.js falls back to localStorage / the
- * ?shademap_key= URL parameter (legacy behaviour).
- *
- * To rotate: drop a new JWT here and push.
+ * Local override: drop a sibling file `js/config.local.js` that
+ * exports the same constant — it's gitignored and takes precedence
+ * over the empty default. Lets you test shadows on localhost without
+ * touching the deploy.
  */
 
-export const SHADEMAP_API_KEY = "";
+const BAKED_KEY = "";
+
+let overrideKey = "";
+try {
+  // Dynamic import returns a promise; top-level await holds module
+  // evaluation until it settles. If the file doesn't exist (the common
+  // case for fresh clones), we swallow the error and keep BAKED_KEY.
+  const m = await import("./config.local.js");
+  overrideKey = (m.SHADEMAP_API_KEY || "").trim();
+} catch (e) { /* no local override — fine */ }
+
+export const SHADEMAP_API_KEY = overrideKey || BAKED_KEY;
 

@@ -10,3 +10,8 @@ __pycache__/
 # Raw upstream of the openskimap style for diffing; the cleaned
 # styles/terrain.json is what we ship. Regenerate with build_style.py.
 /styles/_openskimap_terrain_v2.json
+
+# Optional local override for js/config.js (ShadeMap JWT etc.).
+# The deploy workflow injects the real key from a repo secret;
+# locally you can drop your own JWT here without touching git.
+/js/config.local.js
