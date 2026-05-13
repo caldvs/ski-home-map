@@ -78,7 +78,8 @@ export function wireSun(map) {
     "lifts-casing", "lifts-layer", "lifts-down-layer", "lift-labels",
     "skates-layer",
     "stations-layer", "villages-layer", "villages-label",
-    "user-route-layer", "route-leg-highlight-halo", "route-leg-highlight-layer",
+    "user-route-layer", "start-approach-layer",
+    "route-leg-highlight-halo", "route-leg-highlight-layer",
     "anim-settled-layer",
   ];
   function promoteOverlaysAboveShade() {

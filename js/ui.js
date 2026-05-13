@@ -5,7 +5,7 @@
  */
 
 import {
-  runDijkstra, nearestNodeId, describeNode,
+  runDijkstra, nearestNodeId, nearestPisteOrLiftNodeId, describeNode,
   DijkstraRunner, AstarRunner, BidirRunner, edgeCost,
   reachableCount,
 } from "./routing.js";
@@ -231,15 +231,67 @@ export function wireRouting(map, graph) {
     }
   }
 
-  function placePin(lat, lon, kind) {
-    const nid = nearestNodeId(graph, lat, lon);
-    if (nid === null) return null;
-    return placePinAtNode(nid, kind);
+  // Pin A's display coords — may differ from the graph node A actually
+  // routes from (if the user clicked off-piste, the pin sits wherever
+  // clicked and a dashed "approach" line connects the pin to the
+  // nearest graph node).
+  let startDisplay = null;  // { lat, lon }
+
+  function setStartApproach() {
+    const src = map.getSource("start-approach");
+    if (!src) return;
+    if (!startDisplay || startNodeId === null) {
+      src.setData({ type: "FeatureCollection", features: [] });
+      return;
+    }
+    const node = graph.routingNodes[startNodeId];
+    const dLon = Math.abs(node[0] - startDisplay.lon);
+    const dLat = Math.abs(node[1] - startDisplay.lat);
+    // Don't render the approach line if pin A is essentially AT the node.
+    if (dLon < 1e-6 && dLat < 1e-6) {
+      src.setData({ type: "FeatureCollection", features: [] });
+      return;
+    }
+    src.setData({
+      type: "FeatureCollection",
+      features: [{
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [startDisplay.lon, startDisplay.lat],
+            [node[0], node[1]],
+          ],
+        },
+        properties: {},
+      }],
+    });
   }
 
-  function placePinAtNode(nid, kind) {
+  // Build a pin marker. kind = "start" → free-form, displayed at
+  // (displayLat, displayLon). kind = "end" → snapped to a piste/lift
+  // node, displayed at that node's coordinates.
+  function placePin(lat, lon, kind) {
+    if (kind === "start") {
+      // Pin A is free-form: the visible marker sits where the user
+      // clicked, but the route source is always a piste / lift node
+      // (so the algorithm has something to start from). The dashed
+      // approach line bridges the two.
+      const nid = nearestPisteOrLiftNodeId(graph, lat, lon);
+      if (nid === null) return null;
+      startDisplay = { lat, lon };
+      const r = buildMarker(lat, lon, kind, nid);
+      setStartApproach();
+      return r;
+    }
+    // Pin B: visibly snaps to the nearest piste / lift node.
+    const nid = nearestPisteOrLiftNodeId(graph, lat, lon);
+    if (nid === null) return null;
     const n = graph.routingNodes[nid];
-    if (!n) return null;
+    return buildMarker(n[1], n[0], kind, nid);
+  }
+
+  function buildMarker(lat, lon, kind, nid) {
     const el = document.createElement("div");
     el.innerHTML = pinMarkerSVG(kind === "end" ? "B" : "A");
     el.style.cursor = "grab";
@@ -249,7 +301,7 @@ export function wireRouting(map, graph) {
       anchor: "bottom",
       draggable: true,
     })
-      .setLngLat([n[0], n[1]])
+      .setLngLat([lon, lat])
       .setPopup(popup)
       .addTo(map);
 
@@ -262,19 +314,30 @@ export function wireRouting(map, graph) {
       const ll = marker.getLngLat();
       const point = map.project(ll);
       const { lat: nlat, lon: nlon } = pickCoordAtPoint(point, ll);
-      const newNid = nearestNodeId(graph, nlat, nlon);
-      console.log(`[pin] ${kind} dragend → nearest node ${newNid}`,
-        { droppedAt: ll, snappedTo: newNid != null ? graph.routingNodes[newNid] : null });
+
+      // Both pins use the piste/lift node filter — pin A is just
+      // additionally free in WHERE its visible marker sits.
+      const newNid = nearestPisteOrLiftNodeId(graph, nlat, nlon);
       if (newNid === null) {
-        marker.setLngLat([n[0], n[1]]);
+        // No valid node — snap pin back to the previous position.
+        marker.setLngLat([lon, lat]);
         return;
       }
       const newN = graph.routingNodes[newNid];
-      marker.setLngLat([newN[0], newN[1]]);
-      popup.setText(describeNode(graph, newNid));
-      if (kind === "start") startNodeId = newNid;
-      else                   endNodeId   = newNid;
-      console.log(`[pin] startNodeId=${startNodeId} endNodeId=${endNodeId} → recompute`);
+      if (kind === "start") {
+        // Free-form: leave the pin wherever the user dropped it
+        // (snapped to point-feature if relevant), update routing source.
+        marker.setLngLat([nlon, nlat]);
+        startDisplay = { lat: nlat, lon: nlon };
+        startNodeId = newNid;
+        popup.setText(describeNode(graph, newNid));
+        setStartApproach();
+      } else {
+        // Pin B always sits AT the snapped node.
+        marker.setLngLat([newN[0], newN[1]]);
+        popup.setText(describeNode(graph, newNid));
+        endNodeId = newNid;
+      }
       if (startNodeId !== null && endNodeId !== null) recomputeRoute();
     });
 
@@ -285,6 +348,10 @@ export function wireRouting(map, graph) {
     if (startPin) { startPin.remove(); startPin = null; }
     if (endPin) { endPin.remove(); endPin = null; }
     startNodeId = null; endNodeId = null;
+    startDisplay = null;
+    if (map.getSource("start-approach")) {
+      map.getSource("start-approach").setData({ type: "FeatureCollection", features: [] });
+    }
     if (map.getSource("user-route")) {
       map.getSource("user-route").setData({ type: "FeatureCollection", features: [] });
     }
@@ -303,48 +370,15 @@ export function wireRouting(map, graph) {
     if (statsEl) statsEl.innerHTML = "Drop two pins, then press Animate to watch the search expand.";
   }
 
-  // Point-feature snap layers (village dots, lift labels) — drop the
-  // pin AT this feature's coordinate.
+  // Point-feature snap layers — clicking near a village dot / station
+  // dot / lift label snaps to that exact feature's coordinate so the
+  // pin lands cleanly on the named thing.
   const POINT_SNAP_LAYERS = [
     "villages-layer", "villages-label",
     "stations-layer", "lift-labels",
   ];
-  // Line-feature snap layers (pistes, lifts) — drop the pin AT the
-  // nearest point ALONG this line. Distance-based: nearer to a piste
-  // line wins over a far-away node.
-  const LINE_SNAP_LAYERS = [
-    "pistes-layer", "pistes-outline",
-    "lifts-layer", "lifts-casing",
-    "skates-layer",
-  ];
 
-  // Project a point onto a polyline; return the nearest point on the
-  // line and the distance² (in degree-space) to it.
-  function nearestPointOnLine(targetLon, targetLat, coords) {
-    let best = null, bestD2 = Infinity;
-    for (let i = 1; i < coords.length; i++) {
-      const a = coords[i - 1], b = coords[i];
-      const ax = a[0], ay = a[1], bx = b[0], by = b[1];
-      const dx = bx - ax, dy = by - ay;
-      const len2 = dx * dx + dy * dy;
-      let t = len2 ? ((targetLon - ax) * dx + (targetLat - ay) * dy) / len2 : 0;
-      t = Math.max(0, Math.min(1, t));
-      const px = ax + t * dx, py = ay + t * dy;
-      const ex = px - targetLon, ey = py - targetLat;
-      const d2 = ex * ex + ey * ey;
-      if (d2 < bestD2) { bestD2 = d2; best = [px, py]; }
-    }
-    return best ? { lon: best[0], lat: best[1], d2: bestD2 } : null;
-  }
-
-  // Given a screen point (plus a fallback LngLat), pick the coordinate
-  // to snap a pin to. Priority:
-  //   1. A point feature (village / station / lift label) within ~8 px.
-  //   2. The nearest line feature (piste / lift / skate) within ~14 px,
-  //      projecting the click onto the line.
-  //   3. The raw drop lat/lon (caller's fallback).
   function pickCoordAtPoint(point, fallbackLngLat) {
-    // 1. Point features first.
     const ptLayers = POINT_SNAP_LAYERS.filter((id) => map.getLayer(id));
     if (ptLayers.length) {
       const r = 8;
@@ -357,30 +391,8 @@ export function wireRouting(map, graph) {
         if (c && c.length >= 2) return { lat: c[1], lon: c[0] };
       }
     }
-    // 2. Line features. Project onto whichever line is geometrically
-    //    closest within the search box, not just the first feature
-    //    MapLibre happens to return.
-    const lnLayers = LINE_SNAP_LAYERS.filter((id) => map.getLayer(id));
-    const fallback = fallbackLngLat || map.unproject(point);
-    if (lnLayers.length) {
-      const r = 14;
-      const feats = map.queryRenderedFeatures(
-        [[point.x - r, point.y - r], [point.x + r, point.y + r]],
-        { layers: lnLayers },
-      );
-      let best = null, bestD2 = Infinity;
-      for (const f of feats) {
-        const g = f.geometry;
-        if (!g) continue;
-        const lines = g.type === "MultiLineString" ? g.coordinates : [g.coordinates];
-        for (const line of lines) {
-          const proj = nearestPointOnLine(fallback.lng, fallback.lat, line);
-          if (proj && proj.d2 < bestD2) { bestD2 = proj.d2; best = proj; }
-        }
-      }
-      if (best) return { lat: best.lat, lon: best.lon };
-    }
-    return { lat: fallback.lat, lon: fallback.lng };
+    const ll = fallbackLngLat || map.unproject(point);
+    return { lat: ll.lat, lon: ll.lng };
   }
 
   function pickClickCoord(ev) {

@@ -391,6 +391,26 @@ export function addGraphLayers(map, graph) {
     layout: { "line-cap": "round", "line-join": "round" },
   });
 
+  // Pin-A approach line — dashed grey connector from a free-form pin A
+  // (placed off-piste) to the graph node the route actually starts from.
+  // Empty unless pin A's display position differs from its routing node.
+  map.addSource("start-approach", {
+    type: "geojson",
+    data: { type: "FeatureCollection", features: [] },
+  });
+  map.addLayer({
+    id: "start-approach-layer",
+    source: "start-approach",
+    type: "line",
+    paint: {
+      "line-color": "#0284c7",
+      "line-width": 2,
+      "line-dasharray": [2, 2],
+      "line-opacity": 0.85,
+    },
+    layout: { "line-cap": "round" },
+  });
+
   // Highlighted itinerary-leg source — populated on hover of a leg row
   // in the itinerary list. Rendered ON TOP of user-route-layer so the
   // brighter halo + thicker line stands out against the rest of the route.

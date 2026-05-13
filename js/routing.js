@@ -276,15 +276,25 @@ export function reachableCount(graph, srcId, opts = {}) {
   return seen.size;
 }
 
-export function nearestNodeId(graph, lat, lon) {
+export function nearestNodeId(graph, lat, lon, filter) {
   let best = null, bestD = Infinity;
   for (const id in graph.routingNodes) {
+    if (filter && !filter(parseInt(id, 10))) continue;
     const n = graph.routingNodes[id];
     const dLat = n[1] - lat, dLon = n[0] - lon;
     const d = dLat * dLat + dLon * dLon;
     if (d < bestD) { bestD = d; best = id; }
   }
   return best === null ? null : parseInt(best, 10);
+}
+
+// Convenience: pin B must land on a piste / lift / connection / lift_down
+// node, never a skating-only pocket node.
+export function nearestPisteOrLiftNodeId(graph, lat, lon) {
+  const filter = graph.pisteOrLiftNodes
+    ? (nid) => graph.pisteOrLiftNodes.has(nid)
+    : null;
+  return nearestNodeId(graph, lat, lon, filter);
 }
 
 export function describeNode(graph, id) {

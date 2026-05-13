@@ -237,6 +237,20 @@ function reshapeGraph(raw) {
     console.log(`[graph] added ${walkCount} synthetic walk edges (≤100 m, ≤5 m Δelev)`);
   }
 
+  // Set of node IDs that participate in any run / connection / lift /
+  // lift_down edge. Used by the routing UI to constrain pin B to
+  // "snap onto a piste or a lift node" — skating-only pocket nodes
+  // and pure-walk nodes are excluded so the pin always lands somewhere
+  // a skier would actually be.
+  const pisteOrLiftNodes = new Set();
+  for (const e of raw.edges) {
+    if (e.type === "run" || e.type === "connection"
+        || e.type === "lift" || e.type === "lift_down") {
+      pisteOrLiftNodes.add(e.from);
+      pisteOrLiftNodes.add(e.to);
+    }
+  }
+
   // --- Villages + stations as Point features ---
   const villagesFC = { type: "FeatureCollection", features: [] };
   for (const [name, v] of Object.entries(raw.villages || {})) {
@@ -278,6 +292,7 @@ function reshapeGraph(raw) {
     routingEdges,
     adj,
     reverseAdj,
+    pisteOrLiftNodes,
     stats: {
       nodes: raw.nodes.length,
       edges: raw.edges.length,
