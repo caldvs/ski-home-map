@@ -290,5 +290,5 @@ function round6(x) {
   return Math.round(x * 1e6) / 1e6;
 }
 
-export const LIFT_COLOUR = "#7c3aed";
+export const LIFT_COLOUR = "#000000";
 export { DIFF_COLOURS };
