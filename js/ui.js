@@ -237,8 +237,9 @@ export function wireRouting(map, graph) {
       const point = map.project(ll);
       const { lat: nlat, lon: nlon } = pickCoordAtPoint(point, ll);
       const newNid = nearestNodeId(graph, nlat, nlon);
+      console.log(`[pin] ${kind} dragend → nearest node ${newNid}`,
+        { droppedAt: ll, snappedTo: newNid != null ? graph.routingNodes[newNid] : null });
       if (newNid === null) {
-        // snap back to old position
         marker.setLngLat([n[0], n[1]]);
         return;
       }
@@ -247,6 +248,7 @@ export function wireRouting(map, graph) {
       popup.setText(describeNode(graph, newNid));
       if (kind === "start") startNodeId = newNid;
       else                   endNodeId   = newNid;
+      console.log(`[pin] startNodeId=${startNodeId} endNodeId=${endNodeId} → recompute`);
       if (startNodeId !== null && endNodeId !== null) recomputeRoute();
     });
 

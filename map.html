@@ -20,7 +20,7 @@
   <div id="map-region">
     <div id="map"></div>
 
-    <!-- TOP-LEFT: breadcrumb + info popover ─────────────────────── -->
+    <!-- TOP-LEFT ────────────────────────────────────────────────── -->
     <div class="top-left">
       <a id="back-link" href="./index.html">
         <svg viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -42,19 +42,15 @@
           <div class="stat"><div class="k">Pistes</div> <div class="v mono" id="stat-pistes">—</div></div>
         </div>
       </div>
-      <!-- compat: app.js writes a summary line here for older paths -->
       <div id="world-summary" hidden></div>
     </div>
 
-    <!-- TOP-CENTRE: mode switcher ─────────────────────────────────── -->
+    <!-- TOP-CENTRE: mode bar ──────────────────────────────────────── -->
     <div class="mode-bar" id="mode-picker" role="tablist" aria-label="Mode">
-      <button type="button" data-mode="layers" role="tab" aria-selected="false">
-        <span class="mode-icon">▣</span><span class="mode-label">Layers</span>
-      </button>
-      <button type="button" data-mode="route"  role="tab" aria-selected="true" class="on">
+      <button type="button" data-mode="route" role="tab" aria-selected="true" class="on">
         <span class="mode-icon">➤</span><span class="mode-label">Route</span>
       </button>
-      <button type="button" data-mode="sun"    role="tab" aria-selected="false">
+      <button type="button" data-mode="sun" role="tab" aria-selected="false">
         <span class="mode-icon">☀</span><span class="mode-label">Sun</span>
       </button>
     </div>
@@ -70,7 +66,145 @@
       </button>
     </div>
 
-    <!-- Misc map-region children ──────────────────────────────────── -->
+    <!-- LEFT PANEL: always Layers; in Route mode also Route content ─ -->
+    <aside class="left-panel" id="left-panel">
+
+      <!-- Layers section (always visible) -->
+      <section class="left-section layers-section">
+        <header class="left-section-head">
+          <h3>Layers</h3>
+          <button class="left-section-collapse" id="layers-collapse" title="Collapse">‹</button>
+        </header>
+        <div class="layers-list" id="layers-list">
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-pistes" checked>
+            <span class="swatch" style="background:linear-gradient(90deg,var(--green) 0 25%,var(--blue) 25% 50%,var(--red) 50% 75%,var(--black) 75% 100%)"></span>
+            <span class="name">Pistes</span>
+            <span class="count" id="layer-count-pistes">—</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-lifts" checked>
+            <span class="swatch" style="background:var(--lift)"></span>
+            <span class="name">Lifts</span>
+            <span class="count" id="layer-count-lifts">—</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-stations" checked>
+            <span class="swatch" style="background:#fff;border:1.5px solid var(--lift);border-radius:50%"></span>
+            <span class="name">Stations</span>
+            <span class="count" id="layer-count-stations">—</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-villages" checked>
+            <span class="swatch" style="background:var(--accent);border-radius:50%"></span>
+            <span class="name">Villages</span>
+            <span class="count" id="layer-count-villages">—</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-skates">
+            <span class="swatch" style="background:repeating-linear-gradient(90deg,#9aa3aa 0 3px,transparent 3px 6px)"></span>
+            <span class="name">Skating</span>
+            <span class="count mono">aux</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-contours" checked>
+            <span class="swatch" style="background:repeating-linear-gradient(90deg,#9a8554 0 2px,transparent 2px 4px)"></span>
+            <span class="name">Contours</span>
+            <span class="count mono">100m</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-hillshade" checked>
+            <span class="swatch" style="background:linear-gradient(135deg,#bda678,#5a4828)"></span>
+            <span class="name">Hillshade</span>
+            <span class="count mono">on</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-terrain" checked>
+            <span class="swatch" style="background:linear-gradient(180deg,#a8d8a8,#5a4828)"></span>
+            <span class="name">3D terrain</span>
+            <span class="count mono">DEM</span>
+          </label>
+          <label class="layer">
+            <input type="checkbox" class="checkbox" id="lyr-shadows" checked>
+            <span class="swatch" style="background:#15130f"></span>
+            <span class="name">Shadows</span>
+            <span class="count mono">live</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Route section (visible in Route mode only) -->
+      <section class="left-section route-section" id="route-section">
+        <header class="left-section-head">
+          <h3>Route finder</h3>
+        </header>
+
+        <div class="route-body">
+          <div id="user-route-info">
+            <div class="ab-status">
+              <span class="empty">Click the map to place pin A.</span>
+            </div>
+          </div>
+
+          <div class="difficulty-seg" id="user-difficulty-seg">
+            <button type="button" data-mode="prefer-easy" class="on">Greens &amp; blues</button>
+            <button type="button" data-mode="reds-if-needed">Reds OK</button>
+            <button type="button" data-mode="any-piste">Fastest</button>
+          </div>
+          <select id="user-difficulty" hidden>
+            <option value="prefer-easy" selected>Prefer greens &amp; blues</option>
+            <option value="reds-if-needed">Reds if needed</option>
+            <option value="any-piste">Any piste (fastest)</option>
+          </select>
+
+          <div class="summary-chips" id="route-summary-chips" hidden></div>
+          <button id="clear-route-btn" style="display:none">Clear</button>
+        </div>
+
+        <div class="tabs" id="route-tabs" role="tablist">
+          <button class="tab on" data-tab="itin" role="tab" aria-selected="true">
+            Itinerary <span class="count" id="tab-count-itin">—</span>
+          </button>
+          <button class="tab" data-tab="elev" role="tab" aria-selected="false">
+            Elevation <span class="count" id="tab-count-elev">—</span>
+          </button>
+          <button class="tab" data-tab="algo" role="tab" aria-selected="false">
+            Algorithm <span class="count" id="tab-count-algo">DIJK</span>
+          </button>
+        </div>
+
+        <div class="tab-content">
+          <div class="tab-pane on" data-tab-pane="itin">
+            <div id="itinerary"></div>
+            <div class="pane-empty" id="itin-empty">Drop two pins on the map to build a route.</div>
+          </div>
+          <div class="tab-pane" data-tab-pane="elev">
+            <div id="elevation-profile" class="elev-pane" hidden></div>
+            <div class="pane-empty" id="elev-empty">An elevation profile appears here once a route is plotted.</div>
+          </div>
+          <div class="tab-pane" data-tab-pane="algo">
+            <div class="algo-tab-body">
+              <label for="anim-algorithm">Algorithm</label>
+              <select id="anim-algorithm">
+                <option value="dijkstra">Dijkstra (radial)</option>
+                <option value="astar">A* (goal-directed)</option>
+                <option value="bidir">Bidirectional Dijkstra</option>
+              </select>
+              <label for="anim-speed" style="margin-top:10px">Speed: <span class="mono" id="anim-speed-label">200</span> n/s</label>
+              <input type="range" id="anim-speed" min="30" max="3000" step="10" value="200">
+              <div style="display:flex;gap:6px;margin-top:10px">
+                <button id="anim-run-btn" class="primary" style="flex:1">▶ Animate</button>
+                <button id="anim-stop-btn">⏹</button>
+              </div>
+              <div id="anim-stats">Drop two pins, then press Animate to watch the search expand.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- Other misc map-region children ─────────────────────────── -->
     <div id="perf-overlay">
       <span class="label">fps</span> <span id="perf-fps">--</span> ·
       <span class="label">frame</span> <span id="perf-frame-ms">--</span><span class="label">ms</span><br>
@@ -100,7 +234,7 @@
       <div class="frontier-strip" id="algo-hero-strip"></div>
     </div>
 
-    <!-- BOTTOM-RIGHT: attribution ─────────────────────────────────── -->
+    <!-- BOTTOM-RIGHT attribution ──────────────────────────────────── -->
     <div class="attribution-corner">
       Map © <a href="https://www.openstreetmap.org/copyright">OSM</a> ·
       <a href="https://openfreemap.org/">OpenFreeMap</a> ·
@@ -112,164 +246,14 @@
     </div>
   </div>
 
-  <!-- BOTTOM PANE — mode-driven content ──────────────────────────── -->
+  <!-- BOTTOM PANE — only used by Sun mode now ────────────────────── -->
   <div id="bottom-pane">
-
-    <!-- LAYERS MODE ── -->
-    <div class="bottom-mode" data-bottom-mode="layers" hidden>
-      <div class="layers-pane">
-        <div class="layers-pane-head">
-          <h3>Map layers</h3>
-          <span class="muted">Toggle what the map shows.</span>
-        </div>
-        <div class="layers-grid">
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-pistes" checked>
-            <span class="swatch" style="background:linear-gradient(90deg,var(--green) 0 25%,var(--blue) 25% 50%,var(--red) 50% 75%,var(--black) 75% 100%)"></span>
-            <span class="name">Pistes</span>
-            <span class="count" id="layer-count-pistes">—</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-lifts" checked>
-            <span class="swatch" style="background:var(--lift)"></span>
-            <span class="name">Lifts</span>
-            <span class="count" id="layer-count-lifts">—</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-stations" checked>
-            <span class="swatch" style="background:#fff;border:1.5px solid var(--lift);border-radius:50%"></span>
-            <span class="name">Stations</span>
-            <span class="count" id="layer-count-stations">—</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-villages" checked>
-            <span class="swatch" style="background:var(--accent);border-radius:50%"></span>
-            <span class="name">Villages</span>
-            <span class="count" id="layer-count-villages">—</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-skates">
-            <span class="swatch" style="background:repeating-linear-gradient(90deg,#9aa3aa 0 3px,transparent 3px 6px)"></span>
-            <span class="name">Skating links</span>
-            <span class="count mono">aux</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-contours" checked>
-            <span class="swatch" style="background:repeating-linear-gradient(90deg,#9a8554 0 2px,transparent 2px 4px)"></span>
-            <span class="name">Contours</span>
-            <span class="count mono">100 m</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-hillshade" checked>
-            <span class="swatch" style="background:linear-gradient(135deg,#bda678,#5a4828)"></span>
-            <span class="name">Hillshade</span>
-            <span class="count mono">0.95</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-terrain" checked>
-            <span class="swatch" style="background:linear-gradient(180deg,#a8d8a8,#5a4828)"></span>
-            <span class="name">3D terrain</span>
-            <span class="count mono">DEM</span>
-          </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-shadows" checked>
-            <span class="swatch" style="background:#15130f"></span>
-            <span class="name">Sun shadows</span>
-            <span class="count mono">live</span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!-- ROUTE MODE ── -->
-    <div class="bottom-mode" data-bottom-mode="route">
-      <div class="bottom-topbar">
-        <div class="col">
-          <div class="col-title">Route Finder</div>
-          <div id="user-route-info">
-            <div class="ab-status">
-              <span class="empty">Click the map to place pin A.</span>
-            </div>
-          </div>
-          <div class="difficulty-seg" id="user-difficulty-seg">
-            <button type="button" data-mode="prefer-easy"   class="on">Greens &amp; blues</button>
-            <button type="button" data-mode="reds-if-needed">Reds OK</button>
-            <button type="button" data-mode="any-piste">Fastest</button>
-          </div>
-          <select id="user-difficulty" hidden>
-            <option value="prefer-easy" selected>Prefer greens &amp; blues</option>
-            <option value="reds-if-needed">Reds if needed</option>
-            <option value="any-piste">Any piste (fastest)</option>
-          </select>
-          <div class="summary-chips" id="route-summary-chips" hidden></div>
-          <button id="clear-route-btn" style="display:none">Clear</button>
-        </div>
-      </div>
-
-      <div class="tabs" id="route-tabs" role="tablist">
-        <button class="tab on" data-tab="itin" role="tab" aria-selected="true">
-          Itinerary <span class="count" id="tab-count-itin">—</span>
-        </button>
-        <button class="tab" data-tab="elev" role="tab" aria-selected="false">
-          Elevation <span class="count" id="tab-count-elev">—</span>
-        </button>
-        <button class="tab" data-tab="algo" role="tab" aria-selected="false">
-          Algorithm <span class="count" id="tab-count-algo">DIJK</span>
-        </button>
-        <button class="tab" data-tab="alt" role="tab" aria-selected="false">
-          Alternates <span class="count" id="tab-count-alt">—</span>
-        </button>
-        <div class="tab tab-hint">↑↓ between rows</div>
-      </div>
-
-      <div class="tab-content">
-        <div class="tab-pane on" data-tab-pane="itin">
-          <div id="itinerary"></div>
-          <div class="pane-empty" id="itin-empty">Drop two pins on the map to build a route.</div>
-        </div>
-        <div class="tab-pane" data-tab-pane="elev">
-          <div id="elevation-profile" class="elev-pane" hidden></div>
-          <div class="pane-empty" id="elev-empty">An elevation profile appears here once a route is plotted.</div>
-        </div>
-        <div class="tab-pane" data-tab-pane="algo">
-          <div class="algo-tab-body">
-            <div class="algo-row">
-              <div style="flex:1 1 200px;min-width:160px">
-                <label for="anim-algorithm">Algorithm</label>
-                <select id="anim-algorithm">
-                  <option value="dijkstra">Dijkstra (radial)</option>
-                  <option value="astar">A* (goal-directed)</option>
-                  <option value="bidir">Bidirectional Dijkstra</option>
-                </select>
-              </div>
-              <div style="flex:1 1 240px;min-width:200px">
-                <label for="anim-speed">Speed: <span class="mono" id="anim-speed-label">200</span> n/s</label>
-                <input type="range" id="anim-speed" min="30" max="3000" step="10" value="200">
-              </div>
-              <div style="display:flex;gap:6px;align-items:flex-end">
-                <button id="anim-run-btn" class="primary">▶ Animate</button>
-                <button id="anim-stop-btn">⏹</button>
-              </div>
-            </div>
-            <div id="anim-stats">Drop two pins, then press Animate to watch the search expand.</div>
-          </div>
-        </div>
-        <div class="tab-pane" data-tab-pane="alt">
-          <div class="pane-empty">Alternates aren't computed yet — coming soon.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SUN MODE ── -->
-    <div class="bottom-mode" data-bottom-mode="sun" hidden>
-      <div id="time-scrubber" class="time-scrubber"></div>
-    </div>
-
+    <div id="time-scrubber" class="time-scrubber"></div>
   </div>
 
 </div>
 
-<!-- Hidden helpers required by sun.js for legacy state mirroring -->
+<!-- Hidden compat helpers required by older code paths -->
 <input type="hidden" id="sun-date" value="">
 <span id="sun-time-label" hidden></span>
 <span id="sun-track-marker" hidden></span>
@@ -281,7 +265,7 @@
 
 <script type="module" src="./js/app.js"></script>
 <script>
-  // ── Tab switching inside the Route mode's pane ──
+  // ── Tab switching inside the Route section ──
   const tabBar  = document.getElementById("route-tabs");
   const tabs    = tabBar.querySelectorAll(".tab[data-tab]");
   const panes   = document.querySelectorAll(".tab-pane[data-tab-pane]");
@@ -307,7 +291,7 @@
     });
   });
 
-  // ── Hide UI button (collapses both top floats + bottom pane) ──
+  // ── Hide UI / bottom pane ──
   const bBtn  = document.getElementById("bottom-toggle");
   const uiBtn = document.getElementById("ui-toggle");
   function setBottom(open) {
@@ -327,7 +311,7 @@
     uiBtn.click();
   });
 
-  // ── Info popover (resort details) ──
+  // ── Info popover ──
   const infoBtn = document.getElementById("info-btn");
   const infoPop = document.getElementById("info-popover");
   infoBtn.addEventListener("click", (e) => {
@@ -340,11 +324,23 @@
     infoPop.hidden = true;
   });
 
-  // ── Mode picker ──
+  // ── Layers section collapse (persists) ──
+  const layersCollapseBtn = document.getElementById("layers-collapse");
+  const layersList = document.getElementById("layers-list");
+  function applyLayersCollapse(collapsed) {
+    layersList.hidden = collapsed;
+    layersCollapseBtn.textContent = collapsed ? "›" : "‹";
+    layersCollapseBtn.title = collapsed ? "Expand layers" : "Collapse layers";
+    localStorage.setItem("ski:layers-collapsed", collapsed ? "1" : "0");
+  }
+  layersCollapseBtn.addEventListener("click", () =>
+    applyLayersCollapse(!layersList.hidden));
+  applyLayersCollapse(localStorage.getItem("ski:layers-collapsed") === "1");
+
+  // ── Mode picker (just Route · Sun) ──
   const modePicker = document.getElementById("mode-picker");
   const modeBtns   = modePicker.querySelectorAll("button[data-mode]");
-  const bottomModes = document.querySelectorAll(".bottom-mode[data-bottom-mode]");
-  const VALID_MODES = ["layers", "route", "sun"];
+  const VALID_MODES = ["route", "sun"];
   function setMode(name) {
     if (!VALID_MODES.includes(name)) name = "route";
     modeBtns.forEach((b) => {
@@ -352,25 +348,20 @@
       b.classList.toggle("on", on);
       b.setAttribute("aria-selected", on ? "true" : "false");
     });
-    bottomModes.forEach((p) => { p.hidden = p.dataset.bottomMode !== name; });
-    document.body.classList.remove("mode-layers", "mode-route", "mode-sun");
+    document.body.classList.remove("mode-route", "mode-sun");
     document.body.classList.add("mode-" + name);
     localStorage.setItem("ski:mode", name);
+
     if (name === "sun" && window._renderTimeScrubber) window._renderTimeScrubber();
 
-    // Route mode auto-flattens to 2D — pin placement is much easier
-    // without 3D perspective foreshortening. User can re-enable 3D
-    // from the toolbar at any time.
+    // Route mode flattens to 2D for cleaner pin placement.
     const m = window._skihomeMap;
     if (m && name === "route" && m.getPitch() > 1) {
       m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
       const btn3d = document.getElementById("toggle-3d");
       if (btn3d) btn3d.textContent = "3D · 42°";
     }
-
-    setTimeout(() => {
-      if (m && typeof m.resize === "function") m.resize();
-    }, 240);
+    setTimeout(() => { if (m && m.resize) m.resize(); }, 240);
   }
   modeBtns.forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
   setMode(localStorage.getItem("ski:mode") || "route");

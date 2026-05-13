@@ -329,48 +329,85 @@ body.ui-hidden .attribution-corner { display: none !important; }
 }
 .attribution-corner a:hover { color: var(--d-text); }
 
-/* ───── Bottom-pane visibility per mode ───── */
+/* ───── LEFT PANEL — Layers always; +Route in Route mode ───── */
 
-.bottom-mode[hidden] { display: none; }
-body.mode-layers #bottom-pane { flex: 0 0 260px; height: 260px; }
-body.mode-route  #bottom-pane { flex: 0 0 380px; height: 380px; }
-body.mode-sun    #bottom-pane { flex: 0 0 180px; height: 180px; }
-
-/* ───── Layers mode pane (in the bottom pane) ───── */
-
-.layers-pane {
-  padding: 16px 22px;
-  height: 100%;
-  overflow-y: auto;
-}
-.layers-pane-head {
+.left-panel {
+  position: absolute;
+  top: 70px;
+  left: 16px;
+  bottom: 32px;
+  z-index: 1400;
+  width: 220px;
+  background: rgba(250, 246, 234, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--l-text);
+  border: 1px solid var(--l-line);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
   display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 14px;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 220ms ease;
 }
-.layers-pane-head h3 {
-  margin: 0;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--l-text-2);
+body.mode-route .left-panel { width: 340px; }
+body.mode-sun   .left-panel { width: 220px; }
+body.mode-sun   .left-panel { bottom: 196px; }  /* leave room for scrubber */
+
+.left-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
-.layers-pane-head .muted { font-size: 11.5px; color: var(--l-text-3); }
-.layers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px 22px;
-}
-.layers-grid .layer {
+.left-section + .left-section { border-top: 1px solid var(--l-line); }
+
+.left-section-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
+  gap: 8px;
+  padding: 12px 14px 8px;
+}
+.left-section-head h3 {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--l-text-3);
+  flex: 1;
+}
+.left-section-collapse {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--l-line);
+  color: var(--l-text-3);
+  border-radius: 4px;
+  width: 20px; height: 20px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.left-section-collapse:hover { color: var(--l-text); }
+
+.layers-section { flex: 0 0 auto; }
+.layers-list {
+  padding: 4px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.layers-list[hidden] { display: none; }
+.layers-list .layer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
   cursor: pointer;
   color: var(--l-text);
 }
-.layers-grid .layer .checkbox {
+.layers-list .layer .checkbox {
   width: 14px; height: 14px;
   border: 1px solid var(--l-text-3);
   border-radius: 3px;
@@ -380,11 +417,11 @@ body.mode-sun    #bottom-pane { flex: 0 0 180px; height: 180px; }
   appearance: none;
   cursor: pointer;
 }
-.layers-grid .layer .checkbox:checked {
+.layers-list .layer .checkbox:checked {
   background: var(--l-text);
   border-color: var(--l-text);
 }
-.layers-grid .layer .checkbox:checked::after {
+.layers-list .layer .checkbox:checked::after {
   content: "";
   position: absolute;
   left: 3px; top: 0;
@@ -393,18 +430,34 @@ body.mode-sun    #bottom-pane { flex: 0 0 180px; height: 180px; }
   border-width: 0 1.5px 1.5px 0;
   transform: rotate(45deg);
 }
-.layers-grid .layer .swatch {
+.layers-list .layer .swatch {
   width: 14px; height: 14px;
   border-radius: 3px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   flex: 0 0 auto;
 }
-.layers-grid .layer .name { flex: 1; }
-.layers-grid .layer .count {
+.layers-list .layer .name { flex: 1; }
+.layers-list .layer .count {
   color: var(--l-text-3);
-  font-size: 11px;
+  font-size: 10.5px;
   font-family: "JetBrains Mono", monospace;
 }
+
+/* Route section inside the left panel */
+.route-section { display: none; flex: 1 1 auto; min-height: 0; }
+body.mode-route .route-section { display: flex; }
+
+.route-body {
+  padding: 4px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ───── Bottom-pane visibility per mode ───── */
+
+body.mode-route #bottom-pane { display: none; }
+body.mode-sun   #bottom-pane { flex: 0 0 180px; height: 180px; }
 
 /* Route mode: signal "drop a pin" with a crosshair cursor. MapLibre
    sets cursor inline during drag (→ grabbing) which beats this; the
