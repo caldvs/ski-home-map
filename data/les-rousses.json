@@ -1,0 +1,10598 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "lon": 6.081979,
+      "lat": 46.437447,
+      "elev": 1231.3,
+      "name": "Leseneys bottom",
+      "villages": []
+    },
+    {
+      "id": 1,
+      "lon": 6.085553,
+      "lat": 46.429592,
+      "elev": 1467.2,
+      "name": "Leseneys top",
+      "villages": []
+    },
+    {
+      "id": 2,
+      "lon": 6.065943,
+      "lat": 46.453187,
+      "elev": 1152.0,
+      "name": "Tuffes bottom",
+      "villages": []
+    },
+    {
+      "id": 3,
+      "lon": 6.064555,
+      "lat": 46.44804,
+      "elev": 1353.9,
+      "name": "Tuffes top",
+      "villages": []
+    },
+    {
+      "id": 4,
+      "lon": 6.107159,
+      "lat": 46.425698,
+      "elev": 1440.9,
+      "name": "T\u00e9l\u00e9ph\u00e9rique de service bottom",
+      "villages": []
+    },
+    {
+      "id": 5,
+      "lon": 6.100379,
+      "lat": 46.425665,
+      "elev": 1669.0,
+      "name": "T\u00e9l\u00e9ph\u00e9rique de service top",
+      "villages": []
+    },
+    {
+      "id": 6,
+      "lon": 6.090577,
+      "lat": 46.442287,
+      "elev": 1254.7,
+      "name": "Cuvaloup 3 bottom",
+      "villages": []
+    },
+    {
+      "id": 7,
+      "lon": 6.101992,
+      "lat": 46.431094,
+      "elev": 1593.5,
+      "name": "Cuvaloup 3 top",
+      "villages": []
+    },
+    {
+      "id": 8,
+      "lon": 6.057277,
+      "lat": 46.452882,
+      "elev": 1226.4,
+      "name": "Jouvencelles bottom",
+      "villages": []
+    },
+    {
+      "id": 9,
+      "lon": 6.064087,
+      "lat": 46.445491,
+      "elev": 1413.7,
+      "name": "Jouvencelles top",
+      "villages": []
+    },
+    {
+      "id": 10,
+      "lon": 6.054936,
+      "lat": 46.456127,
+      "elev": 1163.2,
+      "name": "Jouvenceaux bottom",
+      "villages": []
+    },
+    {
+      "id": 11,
+      "lon": 6.066084,
+      "lat": 46.445393,
+      "elev": 1420.2,
+      "name": "Jouvenceaux top",
+      "villages": []
+    },
+    {
+      "id": 12,
+      "lon": 6.075109,
+      "lat": 46.431713,
+      "elev": 1245.6,
+      "name": "Tabagnoz bottom",
+      "villages": []
+    },
+    {
+      "id": 13,
+      "lon": 6.079927,
+      "lat": 46.425485,
+      "elev": 1431.2,
+      "name": "Tabagnoz top",
+      "villages": []
+    },
+    {
+      "id": 14,
+      "lon": 6.135714,
+      "lat": 46.533226,
+      "elev": 1059.9,
+      "name": "Marmousets bottom",
+      "villages": []
+    },
+    {
+      "id": 15,
+      "lon": 6.136779,
+      "lat": 46.53263,
+      "elev": 1069.8,
+      "name": "Marmousets top",
+      "villages": []
+    },
+    {
+      "id": 16,
+      "lon": 6.044799,
+      "lat": 46.446304,
+      "elev": 1140.3,
+      "name": "Darbella bottom",
+      "villages": []
+    },
+    {
+      "id": 17,
+      "lon": 6.066333,
+      "lat": 46.444909,
+      "elev": 1418.2,
+      "name": "Darbella top",
+      "villages": []
+    },
+    {
+      "id": 18,
+      "lon": 6.085774,
+      "lat": 46.439902,
+      "elev": 1237.2,
+      "name": "Valdappes bottom",
+      "villages": []
+    },
+    {
+      "id": 19,
+      "lon": 6.08868,
+      "lat": 46.437763,
+      "elev": 1307.5,
+      "name": "Valdappes top",
+      "villages": []
+    },
+    {
+      "id": 20,
+      "lon": 6.05324,
+      "lat": 46.45395,
+      "elev": 1176.1,
+      "name": "Beauregard bottom",
+      "villages": []
+    },
+    {
+      "id": 21,
+      "lon": 6.057667,
+      "lat": 46.449373,
+      "elev": 1274.7,
+      "name": "Beauregard top",
+      "villages": []
+    },
+    {
+      "id": 22,
+      "lon": 6.078184,
+      "lat": 46.447471,
+      "elev": 1200.8,
+      "name": "Balancier bottom",
+      "villages": []
+    },
+    {
+      "id": 23,
+      "lon": 6.067368,
+      "lat": 46.445537,
+      "elev": 1422.9,
+      "name": "Balancier top",
+      "villages": []
+    },
+    {
+      "id": 24,
+      "lon": 6.082506,
+      "lat": 46.437787,
+      "elev": 1232.9,
+      "name": "Reculet bottom",
+      "villages": []
+    },
+    {
+      "id": 25,
+      "lon": 6.08692,
+      "lat": 46.436705,
+      "elev": 1302.5,
+      "name": "Reculet top",
+      "villages": []
+    },
+    {
+      "id": 26,
+      "lon": 6.081938,
+      "lat": 46.43832,
+      "elev": 1238.3,
+      "name": "Dappes - Tuffes bottom",
+      "villages": []
+    },
+    {
+      "id": 27,
+      "lon": 6.067059,
+      "lat": 46.444819,
+      "elev": 1412.5,
+      "name": "Dappes - Tuffes top",
+      "villages": []
+    },
+    {
+      "id": 28,
+      "lon": 6.082863,
+      "lat": 46.438472,
+      "elev": 1232.2,
+      "name": "Dappes bottom",
+      "villages": []
+    },
+    {
+      "id": 29,
+      "lon": 6.099278,
+      "lat": 46.425819,
+      "elev": 1662.5,
+      "name": "Dappes top",
+      "villages": []
+    },
+    {
+      "id": 30,
+      "lon": 6.08637,
+      "lat": 46.443183,
+      "elev": 1233.7,
+      "name": "Neige bottom",
+      "villages": []
+    },
+    {
+      "id": 31,
+      "lon": 6.08803,
+      "lat": 46.442715,
+      "elev": 1249.1,
+      "name": "Neige top",
+      "villages": []
+    },
+    {
+      "id": 32,
+      "lon": 6.093624,
+      "lat": 46.439671,
+      "elev": 1320.9,
+      "name": "Couvaloup 2 top",
+      "villages": []
+    },
+    {
+      "id": 33,
+      "lon": 6.052755,
+      "lat": 46.454457,
+      "elev": 1172.1,
+      "name": "Combe des Dappes bottom",
+      "villages": []
+    },
+    {
+      "id": 34,
+      "lon": 6.078378,
+      "lat": 46.445757,
+      "elev": 1232.8,
+      "name": "Baby Balancier top",
+      "villages": []
+    },
+    {
+      "id": 35,
+      "lon": 6.068736,
+      "lat": 46.45067,
+      "elev": 1161.5,
+      "name": "Tremplin des Tuffes bottom",
+      "villages": []
+    },
+    {
+      "id": 36,
+      "lon": 6.067252,
+      "lat": 46.449695,
+      "elev": 1216.1,
+      "name": "Tremplin des Tuffes top",
+      "villages": []
+    },
+    {
+      "id": 37,
+      "lon": 6.08336,
+      "lat": 46.445244,
+      "elev": 1215.3,
+      "name": "Liaison bottom",
+      "villages": []
+    },
+    {
+      "id": 38,
+      "lon": 6.081442,
+      "lat": 46.4454,
+      "elev": 1220.6,
+      "name": "Liaison top",
+      "villages": []
+    },
+    {
+      "id": 39,
+      "lon": 6.06415,
+      "lat": 46.446146,
+      "elev": 1411.2,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 40,
+      "lon": 6.06273,
+      "lat": 46.449136,
+      "elev": 1317.4,
+      "name": "Nathalie Bouvier top",
+      "villages": []
+    },
+    {
+      "id": 41,
+      "lon": 6.060899,
+      "lat": 46.451673,
+      "elev": 1266.6,
+      "name": "D\u00e9vers des Tuffes top",
+      "villages": []
+    },
+    {
+      "id": 42,
+      "lon": 6.055725,
+      "lat": 46.45407,
+      "elev": 1196.2,
+      "name": "Baby Jouvencelles top",
+      "villages": []
+    },
+    {
+      "id": 43,
+      "lon": 6.054924,
+      "lat": 46.453856,
+      "elev": 1190.7,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 44,
+      "lon": 6.094254,
+      "lat": 46.440169,
+      "elev": 1317.6,
+      "name": "Chalet bottom",
+      "villages": []
+    },
+    {
+      "id": 45,
+      "lon": 6.063476,
+      "lat": 46.444999,
+      "elev": 1397.7,
+      "name": "Route Foresti\u00e8re des Dappes top",
+      "villages": []
+    },
+    {
+      "id": 46,
+      "lon": 6.061434,
+      "lat": 46.44575,
+      "elev": 1362.0,
+      "name": "Route Foresti\u00e8re des Dappes bottom",
+      "villages": []
+    },
+    {
+      "id": 47,
+      "lon": 6.080333,
+      "lat": 46.446442,
+      "elev": 1210.1,
+      "name": "Liaison Franco-Suisse bottom",
+      "villages": []
+    },
+    {
+      "id": 48,
+      "lon": 6.054296,
+      "lat": 46.45552,
+      "elev": 1165.2,
+      "name": "Baby Jouvencelles bottom",
+      "villages": []
+    },
+    {
+      "id": 49,
+      "lon": 6.097619,
+      "lat": 46.431822,
+      "elev": 1502.4,
+      "name": "Les Combes top",
+      "villages": []
+    },
+    {
+      "id": 50,
+      "lon": 6.08902,
+      "lat": 46.436106,
+      "elev": 1357.6,
+      "name": "Les Combes bottom",
+      "villages": []
+    },
+    {
+      "id": 51,
+      "lon": 6.062428,
+      "lat": 46.444734,
+      "elev": 1381.1,
+      "name": "Beauregard top",
+      "villages": []
+    },
+    {
+      "id": 52,
+      "lon": 6.05563,
+      "lat": 46.454876,
+      "elev": 1181.9,
+      "name": "Beauregard bottom",
+      "villages": []
+    },
+    {
+      "id": 53,
+      "lon": 6.086852,
+      "lat": 46.437932,
+      "elev": 1278.8,
+      "name": "Franco-Suisse bottom",
+      "villages": []
+    },
+    {
+      "id": 54,
+      "lon": 6.101229,
+      "lat": 46.430505,
+      "elev": 1585.7,
+      "name": "Franco-Suisse top",
+      "villages": []
+    },
+    {
+      "id": 55,
+      "lon": 6.098803,
+      "lat": 46.431391,
+      "elev": 1520.9,
+      "name": "Franco-Suisse bottom",
+      "villages": []
+    },
+    {
+      "id": 56,
+      "lon": 6.059281,
+      "lat": 46.447267,
+      "elev": 1314.8,
+      "name": "Liaison Darbella top",
+      "villages": []
+    },
+    {
+      "id": 57,
+      "lon": 6.054406,
+      "lat": 46.444735,
+      "elev": 1274.7,
+      "name": "Liaison Darbella bottom",
+      "villages": []
+    },
+    {
+      "id": 58,
+      "lon": 6.080966,
+      "lat": 46.430761,
+      "elev": 1382.4,
+      "name": "Liaison L\u00e9seneys bottom",
+      "villages": []
+    },
+    {
+      "id": 59,
+      "lon": 6.091881,
+      "lat": 46.440692,
+      "elev": 1285.3,
+      "name": "Chalet top",
+      "villages": []
+    },
+    {
+      "id": 60,
+      "lon": 6.08877,
+      "lat": 46.436525,
+      "elev": 1337.6,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 61,
+      "lon": 6.087961,
+      "lat": 46.437518,
+      "elev": 1303.1,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 62,
+      "lon": 6.05812,
+      "lat": 46.450002,
+      "elev": 1263.5,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 63,
+      "lon": 6.080036,
+      "lat": 46.438771,
+      "elev": 1253.6,
+      "name": "Gaston Cottet top",
+      "villages": []
+    },
+    {
+      "id": 64,
+      "lon": 6.091001,
+      "lat": 46.441487,
+      "elev": 1267.4,
+      "name": "Liaison Valdappes - Cuvaloup bottom",
+      "villages": []
+    },
+    {
+      "id": 65,
+      "lon": 6.068695,
+      "lat": 46.443719,
+      "elev": 1398.1,
+      "name": "Balancier top",
+      "villages": []
+    },
+    {
+      "id": 66,
+      "lon": 6.078673,
+      "lat": 46.446961,
+      "elev": 1203.6,
+      "name": "Liaison Franco-Suisse bottom",
+      "villages": []
+    },
+    {
+      "id": 67,
+      "lon": 6.075897,
+      "lat": 46.429466,
+      "elev": 1306.0,
+      "name": "La Germine, La P\u00e9troule top",
+      "villages": []
+    },
+    {
+      "id": 68,
+      "lon": 6.082862,
+      "lat": 46.434924,
+      "elev": 1276.2,
+      "name": "Les Quatres-Murs bottom",
+      "villages": []
+    },
+    {
+      "id": 69,
+      "lon": 6.074641,
+      "lat": 46.442511,
+      "elev": 1344.2,
+      "name": "Gaston Cottet top",
+      "villages": []
+    },
+    {
+      "id": 70,
+      "lon": 6.090502,
+      "lat": 46.442791,
+      "elev": 1251.3,
+      "name": "Chalet top",
+      "villages": []
+    },
+    {
+      "id": 71,
+      "lon": 6.081125,
+      "lat": 46.431248,
+      "elev": 1374.1,
+      "name": "Liaison Tabagnoz top",
+      "villages": []
+    },
+    {
+      "id": 72,
+      "lon": 6.085655,
+      "lat": 46.438348,
+      "elev": 1262.0,
+      "name": "Liaison Reculet-Dessous - Valdappes top",
+      "villages": []
+    },
+    {
+      "id": 73,
+      "lon": 6.080369,
+      "lat": 46.442287,
+      "elev": 1284.3,
+      "name": "Boarder cross top",
+      "villages": []
+    },
+    {
+      "id": 74,
+      "lon": 6.07937,
+      "lat": 46.446006,
+      "elev": 1218.6,
+      "name": "Boarder cross bottom",
+      "villages": []
+    },
+    {
+      "id": 75,
+      "lon": 6.059858,
+      "lat": 46.451673,
+      "elev": 1261.0,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 76,
+      "lon": 6.091226,
+      "lat": 46.442665,
+      "elev": 1261.7,
+      "name": "Competition bottom",
+      "villages": []
+    },
+    {
+      "id": 77,
+      "lon": 6.058079,
+      "lat": 46.444446,
+      "elev": 1336.5,
+      "name": "Liaison Jouvencelles top",
+      "villages": []
+    },
+    {
+      "id": 78,
+      "lon": 6.059431,
+      "lat": 46.447881,
+      "elev": 1305.3,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 79,
+      "lon": 6.084257,
+      "lat": 46.430085,
+      "elev": 1445.6,
+      "name": "Les L\u00e9sines top",
+      "villages": []
+    },
+    {
+      "id": 80,
+      "lon": 6.09194,
+      "lat": 46.439514,
+      "elev": 1305.1,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 81,
+      "lon": 6.06367,
+      "lat": 46.446558,
+      "elev": 1398.7,
+      "name": "D\u00e9vers des Tuffes top",
+      "villages": []
+    },
+    {
+      "id": 82,
+      "lon": 6.089566,
+      "lat": 46.435672,
+      "elev": 1370.9,
+      "name": "Liaison Cuvaloup top",
+      "villages": []
+    },
+    {
+      "id": 83,
+      "lon": 6.05398,
+      "lat": 46.453911,
+      "elev": 1178.9,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 84,
+      "lon": 6.062364,
+      "lat": 46.450134,
+      "elev": 1293.9,
+      "name": "Vincent Gauthier-Manuel top",
+      "villages": []
+    },
+    {
+      "id": 85,
+      "lon": 6.060732,
+      "lat": 46.450939,
+      "elev": 1282.2,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 86,
+      "lon": 6.064857,
+      "lat": 46.452709,
+      "elev": 1167.7,
+      "name": "Vincent Gauthier-Manuel bottom",
+      "villages": []
+    },
+    {
+      "id": 87,
+      "lon": 6.10022,
+      "lat": 46.428565,
+      "elev": 1612.7,
+      "name": "Reculets-Dessus top",
+      "villages": []
+    },
+    {
+      "id": 88,
+      "lon": 6.056153,
+      "lat": 46.453381,
+      "elev": 1213.2,
+      "name": "Beauregard top",
+      "villages": []
+    },
+    {
+      "id": 89,
+      "lon": 6.058086,
+      "lat": 46.452854,
+      "elev": 1232.7,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 90,
+      "lon": 6.056447,
+      "lat": 46.452105,
+      "elev": 1227.2,
+      "name": "",
+      "villages": []
+    }
+  ],
+  "edges": [
+    {
+      "from": 0,
+      "to": 1,
+      "type": "lift",
+      "name": "Leseneys",
+      "cost_base": 300,
+      "length_m": 915.6,
+      "elev_drop": -235.9,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.081979,
+          46.437447
+        ],
+        [
+          6.084356,
+          46.431958
+        ],
+        [
+          6.085553,
+          46.429592
+        ]
+      ]
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "type": "lift",
+      "name": "Tuffes",
+      "cost_base": 300,
+      "length_m": 582.1,
+      "elev_drop": -201.9,
+      "lift_type": "drag_lift",
+      "geometry": [
+        [
+          6.065943,
+          46.453187
+        ],
+        [
+          6.065769,
+          46.452542
+        ],
+        [
+          6.065447,
+          46.451349
+        ],
+        [
+          6.065295,
+          46.450786
+        ],
+        [
+          6.064998,
+          46.449683
+        ],
+        [
+          6.064881,
+          46.449249
+        ],
+        [
+          6.064719,
+          46.448651
+        ],
+        [
+          6.064598,
+          46.448199
+        ],
+        [
+          6.064555,
+          46.44804
+        ]
+      ]
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "type": "lift",
+      "name": "T\u00e9l\u00e9ph\u00e9rique de service",
+      "cost_base": 420,
+      "length_m": 519.7,
+      "elev_drop": -228.1,
+      "lift_type": "cable_car",
+      "geometry": [
+        [
+          6.107159,
+          46.425698
+        ],
+        [
+          6.100379,
+          46.425665
+        ]
+      ]
+    },
+    {
+      "from": 5,
+      "to": 4,
+      "type": "lift_down",
+      "name": "T\u00e9l\u00e9ph\u00e9rique de service (down)",
+      "cost_base": 1020,
+      "length_m": 519.7,
+      "elev_drop": 228.1,
+      "lift_type": "cable_car",
+      "geometry": [
+        [
+          6.100379,
+          46.425665
+        ],
+        [
+          6.107159,
+          46.425698
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "type": "lift",
+      "name": "Cuvaloup 3",
+      "cost_base": 300,
+      "length_m": 1521.3,
+      "elev_drop": -338.8,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.091703,
+          46.441183
+        ],
+        [
+          6.092563,
+          46.440339
+        ],
+        [
+          6.09314,
+          46.439773
+        ],
+        [
+          6.09525,
+          46.437703
+        ],
+        [
+          6.096323,
+          46.436651
+        ],
+        [
+          6.097121,
+          46.435867
+        ],
+        [
+          6.097919,
+          46.435084
+        ],
+        [
+          6.099059,
+          46.433966
+        ],
+        [
+          6.100281,
+          46.432767
+        ],
+        [
+          6.101158,
+          46.431907
+        ],
+        [
+          6.101683,
+          46.431418
+        ],
+        [
+          6.101992,
+          46.431094
+        ]
+      ]
+    },
+    {
+      "from": 8,
+      "to": 9,
+      "type": "lift",
+      "name": "Jouvencelles",
+      "cost_base": 300,
+      "length_m": 976.4,
+      "elev_drop": -187.3,
+      "lift_type": "drag_lift",
+      "geometry": [
+        [
+          6.057277,
+          46.452882
+        ],
+        [
+          6.057648,
+          46.452365
+        ],
+        [
+          6.058113,
+          46.451698
+        ],
+        [
+          6.058638,
+          46.450946
+        ],
+        [
+          6.058998,
+          46.450429
+        ],
+        [
+          6.059353,
+          46.450085
+        ],
+        [
+          6.060079,
+          46.44938
+        ],
+        [
+          6.060884,
+          46.4486
+        ],
+        [
+          6.062075,
+          46.447444
+        ],
+        [
+          6.063322,
+          46.446234
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 10,
+      "to": 11,
+      "type": "lift",
+      "name": "Jouvenceaux",
+      "cost_base": 360,
+      "length_m": 1467.7,
+      "elev_drop": -257.0,
+      "lift_type": "chair_lift",
+      "geometry": [
+        [
+          6.054936,
+          46.456127
+        ],
+        [
+          6.055322,
+          46.455755
+        ],
+        [
+          6.055871,
+          46.455227
+        ],
+        [
+          6.057118,
+          46.454025
+        ],
+        [
+          6.057777,
+          46.453391
+        ],
+        [
+          6.058689,
+          46.452513
+        ],
+        [
+          6.059302,
+          46.451923
+        ],
+        [
+          6.060082,
+          46.451172
+        ],
+        [
+          6.060748,
+          46.450531
+        ],
+        [
+          6.061763,
+          46.449554
+        ],
+        [
+          6.062574,
+          46.448773
+        ],
+        [
+          6.063855,
+          46.447539
+        ],
+        [
+          6.064797,
+          46.446631
+        ],
+        [
+          6.065421,
+          46.446031
+        ],
+        [
+          6.06576,
+          46.445704
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 12,
+      "to": 13,
+      "type": "lift",
+      "name": "Tabagnoz",
+      "cost_base": 300,
+      "length_m": 784.8,
+      "elev_drop": -185.6,
+      "lift_type": "t-bar",
+      "geometry": [
+        [
+          6.075109,
+          46.431713
+        ],
+        [
+          6.075141,
+          46.431672
+        ],
+        [
+          6.075703,
+          46.430946
+        ],
+        [
+          6.076068,
+          46.43049
+        ],
+        [
+          6.076827,
+          46.429506
+        ],
+        [
+          6.077682,
+          46.428399
+        ],
+        [
+          6.078309,
+          46.427586
+        ],
+        [
+          6.079227,
+          46.426399
+        ],
+        [
+          6.079557,
+          46.42597
+        ],
+        [
+          6.079927,
+          46.425485
+        ]
+      ]
+    },
+    {
+      "from": 14,
+      "to": 15,
+      "type": "lift",
+      "name": "Marmousets",
+      "cost_base": 120,
+      "length_m": 105.0,
+      "elev_drop": -9.9,
+      "lift_type": "rope_tow",
+      "geometry": [
+        [
+          6.135714,
+          46.533226
+        ],
+        [
+          6.136216,
+          46.532945
+        ],
+        [
+          6.136779,
+          46.53263
+        ]
+      ]
+    },
+    {
+      "from": 16,
+      "to": 17,
+      "type": "lift",
+      "name": "Darbella",
+      "cost_base": 300,
+      "length_m": 1754.9,
+      "elev_drop": -277.9,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.044799,
+          46.446304
+        ],
+        [
+          6.053891,
+          46.443125
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 18,
+      "to": 19,
+      "type": "lift",
+      "name": "Valdappes",
+      "cost_base": 300,
+      "length_m": 325.8,
+      "elev_drop": -70.3,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.085774,
+          46.439902
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 21,
+      "type": "lift",
+      "name": "Beauregard",
+      "cost_base": 300,
+      "length_m": 620.0,
+      "elev_drop": -98.6,
+      "lift_type": "drag_lift",
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.053394,
+          46.453549
+        ],
+        [
+          6.053664,
+          46.45285
+        ],
+        [
+          6.054246,
+          46.452344
+        ],
+        [
+          6.055036,
+          46.451658
+        ],
+        [
+          6.055957,
+          46.450858
+        ],
+        [
+          6.056497,
+          46.450389
+        ],
+        [
+          6.057448,
+          46.449563
+        ],
+        [
+          6.057667,
+          46.449373
+        ]
+      ]
+    },
+    {
+      "from": 22,
+      "to": 23,
+      "type": "lift",
+      "name": "Balancier",
+      "cost_base": 360,
+      "length_m": 856.1,
+      "elev_drop": -222.1,
+      "lift_type": "chair_lift",
+      "geometry": [
+        [
+          6.078184,
+          46.447471
+        ],
+        [
+          6.077673,
+          46.44738
+        ],
+        [
+          6.076186,
+          46.447114
+        ],
+        [
+          6.074839,
+          46.446873
+        ],
+        [
+          6.073605,
+          46.446652
+        ],
+        [
+          6.071273,
+          46.446235
+        ],
+        [
+          6.069398,
+          46.4459
+        ],
+        [
+          6.069167,
+          46.445859
+        ],
+        [
+          6.067368,
+          46.445537
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "type": "lift",
+      "name": "Cuvaloup 1",
+      "cost_base": 300,
+      "length_m": 1533.1,
+      "elev_drop": -338.9,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.091106,
+          46.441914
+        ],
+        [
+          6.091793,
+          46.441239
+        ],
+        [
+          6.092656,
+          46.440391
+        ],
+        [
+          6.093231,
+          46.439825
+        ],
+        [
+          6.09535,
+          46.437743
+        ],
+        [
+          6.097213,
+          46.435912
+        ],
+        [
+          6.098229,
+          46.434913
+        ],
+        [
+          6.099505,
+          46.433658
+        ],
+        [
+          6.100426,
+          46.432753
+        ],
+        [
+          6.101246,
+          46.431947
+        ],
+        [
+          6.101752,
+          46.431459
+        ],
+        [
+          6.101992,
+          46.431094
+        ]
+      ]
+    },
+    {
+      "from": 24,
+      "to": 25,
+      "type": "lift",
+      "name": "Reculet",
+      "cost_base": 300,
+      "length_m": 359.1,
+      "elev_drop": -69.6,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.082506,
+          46.437787
+        ],
+        [
+          6.082948,
+          46.437656
+        ],
+        [
+          6.083484,
+          46.437527
+        ],
+        [
+          6.085018,
+          46.437159
+        ],
+        [
+          6.085771,
+          46.436979
+        ],
+        [
+          6.086062,
+          46.436909
+        ],
+        [
+          6.086551,
+          46.436792
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 26,
+      "to": 27,
+      "type": "lift",
+      "name": "Dappes - Tuffes",
+      "cost_base": 360,
+      "length_m": 1349.8,
+      "elev_drop": -174.2,
+      "lift_type": "chair_lift",
+      "geometry": [
+        [
+          6.081938,
+          46.43832
+        ],
+        [
+          6.081773,
+          46.438392
+        ],
+        [
+          6.081505,
+          46.43851
+        ],
+        [
+          6.080664,
+          46.438877
+        ],
+        [
+          6.07899,
+          46.439608
+        ],
+        [
+          6.077909,
+          46.44008
+        ],
+        [
+          6.077591,
+          46.440219
+        ],
+        [
+          6.076157,
+          46.440845
+        ],
+        [
+          6.075102,
+          46.441306
+        ],
+        [
+          6.073821,
+          46.441866
+        ],
+        [
+          6.072536,
+          46.442427
+        ],
+        [
+          6.070948,
+          46.443121
+        ],
+        [
+          6.069195,
+          46.443886
+        ],
+        [
+          6.068237,
+          46.444305
+        ],
+        [
+          6.067269,
+          46.444727
+        ],
+        [
+          6.067059,
+          46.444819
+        ]
+      ]
+    },
+    {
+      "from": 28,
+      "to": 29,
+      "type": "lift",
+      "name": "Dappes",
+      "cost_base": 360,
+      "length_m": 1887.4,
+      "elev_drop": -430.3,
+      "lift_type": "chair_lift",
+      "geometry": [
+        [
+          6.082863,
+          46.438472
+        ],
+        [
+          6.083743,
+          46.437793
+        ],
+        [
+          6.084712,
+          46.437046
+        ],
+        [
+          6.085516,
+          46.436427
+        ],
+        [
+          6.086479,
+          46.435685
+        ],
+        [
+          6.087562,
+          46.43485
+        ],
+        [
+          6.089011,
+          46.433733
+        ],
+        [
+          6.090478,
+          46.432602
+        ],
+        [
+          6.091013,
+          46.432189
+        ],
+        [
+          6.092598,
+          46.430968
+        ],
+        [
+          6.094073,
+          46.429831
+        ],
+        [
+          6.095436,
+          46.42878
+        ],
+        [
+          6.096749,
+          46.427768
+        ],
+        [
+          6.098035,
+          46.426777
+        ],
+        [
+          6.098853,
+          46.426146
+        ],
+        [
+          6.098928,
+          46.426088
+        ],
+        [
+          6.099278,
+          46.425819
+        ]
+      ]
+    },
+    {
+      "from": 30,
+      "to": 31,
+      "type": "lift",
+      "name": "Neige",
+      "cost_base": 300,
+      "length_m": 137.4,
+      "elev_drop": -15.4,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.08637,
+          46.443183
+        ],
+        [
+          6.08803,
+          46.442715
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 32,
+      "type": "lift",
+      "name": "Couvaloup 2",
+      "cost_base": 300,
+      "length_m": 410.4,
+      "elev_drop": -69.9,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.091019,
+          46.44224
+        ],
+        [
+          6.0915,
+          46.441764
+        ],
+        [
+          6.091992,
+          46.441277
+        ],
+        [
+          6.092849,
+          46.440427
+        ],
+        [
+          6.093402,
+          46.439879
+        ],
+        [
+          6.093494,
+          46.439794
+        ],
+        [
+          6.093624,
+          46.439671
+        ]
+      ]
+    },
+    {
+      "from": 33,
+      "to": 20,
+      "type": "lift",
+      "name": "Combe des Dappes",
+      "cost_base": 300,
+      "length_m": 66.6,
+      "elev_drop": -4.3,
+      "lift_type": "platter",
+      "geometry": [
+        [
+          6.052755,
+          46.454457
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 22,
+      "to": 34,
+      "type": "lift",
+      "name": "Baby Balancier",
+      "cost_base": 300,
+      "length_m": 154.7,
+      "elev_drop": -31.0,
+      "lift_type": "drag_lift",
+      "geometry": [
+        [
+          6.078184,
+          46.447471
+        ],
+        [
+          6.078378,
+          46.445757
+        ]
+      ]
+    },
+    {
+      "from": 35,
+      "to": 36,
+      "type": "lift",
+      "name": "Tremplin des Tuffes",
+      "cost_base": 300,
+      "length_m": 157.2,
+      "elev_drop": -54.6,
+      "lift_type": "drag_lift",
+      "geometry": [
+        [
+          6.068736,
+          46.45067
+        ],
+        [
+          6.067252,
+          46.449695
+        ]
+      ]
+    },
+    {
+      "from": 37,
+      "to": 38,
+      "type": "lift",
+      "name": "Liaison",
+      "cost_base": 120,
+      "length_m": 148.0,
+      "elev_drop": -5.3,
+      "lift_type": "rope_tow",
+      "geometry": [
+        [
+          6.08336,
+          46.445244
+        ],
+        [
+          6.081442,
+          46.4454
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 33,
+      "type": "skate",
+      "name": "Run 4438",
+      "cost_base": 30,
+      "length_m": 38.9,
+      "elev_drop": 3.3,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 40,
+      "to": 85,
+      "type": "run",
+      "name": "Nathalie Bouvier",
+      "cost_base": 31.9,
+      "length_m": 254.9,
+      "elev_drop": 35.2,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.06273,
+          46.449136
+        ],
+        [
+          6.061913,
+          46.449622
+        ],
+        [
+          6.060732,
+          46.450939
+        ]
+      ]
+    },
+    {
+      "from": 85,
+      "to": 75,
+      "type": "run",
+      "name": "Nathalie Bouvier",
+      "cost_base": 7.2,
+      "length_m": 57.5,
+      "elev_drop": 13.0,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.060732,
+          46.450939
+        ],
+        [
+          6.059858,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 75,
+      "to": 89,
+      "type": "run",
+      "name": "Nathalie Bouvier",
+      "cost_base": 23.6,
+      "length_m": 189.0,
+      "elev_drop": 28.3,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.059858,
+          46.451673
+        ],
+        [
+          6.059217,
+          46.452146
+        ],
+        [
+          6.058086,
+          46.452854
+        ]
+      ]
+    },
+    {
+      "from": 89,
+      "to": 52,
+      "type": "run",
+      "name": "Nathalie Bouvier",
+      "cost_base": 37.5,
+      "length_m": 299.9,
+      "elev_drop": 50.8,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.058086,
+          46.452854
+        ],
+        [
+          6.056956,
+          46.454211
+        ],
+        [
+          6.056609,
+          46.454428
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 10,
+      "type": "run",
+      "name": "Nathalie Bouvier",
+      "cost_base": 13.3,
+      "length_m": 106.1,
+      "elev_drop": 15.3,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.055214,
+          46.455407
+        ],
+        [
+          6.054936,
+          46.456127
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 39,
+      "type": "skate",
+      "name": "Run 7554",
+      "cost_base": 30,
+      "length_m": 69.2,
+      "elev_drop": 4.8,
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 81,
+      "type": "skate",
+      "name": "Run 7554",
+      "cost_base": 30,
+      "length_m": 45.9,
+      "elev_drop": 9.9,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.06367,
+          46.446558
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 40,
+      "type": "run",
+      "name": "Run 7554",
+      "cost_base": 36.0,
+      "length_m": 287.9,
+      "elev_drop": 76.6,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.062823,
+          46.447461
+        ],
+        [
+          6.06288,
+          46.447819
+        ],
+        [
+          6.06273,
+          46.449136
+        ]
+      ]
+    },
+    {
+      "from": 41,
+      "to": 86,
+      "type": "run",
+      "name": "D\u00e9vers des Tuffes",
+      "cost_base": 56.5,
+      "length_m": 451.6,
+      "elev_drop": 98.9,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.060899,
+          46.451673
+        ],
+        [
+          6.060622,
+          46.452238
+        ],
+        [
+          6.060648,
+          46.452531
+        ],
+        [
+          6.061179,
+          46.452973
+        ],
+        [
+          6.06215,
+          46.453122
+        ],
+        [
+          6.063944,
+          46.452898
+        ],
+        [
+          6.064857,
+          46.452709
+        ]
+      ]
+    },
+    {
+      "from": 86,
+      "to": 2,
+      "type": "skate",
+      "name": "D\u00e9vers des Tuffes",
+      "cost_base": 30,
+      "length_m": 45.1,
+      "elev_drop": 7.4,
+      "geometry": [
+        [
+          6.064857,
+          46.452709
+        ],
+        [
+          6.065943,
+          46.453187
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 43,
+      "type": "skate",
+      "name": "Run 15829",
+      "cost_base": 30,
+      "length_m": 65.8,
+      "elev_drop": 5.5,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 45,
+      "to": 46,
+      "type": "run",
+      "name": "Route Foresti\u00e8re des Dappes",
+      "cost_base": 47.1,
+      "length_m": 376.7,
+      "elev_drop": 35.7,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.063476,
+          46.444999
+        ],
+        [
+          6.062749,
+          46.445403
+        ],
+        [
+          6.062637,
+          46.445597
+        ],
+        [
+          6.062818,
+          46.446353
+        ],
+        [
+          6.062823,
+          46.446511
+        ],
+        [
+          6.062617,
+          46.446748
+        ],
+        [
+          6.06242,
+          46.446728
+        ],
+        [
+          6.06214,
+          46.446395
+        ],
+        [
+          6.061863,
+          46.446207
+        ],
+        [
+          6.061434,
+          46.44575
+        ]
+      ]
+    },
+    {
+      "from": 38,
+      "to": 47,
+      "type": "run",
+      "name": "Liaison Franco-Suisse",
+      "cost_base": 18.7,
+      "length_m": 149.8,
+      "elev_drop": 10.5,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.081442,
+          46.4454
+        ],
+        [
+          6.081008,
+          46.446123
+        ],
+        [
+          6.080333,
+          46.446442
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 52,
+      "type": "skate",
+      "name": "Baby Jouvencelles",
+      "cost_base": 30,
+      "length_m": 17.1,
+      "elev_drop": 3.2,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 48,
+      "type": "run",
+      "name": "Baby Jouvencelles",
+      "cost_base": 11.2,
+      "length_m": 89.8,
+      "elev_drop": 11.8,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.05504,
+          46.455149
+        ],
+        [
+          6.054296,
+          46.45552
+        ]
+      ]
+    },
+    {
+      "from": 32,
+      "to": 44,
+      "type": "skate",
+      "name": "Chalet",
+      "cost_base": 30,
+      "length_m": 52.4,
+      "elev_drop": 2.9,
+      "geometry": [
+        [
+          6.093624,
+          46.439671
+        ],
+        [
+          6.094254,
+          46.440169
+        ]
+      ]
+    },
+    {
+      "from": 49,
+      "to": 82,
+      "type": "run",
+      "name": "Les Combes",
+      "cost_base": 101.7,
+      "length_m": 813.4,
+      "elev_drop": 123.5,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.097619,
+          46.431822
+        ],
+        [
+          6.096889,
+          46.431709
+        ],
+        [
+          6.095974,
+          46.43176
+        ],
+        [
+          6.094188,
+          46.432006
+        ],
+        [
+          6.093355,
+          46.431982
+        ],
+        [
+          6.092887,
+          46.432299
+        ],
+        [
+          6.092239,
+          46.433068
+        ],
+        [
+          6.091926,
+          46.433244
+        ],
+        [
+          6.091067,
+          46.433432
+        ],
+        [
+          6.090551,
+          46.433797
+        ],
+        [
+          6.090366,
+          46.434222
+        ],
+        [
+          6.089879,
+          46.434973
+        ],
+        [
+          6.089566,
+          46.435672
+        ]
+      ]
+    },
+    {
+      "from": 82,
+      "to": 50,
+      "type": "skate",
+      "name": "Les Combes",
+      "cost_base": 30,
+      "length_m": 21.4,
+      "elev_drop": 3.3,
+      "geometry": [
+        [
+          6.089566,
+          46.435672
+        ],
+        [
+          6.08902,
+          46.436106
+        ]
+      ]
+    },
+    {
+      "from": 51,
+      "to": 46,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 13.1,
+      "length_m": 105.2,
+      "elev_drop": 12.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.062428,
+          46.444734
+        ],
+        [
+          6.061594,
+          46.44529
+        ],
+        [
+          6.061434,
+          46.44575
+        ]
+      ]
+    },
+    {
+      "from": 46,
+      "to": 56,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 27.6,
+      "length_m": 221.0,
+      "elev_drop": 41.7,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.061434,
+          46.44575
+        ],
+        [
+          6.061076,
+          46.446234
+        ],
+        [
+          6.060096,
+          46.446486
+        ],
+        [
+          6.06001,
+          46.446576
+        ],
+        [
+          6.059281,
+          46.447267
+        ]
+      ]
+    },
+    {
+      "from": 56,
+      "to": 78,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 10.5,
+      "length_m": 84.1,
+      "elev_drop": 15.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.059281,
+          46.447267
+        ],
+        [
+          6.059431,
+          46.447881
+        ]
+      ]
+    },
+    {
+      "from": 78,
+      "to": 62,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 36.9,
+      "length_m": 294.9,
+      "elev_drop": 41.8,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.059431,
+          46.447881
+        ],
+        [
+          6.059808,
+          46.448799
+        ],
+        [
+          6.059703,
+          46.448988
+        ],
+        [
+          6.058803,
+          46.449468
+        ],
+        [
+          6.05812,
+          46.450002
+        ]
+      ]
+    },
+    {
+      "from": 62,
+      "to": 90,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 34.0,
+      "length_m": 272.3,
+      "elev_drop": 36.3,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.05812,
+          46.450002
+        ],
+        [
+          6.057213,
+          46.450738
+        ],
+        [
+          6.05657,
+          46.451571
+        ],
+        [
+          6.056447,
+          46.452105
+        ]
+      ]
+    },
+    {
+      "from": 90,
+      "to": 88,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 18.0,
+      "length_m": 143.7,
+      "elev_drop": 14.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.056447,
+          46.452105
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 42,
+      "type": "skate",
+      "name": "Beauregard",
+      "cost_base": 30,
+      "length_m": 59.8,
+      "elev_drop": 9.1,
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 52,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 14.5,
+      "length_m": 116.2,
+      "elev_drop": 22.2,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 24,
+      "to": 0,
+      "type": "skate",
+      "name": "Run 34611",
+      "cost_base": 30,
+      "length_m": 34.7,
+      "elev_drop": 0.0,
+      "geometry": [
+        [
+          6.082506,
+          46.437787
+        ],
+        [
+          6.081979,
+          46.437447
+        ]
+      ]
+    },
+    {
+      "from": 49,
+      "to": 50,
+      "type": "run",
+      "name": "Franco-Suisse",
+      "cost_base": 98.8,
+      "length_m": 790.6,
+      "elev_drop": 137.5,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.097619,
+          46.431822
+        ],
+        [
+          6.094562,
+          46.43384
+        ],
+        [
+          6.093826,
+          46.434201
+        ],
+        [
+          6.092636,
+          46.434679
+        ],
+        [
+          6.091115,
+          46.435006
+        ],
+        [
+          6.08902,
+          46.436106
+        ]
+      ]
+    },
+    {
+      "from": 50,
+      "to": 60,
+      "type": "run",
+      "name": "Franco-Suisse",
+      "cost_base": 9.7,
+      "length_m": 77.3,
+      "elev_drop": 27.3,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.08902,
+          46.436106
+        ],
+        [
+          6.08877,
+          46.436525
+        ]
+      ]
+    },
+    {
+      "from": 60,
+      "to": 61,
+      "type": "run",
+      "name": "Franco-Suisse",
+      "cost_base": 7.8,
+      "length_m": 62.0,
+      "elev_drop": 16.3,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.08877,
+          46.436525
+        ],
+        [
+          6.088582,
+          46.43705
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 53,
+      "type": "run",
+      "name": "Franco-Suisse",
+      "cost_base": 12.1,
+      "length_m": 96.6,
+      "elev_drop": 24.3,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.086852,
+          46.437932
+        ]
+      ]
+    },
+    {
+      "from": 54,
+      "to": 55,
+      "type": "run",
+      "name": "Franco-Suisse",
+      "cost_base": 26.6,
+      "length_m": 212.9,
+      "elev_drop": 64.8,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.101229,
+          46.430505
+        ],
+        [
+          6.100046,
+          46.431103
+        ],
+        [
+          6.098803,
+          46.431391
+        ]
+      ]
+    },
+    {
+      "from": 56,
+      "to": 57,
+      "type": "run",
+      "name": "Liaison Darbella",
+      "cost_base": 60.1,
+      "length_m": 480.5,
+      "elev_drop": 35.9,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.059281,
+          46.447267
+        ],
+        [
+          6.058791,
+          46.447608
+        ],
+        [
+          6.058689,
+          46.447588
+        ],
+        [
+          6.058563,
+          46.447529
+        ],
+        [
+          6.058372,
+          46.447411
+        ],
+        [
+          6.057847,
+          46.447026
+        ],
+        [
+          6.057331,
+          46.446685
+        ],
+        [
+          6.057128,
+          46.446501
+        ],
+        [
+          6.056926,
+          46.446278
+        ],
+        [
+          6.056586,
+          46.445947
+        ],
+        [
+          6.056433,
+          46.445843
+        ],
+        [
+          6.056229,
+          46.445766
+        ],
+        [
+          6.055596,
+          46.445564
+        ],
+        [
+          6.055391,
+          46.445446
+        ],
+        [
+          6.054406,
+          46.444735
+        ]
+      ]
+    },
+    {
+      "from": 13,
+      "to": 58,
+      "type": "run",
+      "name": "Liaison L\u00e9seneys",
+      "cost_base": 77.1,
+      "length_m": 616.6,
+      "elev_drop": 44.7,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.079927,
+          46.425485
+        ],
+        [
+          6.079793,
+          46.425931
+        ],
+        [
+          6.07946,
+          46.426577
+        ],
+        [
+          6.079467,
+          46.426845
+        ],
+        [
+          6.079519,
+          46.427079
+        ],
+        [
+          6.079477,
+          46.427384
+        ],
+        [
+          6.079404,
+          46.427941
+        ],
+        [
+          6.079384,
+          46.428454
+        ],
+        [
+          6.07969,
+          46.428879
+        ],
+        [
+          6.079629,
+          46.428971
+        ],
+        [
+          6.079414,
+          46.429152
+        ],
+        [
+          6.079542,
+          46.429263
+        ],
+        [
+          6.080217,
+          46.42996
+        ],
+        [
+          6.080651,
+          46.430364
+        ],
+        [
+          6.080966,
+          46.430761
+        ]
+      ]
+    },
+    {
+      "from": 50,
+      "to": 25,
+      "type": "run",
+      "name": "Les Combes",
+      "cost_base": 22.4,
+      "length_m": 179.5,
+      "elev_drop": 44.4,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.08902,
+          46.436106
+        ],
+        [
+          6.088362,
+          46.436109
+        ],
+        [
+          6.088323,
+          46.436114
+        ],
+        [
+          6.088016,
+          46.436054
+        ],
+        [
+          6.087611,
+          46.435891
+        ],
+        [
+          6.087454,
+          46.435877
+        ],
+        [
+          6.087292,
+          46.435904
+        ],
+        [
+          6.087201,
+          46.435932
+        ],
+        [
+          6.087114,
+          46.435983
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 31,
+      "type": "skate",
+      "name": "Run 48197",
+      "cost_base": 30,
+      "length_m": 164.8,
+      "elev_drop": 4.9,
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.088904,
+          46.442573
+        ],
+        [
+          6.088688,
+          46.442636
+        ],
+        [
+          6.08803,
+          46.442715
+        ]
+      ]
+    },
+    {
+      "from": 31,
+      "to": 30,
+      "type": "skate",
+      "name": "Run 48197",
+      "cost_base": 30,
+      "length_m": 103.4,
+      "elev_drop": 7.7,
+      "geometry": [
+        [
+          6.08803,
+          46.442715
+        ],
+        [
+          6.08637,
+          46.443183
+        ]
+      ]
+    },
+    {
+      "from": 59,
+      "to": 64,
+      "type": "run",
+      "name": "Chalet",
+      "cost_base": 11.4,
+      "length_m": 91.3,
+      "elev_drop": 15.4,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.091881,
+          46.440692
+        ],
+        [
+          6.091001,
+          46.441487
+        ]
+      ]
+    },
+    {
+      "from": 64,
+      "to": 6,
+      "type": "skate",
+      "name": "Chalet",
+      "cost_base": 30,
+      "length_m": 34.8,
+      "elev_drop": 3.8,
+      "geometry": [
+        [
+          6.091001,
+          46.441487
+        ],
+        [
+          6.090577,
+          46.442287
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 18,
+      "type": "run",
+      "name": "Valdappes",
+      "cost_base": 44.4,
+      "length_m": 354.9,
+      "elev_drop": 65.9,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.088655,
+          46.438516
+        ],
+        [
+          6.088253,
+          46.439055
+        ],
+        [
+          6.087155,
+          46.439846
+        ],
+        [
+          6.085774,
+          46.439902
+        ]
+      ]
+    },
+    {
+      "from": 7,
+      "to": 55,
+      "type": "run",
+      "name": "Les Combes",
+      "cost_base": 24.8,
+      "length_m": 198.5,
+      "elev_drop": 56.5,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.101992,
+          46.431094
+        ],
+        [
+          6.101445,
+          46.431435
+        ],
+        [
+          6.101314,
+          46.431514
+        ],
+        [
+          6.101157,
+          46.431547
+        ],
+        [
+          6.100975,
+          46.431595
+        ],
+        [
+          6.100895,
+          46.431638
+        ],
+        [
+          6.100755,
+          46.431701
+        ],
+        [
+          6.100681,
+          46.431725
+        ],
+        [
+          6.100619,
+          46.431728
+        ],
+        [
+          6.100547,
+          46.431723
+        ],
+        [
+          6.100465,
+          46.431701
+        ],
+        [
+          6.100364,
+          46.431655
+        ],
+        [
+          6.100242,
+          46.431577
+        ],
+        [
+          6.100168,
+          46.431508
+        ],
+        [
+          6.100129,
+          46.431487
+        ],
+        [
+          6.100067,
+          46.43146
+        ],
+        [
+          6.099963,
+          46.431449
+        ],
+        [
+          6.099765,
+          46.431419
+        ],
+        [
+          6.099537,
+          46.431419
+        ],
+        [
+          6.098803,
+          46.431391
+        ]
+      ]
+    },
+    {
+      "from": 60,
+      "to": 61,
+      "type": "run",
+      "name": "Run 60185",
+      "cost_base": 12.0,
+      "length_m": 96.2,
+      "elev_drop": 24.6,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.08877,
+          46.436525
+        ],
+        [
+          6.088126,
+          46.436726
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 21,
+      "to": 62,
+      "type": "skate",
+      "name": "Run 61293",
+      "cost_base": 30,
+      "length_m": 14.3,
+      "elev_drop": 1.0,
+      "geometry": [
+        [
+          6.057667,
+          46.449373
+        ],
+        [
+          6.05812,
+          46.450002
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 45,
+      "type": "run",
+      "name": "Route Foresti\u00e8re des Dappes",
+      "cost_base": 22.9,
+      "length_m": 182.9,
+      "elev_drop": 15.4,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.064786,
+          46.445019
+        ],
+        [
+          6.064296,
+          46.444943
+        ],
+        [
+          6.063476,
+          46.444999
+        ]
+      ]
+    },
+    {
+      "from": 63,
+      "to": 26,
+      "type": "run",
+      "name": "Gaston Cottet",
+      "cost_base": 19.8,
+      "length_m": 158.7,
+      "elev_drop": 16.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.080036,
+          46.438771
+        ],
+        [
+          6.08113,
+          46.438347
+        ],
+        [
+          6.081938,
+          46.43832
+        ]
+      ]
+    },
+    {
+      "from": 26,
+      "to": 24,
+      "type": "skate",
+      "name": "Gaston Cottet",
+      "cost_base": 30,
+      "length_m": 48.7,
+      "elev_drop": 5.8,
+      "geometry": [
+        [
+          6.081938,
+          46.43832
+        ],
+        [
+          6.082506,
+          46.437787
+        ]
+      ]
+    },
+    {
+      "from": 24,
+      "to": 26,
+      "type": "skate",
+      "name": "Gaston Cottet",
+      "cost_base": 30,
+      "length_m": 40.3,
+      "elev_drop": -0.9,
+      "geometry": [
+        [
+          6.082506,
+          46.437787
+        ],
+        [
+          6.081938,
+          46.43832
+        ]
+      ]
+    },
+    {
+      "from": 26,
+      "to": 28,
+      "type": "skate",
+      "name": "Gaston Cottet",
+      "cost_base": 30,
+      "length_m": 24.2,
+      "elev_drop": -0.2,
+      "geometry": [
+        [
+          6.081938,
+          46.43832
+        ],
+        [
+          6.082863,
+          46.438472
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 64,
+      "type": "run",
+      "name": "Liaison Valdappes - Cuvaloup",
+      "cost_base": 57.7,
+      "length_m": 461.4,
+      "elev_drop": 40.1,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.089503,
+          46.438368
+        ],
+        [
+          6.090256,
+          46.439363
+        ],
+        [
+          6.090491,
+          46.440184
+        ],
+        [
+          6.090654,
+          46.440898
+        ],
+        [
+          6.090681,
+          46.441014
+        ],
+        [
+          6.091001,
+          46.441487
+        ]
+      ]
+    },
+    {
+      "from": 65,
+      "to": 22,
+      "type": "run",
+      "name": "Balancier",
+      "cost_base": 115.9,
+      "length_m": 927.0,
+      "elev_drop": 196.9,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.068695,
+          46.443719
+        ],
+        [
+          6.069398,
+          46.443677
+        ],
+        [
+          6.069948,
+          46.443637
+        ],
+        [
+          6.070706,
+          46.443699
+        ],
+        [
+          6.071314,
+          46.443798
+        ],
+        [
+          6.071666,
+          46.443896
+        ],
+        [
+          6.072085,
+          46.444074
+        ],
+        [
+          6.072401,
+          46.444334
+        ],
+        [
+          6.072616,
+          46.444565
+        ],
+        [
+          6.072749,
+          46.444706
+        ],
+        [
+          6.072892,
+          46.444807
+        ],
+        [
+          6.07308,
+          46.444883
+        ],
+        [
+          6.073523,
+          46.444957
+        ],
+        [
+          6.073862,
+          46.444957
+        ],
+        [
+          6.074262,
+          46.444946
+        ],
+        [
+          6.074587,
+          46.444984
+        ],
+        [
+          6.075515,
+          46.445354
+        ],
+        [
+          6.076016,
+          46.445394
+        ],
+        [
+          6.076367,
+          46.445446
+        ],
+        [
+          6.076603,
+          46.445539
+        ],
+        [
+          6.076878,
+          46.44567
+        ],
+        [
+          6.077235,
+          46.445919
+        ],
+        [
+          6.078184,
+          46.447471
+        ]
+      ]
+    },
+    {
+      "from": 47,
+      "to": 66,
+      "type": "run",
+      "name": "Liaison Franco-Suisse",
+      "cost_base": 13.8,
+      "length_m": 110.3,
+      "elev_drop": 10.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.080333,
+          46.446442
+        ],
+        [
+          6.078673,
+          46.446961
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 27,
+      "type": "skate",
+      "name": "Balcon de la D\u00f4le",
+      "cost_base": 30,
+      "length_m": 33.7,
+      "elev_drop": 2.4,
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.067059,
+          46.444819
+        ]
+      ]
+    },
+    {
+      "from": 27,
+      "to": 65,
+      "type": "run",
+      "name": "Balcon de la D\u00f4le",
+      "cost_base": 19.4,
+      "length_m": 155.0,
+      "elev_drop": 10.2,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.067059,
+          46.444819
+        ],
+        [
+          6.067979,
+          46.444862
+        ],
+        [
+          6.068249,
+          46.444695
+        ],
+        [
+          6.068418,
+          46.444549
+        ],
+        [
+          6.068522,
+          46.444412
+        ],
+        [
+          6.068604,
+          46.444226
+        ],
+        [
+          6.068695,
+          46.443719
+        ]
+      ]
+    },
+    {
+      "from": 65,
+      "to": 69,
+      "type": "run",
+      "name": "Balcon de la D\u00f4le",
+      "cost_base": 65.2,
+      "length_m": 521.6,
+      "elev_drop": 48.1,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.068695,
+          46.443719
+        ],
+        [
+          6.069203,
+          46.443417
+        ],
+        [
+          6.0699,
+          46.443171
+        ],
+        [
+          6.070049,
+          46.44308
+        ],
+        [
+          6.07013,
+          46.442991
+        ],
+        [
+          6.070169,
+          46.442829
+        ],
+        [
+          6.070237,
+          46.442679
+        ],
+        [
+          6.070621,
+          46.44229
+        ],
+        [
+          6.070771,
+          46.44217
+        ],
+        [
+          6.070916,
+          46.442115
+        ],
+        [
+          6.071025,
+          46.44208
+        ],
+        [
+          6.071288,
+          46.442074
+        ],
+        [
+          6.071535,
+          46.442116
+        ],
+        [
+          6.07172,
+          46.442137
+        ],
+        [
+          6.071832,
+          46.442123
+        ],
+        [
+          6.072882,
+          46.441766
+        ],
+        [
+          6.073039,
+          46.441751
+        ],
+        [
+          6.073221,
+          46.441757
+        ],
+        [
+          6.073465,
+          46.441804
+        ],
+        [
+          6.073725,
+          46.441908
+        ],
+        [
+          6.074641,
+          46.442511
+        ]
+      ]
+    },
+    {
+      "from": 69,
+      "to": 73,
+      "type": "run",
+      "name": "Balcon de la D\u00f4le",
+      "cost_base": 52.0,
+      "length_m": 415.7,
+      "elev_drop": 46.5,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.074641,
+          46.442511
+        ],
+        [
+          6.075404,
+          46.442527
+        ],
+        [
+          6.075603,
+          46.442488
+        ],
+        [
+          6.075856,
+          46.442423
+        ],
+        [
+          6.076003,
+          46.442347
+        ],
+        [
+          6.076162,
+          46.442227
+        ],
+        [
+          6.076247,
+          46.442121
+        ],
+        [
+          6.076351,
+          46.442054
+        ],
+        [
+          6.076527,
+          46.441995
+        ],
+        [
+          6.076749,
+          46.441968
+        ],
+        [
+          6.078157,
+          46.44195
+        ],
+        [
+          6.078316,
+          46.441957
+        ],
+        [
+          6.078427,
+          46.441975
+        ],
+        [
+          6.078937,
+          46.442282
+        ],
+        [
+          6.079116,
+          46.442305
+        ],
+        [
+          6.079459,
+          46.442274
+        ],
+        [
+          6.080369,
+          46.442287
+        ]
+      ]
+    },
+    {
+      "from": 73,
+      "to": 74,
+      "type": "run",
+      "name": "Balcon de la D\u00f4le",
+      "cost_base": 54.9,
+      "length_m": 439.2,
+      "elev_drop": 59.8,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.080369,
+          46.442287
+        ],
+        [
+          6.080455,
+          46.442754
+        ],
+        [
+          6.079868,
+          46.443271
+        ],
+        [
+          6.079333,
+          46.443512
+        ],
+        [
+          6.079025,
+          46.443961
+        ],
+        [
+          6.078796,
+          46.444595
+        ],
+        [
+          6.079394,
+          46.445101
+        ],
+        [
+          6.07937,
+          46.446006
+        ]
+      ]
+    },
+    {
+      "from": 74,
+      "to": 66,
+      "type": "run",
+      "name": "Balcon de la D\u00f4le",
+      "cost_base": 14.5,
+      "length_m": 115.7,
+      "elev_drop": 14.1,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.07937,
+          46.446006
+        ],
+        [
+          6.078673,
+          46.446961
+        ]
+      ]
+    },
+    {
+      "from": 66,
+      "to": 22,
+      "type": "skate",
+      "name": "Balcon de la D\u00f4le",
+      "cost_base": 30,
+      "length_m": 61.8,
+      "elev_drop": 3.3,
+      "geometry": [
+        [
+          6.078673,
+          46.446961
+        ],
+        [
+          6.078184,
+          46.447471
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 45,
+      "type": "run",
+      "name": "Run 65519",
+      "cost_base": 6.8,
+      "length_m": 54.2,
+      "elev_drop": 14.1,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.063476,
+          46.444999
+        ]
+      ]
+    },
+    {
+      "from": 67,
+      "to": 12,
+      "type": "run",
+      "name": "La Germine, La P\u00e9troule",
+      "cost_base": 45.1,
+      "length_m": 360.8,
+      "elev_drop": 63.0,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.075897,
+          46.429466
+        ],
+        [
+          6.075526,
+          46.429912
+        ],
+        [
+          6.074279,
+          46.430238
+        ],
+        [
+          6.07396,
+          46.430533
+        ],
+        [
+          6.075109,
+          46.431713
+        ]
+      ]
+    },
+    {
+      "from": 1,
+      "to": 68,
+      "type": "run",
+      "name": "Les Quatres-Murs",
+      "cost_base": 105.2,
+      "length_m": 841.3,
+      "elev_drop": 195.1,
+      "difficulty": "advanced",
+      "geometry": [
+        [
+          6.085553,
+          46.429592
+        ],
+        [
+          6.085268,
+          46.429101
+        ],
+        [
+          6.085525,
+          46.429086
+        ],
+        [
+          6.086148,
+          46.429382
+        ],
+        [
+          6.086577,
+          46.429752
+        ],
+        [
+          6.086749,
+          46.429915
+        ],
+        [
+          6.08677,
+          46.430536
+        ],
+        [
+          6.086749,
+          46.43095
+        ],
+        [
+          6.086749,
+          46.431364
+        ],
+        [
+          6.086663,
+          46.431926
+        ],
+        [
+          6.086513,
+          46.43237
+        ],
+        [
+          6.086319,
+          46.43268
+        ],
+        [
+          6.086105,
+          46.433213
+        ],
+        [
+          6.085826,
+          46.433523
+        ],
+        [
+          6.085418,
+          46.43407
+        ],
+        [
+          6.085182,
+          46.434336
+        ],
+        [
+          6.084152,
+          46.434957
+        ],
+        [
+          6.082862,
+          46.434924
+        ]
+      ]
+    },
+    {
+      "from": 69,
+      "to": 63,
+      "type": "run",
+      "name": "Gaston Cottet",
+      "cost_base": 72.9,
+      "length_m": 583.3,
+      "elev_drop": 83.3,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.074641,
+          46.442511
+        ],
+        [
+          6.075926,
+          46.439828
+        ],
+        [
+          6.078178,
+          46.438907
+        ],
+        [
+          6.079343,
+          46.439015
+        ],
+        [
+          6.080036,
+          46.438771
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 61,
+      "type": "run",
+      "name": "Run 81016",
+      "cost_base": 9.0,
+      "length_m": 71.7,
+      "elev_drop": 15.6,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 53,
+      "type": "run",
+      "name": "Run 81016",
+      "cost_base": 8.8,
+      "length_m": 70.4,
+      "elev_drop": 13.1,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.086852,
+          46.437932
+        ]
+      ]
+    },
+    {
+      "from": 29,
+      "to": 87,
+      "type": "run",
+      "name": "Run 82103",
+      "cost_base": 27.8,
+      "length_m": 222.5,
+      "elev_drop": 35.6,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.099278,
+          46.425819
+        ],
+        [
+          6.099451,
+          46.426317
+        ],
+        [
+          6.09945,
+          46.426406
+        ],
+        [
+          6.099478,
+          46.42652
+        ],
+        [
+          6.0995,
+          46.42665
+        ],
+        [
+          6.09952,
+          46.426719
+        ],
+        [
+          6.099571,
+          46.426832
+        ],
+        [
+          6.099639,
+          46.426939
+        ],
+        [
+          6.099703,
+          46.427059
+        ],
+        [
+          6.099741,
+          46.427174
+        ],
+        [
+          6.099794,
+          46.427409
+        ],
+        [
+          6.099814,
+          46.42751
+        ],
+        [
+          6.099841,
+          46.427632
+        ],
+        [
+          6.099915,
+          46.427788
+        ],
+        [
+          6.099948,
+          46.427866
+        ],
+        [
+          6.099981,
+          46.427996
+        ],
+        [
+          6.10022,
+          46.428565
+        ]
+      ]
+    },
+    {
+      "from": 87,
+      "to": 54,
+      "type": "run",
+      "name": "Run 82103",
+      "cost_base": 20.7,
+      "length_m": 165.5,
+      "elev_drop": 26.7,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.10022,
+          46.428565
+        ],
+        [
+          6.100446,
+          46.429004
+        ],
+        [
+          6.100538,
+          46.429134
+        ],
+        [
+          6.100588,
+          46.429299
+        ],
+        [
+          6.100605,
+          46.429353
+        ],
+        [
+          6.100715,
+          46.42964
+        ],
+        [
+          6.100801,
+          46.429855
+        ],
+        [
+          6.100856,
+          46.429958
+        ],
+        [
+          6.101229,
+          46.430505
+        ]
+      ]
+    },
+    {
+      "from": 70,
+      "to": 6,
+      "type": "skate",
+      "name": "Chalet",
+      "cost_base": 30,
+      "length_m": 21.9,
+      "elev_drop": -0.1,
+      "geometry": [
+        [
+          6.090502,
+          46.442791
+        ],
+        [
+          6.090577,
+          46.442287
+        ]
+      ]
+    },
+    {
+      "from": 71,
+      "to": 67,
+      "type": "run",
+      "name": "Liaison Tabagnoz",
+      "cost_base": 53.4,
+      "length_m": 427.0,
+      "elev_drop": 58.2,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.081125,
+          46.431248
+        ],
+        [
+          6.080301,
+          46.431191
+        ],
+        [
+          6.078267,
+          46.430723
+        ],
+        [
+          6.077872,
+          46.430494
+        ],
+        [
+          6.077029,
+          46.429812
+        ],
+        [
+          6.075897,
+          46.429466
+        ]
+      ]
+    },
+    {
+      "from": 72,
+      "to": 18,
+      "type": "run",
+      "name": "Liaison Reculet-Dessous - Valdappes",
+      "cost_base": 14.9,
+      "length_m": 119.5,
+      "elev_drop": 11.5,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.085655,
+          46.438348
+        ],
+        [
+          6.086137,
+          46.43909
+        ],
+        [
+          6.085774,
+          46.439902
+        ]
+      ]
+    },
+    {
+      "from": 32,
+      "to": 59,
+      "type": "run",
+      "name": "Chalet",
+      "cost_base": 20.1,
+      "length_m": 160.5,
+      "elev_drop": 30.7,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.093624,
+          46.439671
+        ],
+        [
+          6.091881,
+          46.440692
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 3,
+      "type": "run",
+      "name": "Nathalie Bouvier",
+      "cost_base": 37.5,
+      "length_m": 300.0,
+      "elev_drop": 55.9,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.064617,
+          46.447467
+        ],
+        [
+          6.064555,
+          46.44804
+        ]
+      ]
+    },
+    {
+      "from": 34,
+      "to": 66,
+      "type": "run",
+      "name": "Baby Balancier",
+      "cost_base": 13.9,
+      "length_m": 111.0,
+      "elev_drop": 21.5,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.078378,
+          46.445757
+        ],
+        [
+          6.078673,
+          46.446961
+        ]
+      ]
+    },
+    {
+      "from": 66,
+      "to": 22,
+      "type": "skate",
+      "name": "Baby Balancier",
+      "cost_base": 30,
+      "length_m": 32.0,
+      "elev_drop": 1.9,
+      "geometry": [
+        [
+          6.078673,
+          46.446961
+        ],
+        [
+          6.078184,
+          46.447471
+        ]
+      ]
+    },
+    {
+      "from": 44,
+      "to": 76,
+      "type": "run",
+      "name": "Chalet",
+      "cost_base": 43.5,
+      "length_m": 348.0,
+      "elev_drop": 55.2,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.094254,
+          46.440169
+        ],
+        [
+          6.092475,
+          46.441068
+        ],
+        [
+          6.091573,
+          46.44202
+        ],
+        [
+          6.091226,
+          46.442665
+        ]
+      ]
+    },
+    {
+      "from": 76,
+      "to": 70,
+      "type": "run",
+      "name": "Chalet",
+      "cost_base": 6.4,
+      "length_m": 51.5,
+      "elev_drop": 12.2,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.091226,
+          46.442665
+        ],
+        [
+          6.090502,
+          46.442791
+        ]
+      ]
+    },
+    {
+      "from": 70,
+      "to": 6,
+      "type": "skate",
+      "name": "Chalet",
+      "cost_base": 30,
+      "length_m": 11.2,
+      "elev_drop": 0.3,
+      "geometry": [
+        [
+          6.090502,
+          46.442791
+        ],
+        [
+          6.090577,
+          46.442287
+        ]
+      ]
+    },
+    {
+      "from": 45,
+      "to": 51,
+      "type": "run",
+      "name": "Darbella",
+      "cost_base": 10.7,
+      "length_m": 85.5,
+      "elev_drop": 16.6,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.063476,
+          46.444999
+        ],
+        [
+          6.062428,
+          46.444734
+        ]
+      ]
+    },
+    {
+      "from": 51,
+      "to": 77,
+      "type": "run",
+      "name": "Darbella",
+      "cost_base": 36.1,
+      "length_m": 288.7,
+      "elev_drop": 36.6,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.062428,
+          46.444734
+        ],
+        [
+          6.058079,
+          46.444446
+        ]
+      ]
+    },
+    {
+      "from": 77,
+      "to": 57,
+      "type": "run",
+      "name": "Darbella",
+      "cost_base": 36.3,
+      "length_m": 290.1,
+      "elev_drop": 58.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.058079,
+          46.444446
+        ],
+        [
+          6.05726,
+          46.445021
+        ],
+        [
+          6.056905,
+          46.445014
+        ],
+        [
+          6.055886,
+          46.444744
+        ],
+        [
+          6.055425,
+          46.444765
+        ],
+        [
+          6.054406,
+          46.444735
+        ]
+      ]
+    },
+    {
+      "from": 57,
+      "to": 16,
+      "type": "run",
+      "name": "Darbella",
+      "cost_base": 97.7,
+      "length_m": 781.8,
+      "elev_drop": 135.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.054406,
+          46.444735
+        ],
+        [
+          6.052392,
+          46.444307
+        ],
+        [
+          6.050634,
+          46.444634
+        ],
+        [
+          6.04747,
+          46.4461
+        ],
+        [
+          6.044799,
+          46.446304
+        ]
+      ]
+    },
+    {
+      "from": 23,
+      "to": 11,
+      "type": "skate",
+      "name": "Run 111493",
+      "cost_base": 30,
+      "length_m": 28.6,
+      "elev_drop": 3.3,
+      "geometry": [
+        [
+          6.067368,
+          46.445537
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 3,
+      "to": 40,
+      "type": "run",
+      "name": "D\u00e9vers des Tuffes, Nathalie Bouvier",
+      "cost_base": 18.8,
+      "length_m": 150.2,
+      "elev_drop": 33.6,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.064555,
+          46.44804
+        ],
+        [
+          6.06273,
+          46.449136
+        ]
+      ]
+    },
+    {
+      "from": 73,
+      "to": 74,
+      "type": "run",
+      "name": "Boarder cross",
+      "cost_base": 100.0,
+      "length_m": 800.1,
+      "elev_drop": 65.0,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.080369,
+          46.442287
+        ],
+        [
+          6.080924,
+          46.441966
+        ],
+        [
+          6.081755,
+          46.441998
+        ],
+        [
+          6.082269,
+          46.441966
+        ],
+        [
+          6.082792,
+          46.442417
+        ],
+        [
+          6.083399,
+          46.442751
+        ],
+        [
+          6.083791,
+          46.443537
+        ],
+        [
+          6.081325,
+          46.444533
+        ],
+        [
+          6.08032,
+          46.444767
+        ],
+        [
+          6.07937,
+          46.446006
+        ]
+      ]
+    },
+    {
+      "from": 40,
+      "to": 84,
+      "type": "run",
+      "name": "D\u00e9vers des Tuffes",
+      "cost_base": 14.3,
+      "length_m": 114.5,
+      "elev_drop": 23.5,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.06273,
+          46.449136
+        ],
+        [
+          6.062364,
+          46.450134
+        ]
+      ]
+    },
+    {
+      "from": 84,
+      "to": 41,
+      "type": "run",
+      "name": "D\u00e9vers des Tuffes",
+      "cost_base": 26.4,
+      "length_m": 211.0,
+      "elev_drop": 27.3,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.062364,
+          46.450134
+        ],
+        [
+          6.061481,
+          46.451422
+        ],
+        [
+          6.060899,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 41,
+      "to": 75,
+      "type": "skate",
+      "name": "Run 116454",
+      "cost_base": 30,
+      "length_m": 79.7,
+      "elev_drop": 5.6,
+      "geometry": [
+        [
+          6.060899,
+          46.451673
+        ],
+        [
+          6.059858,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 7,
+      "to": 44,
+      "type": "run",
+      "name": "Competition",
+      "cost_base": 154.9,
+      "length_m": 1239.0,
+      "elev_drop": 264.0,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.101992,
+          46.431094
+        ],
+        [
+          6.102022,
+          46.431624
+        ],
+        [
+          6.101981,
+          46.43223
+        ],
+        [
+          6.10225,
+          46.432685
+        ],
+        [
+          6.10278,
+          46.432924
+        ],
+        [
+          6.102788,
+          46.433098
+        ],
+        [
+          6.102141,
+          46.434393
+        ],
+        [
+          6.101953,
+          46.434587
+        ],
+        [
+          6.100862,
+          46.435528
+        ],
+        [
+          6.09996,
+          46.436727
+        ],
+        [
+          6.099798,
+          46.43692
+        ],
+        [
+          6.09963,
+          46.43701
+        ],
+        [
+          6.098363,
+          46.437434
+        ],
+        [
+          6.097875,
+          46.437674
+        ],
+        [
+          6.096419,
+          46.438207
+        ],
+        [
+          6.095643,
+          46.438795
+        ],
+        [
+          6.09514,
+          46.439203
+        ],
+        [
+          6.094254,
+          46.440169
+        ]
+      ]
+    },
+    {
+      "from": 44,
+      "to": 76,
+      "type": "run",
+      "name": "Competition",
+      "cost_base": 47.0,
+      "length_m": 376.2,
+      "elev_drop": 55.9,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.094254,
+          46.440169
+        ],
+        [
+          6.094032,
+          46.440768
+        ],
+        [
+          6.092818,
+          46.441879
+        ],
+        [
+          6.092006,
+          46.44244
+        ],
+        [
+          6.091226,
+          46.442665
+        ]
+      ]
+    },
+    {
+      "from": 77,
+      "to": 56,
+      "type": "run",
+      "name": "Liaison Jouvencelles",
+      "cost_base": 31.1,
+      "length_m": 249.0,
+      "elev_drop": 15.1,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.058079,
+          46.444446
+        ],
+        [
+          6.057962,
+          46.445104
+        ],
+        [
+          6.058104,
+          46.445411
+        ],
+        [
+          6.058222,
+          46.445601
+        ],
+        [
+          6.058456,
+          46.445884
+        ],
+        [
+          6.058552,
+          46.446041
+        ],
+        [
+          6.058678,
+          46.446313
+        ],
+        [
+          6.058823,
+          46.446553
+        ],
+        [
+          6.059281,
+          46.447267
+        ]
+      ]
+    },
+    {
+      "from": 56,
+      "to": 78,
+      "type": "skate",
+      "name": "Run 129659",
+      "cost_base": 30,
+      "length_m": 69.3,
+      "elev_drop": 9.5,
+      "geometry": [
+        [
+          6.059281,
+          46.447267
+        ],
+        [
+          6.059431,
+          46.447881
+        ]
+      ]
+    },
+    {
+      "from": 1,
+      "to": 79,
+      "type": "run",
+      "name": "Les T\u00e9tras",
+      "cost_base": 12.1,
+      "length_m": 97.0,
+      "elev_drop": 16.4,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.085553,
+          46.429592
+        ],
+        [
+          6.084905,
+          46.429875
+        ],
+        [
+          6.084257,
+          46.430085
+        ]
+      ]
+    },
+    {
+      "from": 79,
+      "to": 58,
+      "type": "run",
+      "name": "Les T\u00e9tras",
+      "cost_base": 50.0,
+      "length_m": 400.0,
+      "elev_drop": 63.2,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.084257,
+          46.430085
+        ],
+        [
+          6.083019,
+          46.4301
+        ],
+        [
+          6.082169,
+          46.42984
+        ],
+        [
+          6.081614,
+          46.429637
+        ],
+        [
+          6.081172,
+          46.429561
+        ],
+        [
+          6.080931,
+          46.429749
+        ],
+        [
+          6.080981,
+          46.429992
+        ],
+        [
+          6.081248,
+          46.430283
+        ],
+        [
+          6.080966,
+          46.430761
+        ]
+      ]
+    },
+    {
+      "from": 58,
+      "to": 71,
+      "type": "skate",
+      "name": "Les T\u00e9tras",
+      "cost_base": 30,
+      "length_m": 9.2,
+      "elev_drop": 2.7,
+      "geometry": [
+        [
+          6.080966,
+          46.430761
+        ],
+        [
+          6.081125,
+          46.431248
+        ]
+      ]
+    },
+    {
+      "from": 71,
+      "to": 68,
+      "type": "run",
+      "name": "Les T\u00e9tras",
+      "cost_base": 54.8,
+      "length_m": 438.1,
+      "elev_drop": 93.8,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.081125,
+          46.431248
+        ],
+        [
+          6.080559,
+          46.432053
+        ],
+        [
+          6.080431,
+          46.432466
+        ],
+        [
+          6.081131,
+          46.433174
+        ],
+        [
+          6.081754,
+          46.434018
+        ],
+        [
+          6.082862,
+          46.434924
+        ]
+      ]
+    },
+    {
+      "from": 68,
+      "to": 0,
+      "type": "run",
+      "name": "Les T\u00e9tras",
+      "cost_base": 34.5,
+      "length_m": 275.7,
+      "elev_drop": 43.9,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.082862,
+          46.434924
+        ],
+        [
+          6.082005,
+          46.435507
+        ],
+        [
+          6.081875,
+          46.435892
+        ],
+        [
+          6.082055,
+          46.436433
+        ],
+        [
+          6.081979,
+          46.437447
+        ]
+      ]
+    },
+    {
+      "from": 7,
+      "to": 54,
+      "type": "skate",
+      "name": "Run 142206",
+      "cost_base": 30,
+      "length_m": 40.9,
+      "elev_drop": 0.3,
+      "geometry": [
+        [
+          6.101992,
+          46.431094
+        ],
+        [
+          6.101229,
+          46.430505
+        ]
+      ]
+    },
+    {
+      "from": 79,
+      "to": 71,
+      "type": "run",
+      "name": "Les L\u00e9sines",
+      "cost_base": 31.6,
+      "length_m": 252.8,
+      "elev_drop": 70.3,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.084257,
+          46.430085
+        ],
+        [
+          6.082715,
+          46.430439
+        ],
+        [
+          6.082003,
+          46.431126
+        ],
+        [
+          6.081125,
+          46.431248
+        ]
+      ]
+    },
+    {
+      "from": 32,
+      "to": 80,
+      "type": "skate",
+      "name": "Run 143645",
+      "cost_base": 30,
+      "length_m": 63.8,
+      "elev_drop": 4.1,
+      "geometry": [
+        [
+          6.093624,
+          46.439671
+        ],
+        [
+          6.09291,
+          46.439444
+        ],
+        [
+          6.09194,
+          46.439514
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 3,
+      "type": "run",
+      "name": "D\u00e9vers des Tuffes",
+      "cost_base": 18.6,
+      "length_m": 148.7,
+      "elev_drop": 39.6,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.063833,
+          46.447221
+        ],
+        [
+          6.064274,
+          46.447606
+        ],
+        [
+          6.064555,
+          46.44804
+        ]
+      ]
+    },
+    {
+      "from": 82,
+      "to": 50,
+      "type": "skate",
+      "name": "Liaison Cuvaloup",
+      "cost_base": 30,
+      "length_m": 41.7,
+      "elev_drop": 6.0,
+      "geometry": [
+        [
+          6.089566,
+          46.435672
+        ],
+        [
+          6.08902,
+          46.436106
+        ]
+      ]
+    },
+    {
+      "from": 50,
+      "to": 80,
+      "type": "run",
+      "name": "Liaison Cuvaloup",
+      "cost_base": 47.2,
+      "length_m": 377.8,
+      "elev_drop": 52.9,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.08902,
+          46.436106
+        ],
+        [
+          6.089881,
+          46.436534
+        ],
+        [
+          6.090356,
+          46.437071
+        ],
+        [
+          6.090501,
+          46.437532
+        ],
+        [
+          6.090669,
+          46.437681
+        ],
+        [
+          6.09165,
+          46.438556
+        ],
+        [
+          6.09194,
+          46.439514
+        ]
+      ]
+    },
+    {
+      "from": 80,
+      "to": 59,
+      "type": "run",
+      "name": "Liaison Cuvaloup",
+      "cost_base": 13.3,
+      "length_m": 106.3,
+      "elev_drop": 15.3,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.09194,
+          46.439514
+        ],
+        [
+          6.091881,
+          46.440692
+        ]
+      ]
+    },
+    {
+      "from": 13,
+      "to": 67,
+      "type": "run",
+      "name": "La P\u00e9troule",
+      "cost_base": 62.7,
+      "length_m": 501.4,
+      "elev_drop": 121.1,
+      "difficulty": "intermediate",
+      "geometry": [
+        [
+          6.079927,
+          46.425485
+        ],
+        [
+          6.079352,
+          46.425938
+        ],
+        [
+          6.079138,
+          46.426135
+        ],
+        [
+          6.078295,
+          46.426813
+        ],
+        [
+          6.077864,
+          46.427168
+        ],
+        [
+          6.077612,
+          46.427738
+        ],
+        [
+          6.07648,
+          46.428548
+        ],
+        [
+          6.075897,
+          46.429466
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 48,
+      "type": "run",
+      "name": "Run 152253",
+      "cost_base": 19.9,
+      "length_m": 158.8,
+      "elev_drop": 24.0,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.054791,
+          46.454542
+        ],
+        [
+          6.054296,
+          46.45552
+        ]
+      ]
+    },
+    {
+      "from": 13,
+      "to": 67,
+      "type": "run",
+      "name": "La Germine",
+      "cost_base": 118.7,
+      "length_m": 949.3,
+      "elev_drop": 125.1,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.079927,
+          46.425485
+        ],
+        [
+          6.079194,
+          46.425789
+        ],
+        [
+          6.078938,
+          46.425712
+        ],
+        [
+          6.07835,
+          46.42527
+        ],
+        [
+          6.078227,
+          46.425188
+        ],
+        [
+          6.078084,
+          46.425094
+        ],
+        [
+          6.077696,
+          46.424959
+        ],
+        [
+          6.076558,
+          46.424448
+        ],
+        [
+          6.076157,
+          46.424163
+        ],
+        [
+          6.075784,
+          46.424142
+        ],
+        [
+          6.0753,
+          46.424246
+        ],
+        [
+          6.075029,
+          46.424852
+        ],
+        [
+          6.075022,
+          46.424955
+        ],
+        [
+          6.074846,
+          46.425205
+        ],
+        [
+          6.074809,
+          46.425458
+        ],
+        [
+          6.074972,
+          46.426132
+        ],
+        [
+          6.074963,
+          46.426253
+        ],
+        [
+          6.074939,
+          46.426609
+        ],
+        [
+          6.075094,
+          46.427046
+        ],
+        [
+          6.075145,
+          46.427534
+        ],
+        [
+          6.075346,
+          46.428009
+        ],
+        [
+          6.075371,
+          46.428455
+        ],
+        [
+          6.075897,
+          46.429466
+        ]
+      ]
+    },
+    {
+      "from": 55,
+      "to": 49,
+      "type": "skate",
+      "name": "Franco-Suisse, Les Combes",
+      "cost_base": 30,
+      "length_m": 24.4,
+      "elev_drop": 6.3,
+      "geometry": [
+        [
+          6.098803,
+          46.431391
+        ],
+        [
+          6.097619,
+          46.431822
+        ]
+      ]
+    },
+    {
+      "from": 72,
+      "to": 28,
+      "type": "run",
+      "name": "Franco-Suisse, Reculet-Dessous",
+      "cost_base": 26.9,
+      "length_m": 215.2,
+      "elev_drop": 28.4,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.085655,
+          46.438348
+        ],
+        [
+          6.084546,
+          46.438464
+        ],
+        [
+          6.083384,
+          46.438189
+        ],
+        [
+          6.082863,
+          46.438472
+        ]
+      ]
+    },
+    {
+      "from": 28,
+      "to": 24,
+      "type": "skate",
+      "name": "Franco-Suisse, Reculet-Dessous",
+      "cost_base": 30,
+      "length_m": 33.5,
+      "elev_drop": 1.8,
+      "geometry": [
+        [
+          6.082863,
+          46.438472
+        ],
+        [
+          6.082506,
+          46.437787
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 20,
+      "type": "skate",
+      "name": "Run 171811",
+      "cost_base": 30,
+      "length_m": 28.0,
+      "elev_drop": 1.2,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 53,
+      "type": "run",
+      "name": "Reculet-Dessous, Liaison Reculet-Dessous - Valdappes",
+      "cost_base": 18.5,
+      "length_m": 147.9,
+      "elev_drop": 21.8,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.086587,
+          46.437509
+        ],
+        [
+          6.086852,
+          46.437932
+        ]
+      ]
+    },
+    {
+      "from": 84,
+      "to": 85,
+      "type": "run",
+      "name": "Run 182534",
+      "cost_base": 19.2,
+      "length_m": 153.8,
+      "elev_drop": 11.7,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.062364,
+          46.450134
+        ],
+        [
+          6.060732,
+          46.450939
+        ]
+      ]
+    },
+    {
+      "from": 84,
+      "to": 86,
+      "type": "run",
+      "name": "Vincent Gauthier-Manuel",
+      "cost_base": 39.6,
+      "length_m": 317.1,
+      "elev_drop": 115.4,
+      "difficulty": "advanced",
+      "geometry": [
+        [
+          6.062364,
+          46.450134
+        ],
+        [
+          6.0626,
+          46.451144
+        ],
+        [
+          6.063396,
+          46.45167
+        ],
+        [
+          6.064857,
+          46.452709
+        ]
+      ]
+    },
+    {
+      "from": 87,
+      "to": 49,
+      "type": "run",
+      "name": "Reculets-Dessus",
+      "cost_base": 51.9,
+      "length_m": 415.5,
+      "elev_drop": 110.3,
+      "difficulty": "advanced",
+      "geometry": [
+        [
+          6.10022,
+          46.428565
+        ],
+        [
+          6.099772,
+          46.429065
+        ],
+        [
+          6.099461,
+          46.429361
+        ],
+        [
+          6.099204,
+          46.429923
+        ],
+        [
+          6.098453,
+          46.430692
+        ],
+        [
+          6.097619,
+          46.431822
+        ]
+      ]
+    },
+    {
+      "from": 53,
+      "to": 72,
+      "type": "skate",
+      "name": "Franco-Suisse, Reculet-Dessous, Liaison Reculet-Dessous - Valdappes",
+      "cost_base": 30,
+      "length_m": 62.2,
+      "elev_drop": 9.6,
+      "geometry": [
+        [
+          6.086852,
+          46.437932
+        ],
+        [
+          6.085655,
+          46.438348
+        ]
+      ]
+    },
+    {
+      "from": 27,
+      "to": 17,
+      "type": "skate",
+      "name": "Run 195856",
+      "cost_base": 30,
+      "length_m": 35.0,
+      "elev_drop": -3.8,
+      "geometry": [
+        [
+          6.067059,
+          46.444819
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 17,
+      "to": 11,
+      "type": "skate",
+      "name": "Run 195856",
+      "cost_base": 30,
+      "length_m": 6.0,
+      "elev_drop": -0.1,
+      "geometry": [
+        [
+          6.066333,
+          46.444909
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 43,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 13.5,
+      "length_m": 107.9,
+      "elev_drop": 22.5,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 83,
+      "type": "run",
+      "name": "Beauregard",
+      "cost_base": 9.1,
+      "length_m": 72.6,
+      "elev_drop": 11.8,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.05398,
+          46.453911
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 20,
+      "type": "skate",
+      "name": "Beauregard",
+      "cost_base": 30,
+      "length_m": 45.2,
+      "elev_drop": 2.8,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 24,
+      "type": "run",
+      "name": "Les Combes, Reculet-Dessous",
+      "cost_base": 37.2,
+      "length_m": 297.3,
+      "elev_drop": 56.7,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.085535,
+          46.436849
+        ],
+        [
+          6.085042,
+          46.436861
+        ],
+        [
+          6.084779,
+          46.436901
+        ],
+        [
+          6.084516,
+          46.43706
+        ],
+        [
+          6.084355,
+          46.437265
+        ],
+        [
+          6.083808,
+          46.437404
+        ],
+        [
+          6.083218,
+          46.437487
+        ],
+        [
+          6.082506,
+          46.437787
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 33,
+      "type": "skate",
+      "name": "Run 197612",
+      "cost_base": 30,
+      "length_m": 12.8,
+      "elev_drop": 0.8,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 37,
+      "type": "run",
+      "name": "Liaison Franco-Suisse",
+      "cost_base": 80.7,
+      "length_m": 645.5,
+      "elev_drop": 38.1,
+      "difficulty": "novice",
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.089024,
+          46.443023
+        ],
+        [
+          6.088201,
+          46.443472
+        ],
+        [
+          6.087757,
+          46.443696
+        ],
+        [
+          6.086834,
+          46.444218
+        ],
+        [
+          6.085573,
+          46.444423
+        ],
+        [
+          6.08496,
+          46.445038
+        ],
+        [
+          6.08336,
+          46.445244
+        ]
+      ]
+    },
+    {
+      "from": 59,
+      "to": 18,
+      "type": "run",
+      "name": "Liaison Cuvaloup - Valdappes",
+      "cost_base": 63.2,
+      "length_m": 505.9,
+      "elev_drop": 46.0,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.091881,
+          46.440692
+        ],
+        [
+          6.091035,
+          46.440829
+        ],
+        [
+          6.090654,
+          46.440898
+        ],
+        [
+          6.090073,
+          46.440932
+        ],
+        [
+          6.089877,
+          46.440855
+        ],
+        [
+          6.089733,
+          46.440627
+        ],
+        [
+          6.089525,
+          46.44059
+        ],
+        [
+          6.088913,
+          46.440763
+        ],
+        [
+          6.088486,
+          46.440802
+        ],
+        [
+          6.087429,
+          46.440499
+        ],
+        [
+          6.085774,
+          46.439902
+        ]
+      ]
+    },
+    {
+      "from": 89,
+      "to": 8,
+      "type": "skate",
+      "name": "Run 213106",
+      "cost_base": 30,
+      "length_m": 34.4,
+      "elev_drop": 4.8,
+      "geometry": [
+        [
+          6.058086,
+          46.452854
+        ],
+        [
+          6.057277,
+          46.452882
+        ]
+      ]
+    },
+    {
+      "from": 90,
+      "to": 8,
+      "type": "skate",
+      "name": "Run 213433",
+      "cost_base": 30,
+      "length_m": 32.8,
+      "elev_drop": -1.0,
+      "geometry": [
+        [
+          6.056447,
+          46.452105
+        ],
+        [
+          6.057277,
+          46.452882
+        ]
+      ]
+    },
+    {
+      "from": 0,
+      "to": 26,
+      "type": "skate",
+      "name": "Skate 97m",
+      "cost_base": 244.7,
+      "length_m": 97.1,
+      "elev_drop": -7.0,
+      "geometry": [
+        [
+          6.081979,
+          46.437447
+        ],
+        [
+          6.081938,
+          46.43832
+        ]
+      ]
+    },
+    {
+      "from": 26,
+      "to": 0,
+      "type": "skate",
+      "name": "Skate 97m",
+      "cost_base": 78.5,
+      "length_m": 97.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.081938,
+          46.43832
+        ],
+        [
+          6.081979,
+          46.437447
+        ]
+      ]
+    },
+    {
+      "from": 0,
+      "to": 63,
+      "type": "skate",
+      "name": "Skate 209m",
+      "cost_base": 1032.3,
+      "length_m": 209.3,
+      "elev_drop": -22.3,
+      "geometry": [
+        [
+          6.081979,
+          46.437447
+        ],
+        [
+          6.080036,
+          46.438771
+        ]
+      ]
+    },
+    {
+      "from": 63,
+      "to": 0,
+      "type": "skate",
+      "name": "Skate 209m",
+      "cost_base": 134.7,
+      "length_m": 209.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.080036,
+          46.438771
+        ],
+        [
+          6.081979,
+          46.437447
+        ]
+      ]
+    },
+    {
+      "from": 0,
+      "to": 24,
+      "type": "skate",
+      "name": "Skate 55m",
+      "cost_base": 57.7,
+      "length_m": 55.3,
+      "elev_drop": -1.6,
+      "geometry": [
+        [
+          6.081979,
+          46.437447
+        ],
+        [
+          6.082506,
+          46.437787
+        ]
+      ]
+    },
+    {
+      "from": 0,
+      "to": 28,
+      "type": "skate",
+      "name": "Skate 133m",
+      "cost_base": 96.3,
+      "length_m": 132.5,
+      "elev_drop": -0.9,
+      "geometry": [
+        [
+          6.081979,
+          46.437447
+        ],
+        [
+          6.082863,
+          46.438472
+        ]
+      ]
+    },
+    {
+      "from": 28,
+      "to": 0,
+      "type": "skate",
+      "name": "Skate 133m",
+      "cost_base": 96.3,
+      "length_m": 132.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.082863,
+          46.438472
+        ],
+        [
+          6.081979,
+          46.437447
+        ]
+      ]
+    },
+    {
+      "from": 26,
+      "to": 63,
+      "type": "skate",
+      "name": "Skate 154m",
+      "cost_base": 907.1,
+      "length_m": 154.1,
+      "elev_drop": -15.3,
+      "geometry": [
+        [
+          6.081938,
+          46.43832
+        ],
+        [
+          6.080036,
+          46.438771
+        ]
+      ]
+    },
+    {
+      "from": 28,
+      "to": 26,
+      "type": "skate",
+      "name": "Skate 73m",
+      "cost_base": 228.5,
+      "length_m": 72.8,
+      "elev_drop": -6.1,
+      "geometry": [
+        [
+          6.082863,
+          46.438472
+        ],
+        [
+          6.081938,
+          46.43832
+        ]
+      ]
+    },
+    {
+      "from": 63,
+      "to": 24,
+      "type": "skate",
+      "name": "Skate 219m",
+      "cost_base": 139.3,
+      "length_m": 218.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.080036,
+          46.438771
+        ],
+        [
+          6.082506,
+          46.437787
+        ]
+      ]
+    },
+    {
+      "from": 24,
+      "to": 63,
+      "type": "skate",
+      "name": "Skate 219m",
+      "cost_base": 1025.6,
+      "length_m": 218.6,
+      "elev_drop": -20.7,
+      "geometry": [
+        [
+          6.082506,
+          46.437787
+        ],
+        [
+          6.080036,
+          46.438771
+        ]
+      ]
+    },
+    {
+      "from": 63,
+      "to": 28,
+      "type": "skate",
+      "name": "Skate 219m",
+      "cost_base": 139.6,
+      "length_m": 219.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.080036,
+          46.438771
+        ],
+        [
+          6.082863,
+          46.438472
+        ]
+      ]
+    },
+    {
+      "from": 28,
+      "to": 63,
+      "type": "skate",
+      "name": "Skate 219m",
+      "cost_base": 1033.1,
+      "length_m": 219.1,
+      "elev_drop": -21.4,
+      "geometry": [
+        [
+          6.082863,
+          46.438472
+        ],
+        [
+          6.080036,
+          46.438771
+        ]
+      ]
+    },
+    {
+      "from": 3,
+      "to": 39,
+      "type": "skate",
+      "name": "Skate 213m",
+      "cost_base": 1385.8,
+      "length_m": 212.8,
+      "elev_drop": -57.3,
+      "geometry": [
+        [
+          6.064555,
+          46.44804
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 3,
+      "type": "skate",
+      "name": "Skate 213m",
+      "cost_base": 136.4,
+      "length_m": 212.8,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.064555,
+          46.44804
+        ]
+      ]
+    },
+    {
+      "from": 3,
+      "to": 81,
+      "type": "skate",
+      "name": "Skate 178m",
+      "cost_base": 1226.2,
+      "length_m": 178.2,
+      "elev_drop": -44.8,
+      "geometry": [
+        [
+          6.064555,
+          46.44804
+        ],
+        [
+          6.06367,
+          46.446558
+        ]
+      ]
+    },
+    {
+      "from": 40,
+      "to": 3,
+      "type": "skate",
+      "name": "Skate 185m",
+      "cost_base": 1150.4,
+      "length_m": 185.4,
+      "elev_drop": -36.5,
+      "geometry": [
+        [
+          6.06273,
+          46.449136
+        ],
+        [
+          6.064555,
+          46.44804
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 39,
+      "type": "skate",
+      "name": "Skate 59m",
+      "cost_base": 219.2,
+      "length_m": 58.8,
+      "elev_drop": -12.5,
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 5,
+      "to": 29,
+      "type": "skate",
+      "name": "Skate 86m",
+      "cost_base": 73.1,
+      "length_m": 86.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.100379,
+          46.425665
+        ],
+        [
+          6.099278,
+          46.425819
+        ]
+      ]
+    },
+    {
+      "from": 29,
+      "to": 5,
+      "type": "skate",
+      "name": "Skate 86m",
+      "cost_base": 237.4,
+      "length_m": 86.1,
+      "elev_drop": -6.5,
+      "geometry": [
+        [
+          6.099278,
+          46.425819
+        ],
+        [
+          6.100379,
+          46.425665
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 64,
+      "type": "skate",
+      "name": "Skate 95m",
+      "cost_base": 243.2,
+      "length_m": 94.7,
+      "elev_drop": -12.7,
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.091001,
+          46.441487
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 70,
+      "type": "skate",
+      "name": "Skate 56m",
+      "cost_base": 58.2,
+      "length_m": 56.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.090502,
+          46.442791
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 76,
+      "type": "skate",
+      "name": "Skate 65m",
+      "cost_base": 223.4,
+      "length_m": 65.1,
+      "elev_drop": -7.0,
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.091226,
+          46.442665
+        ]
+      ]
+    },
+    {
+      "from": 76,
+      "to": 6,
+      "type": "skate",
+      "name": "Skate 65m",
+      "cost_base": 62.6,
+      "length_m": 65.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.091226,
+          46.442665
+        ],
+        [
+          6.090577,
+          46.442287
+        ]
+      ]
+    },
+    {
+      "from": 64,
+      "to": 70,
+      "type": "skate",
+      "name": "Skate 150m",
+      "cost_base": 105.0,
+      "length_m": 150.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.091001,
+          46.441487
+        ],
+        [
+          6.090502,
+          46.442791
+        ]
+      ]
+    },
+    {
+      "from": 70,
+      "to": 64,
+      "type": "skate",
+      "name": "Skate 150m",
+      "cost_base": 911.0,
+      "length_m": 150.0,
+      "elev_drop": -16.1,
+      "geometry": [
+        [
+          6.090502,
+          46.442791
+        ],
+        [
+          6.091001,
+          46.441487
+        ]
+      ]
+    },
+    {
+      "from": 64,
+      "to": 76,
+      "type": "skate",
+      "name": "Skate 132m",
+      "cost_base": 96.1,
+      "length_m": 132.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.091001,
+          46.441487
+        ],
+        [
+          6.091226,
+          46.442665
+        ]
+      ]
+    },
+    {
+      "from": 76,
+      "to": 64,
+      "type": "skate",
+      "name": "Skate 132m",
+      "cost_base": 268.1,
+      "length_m": 132.1,
+      "elev_drop": -5.7,
+      "geometry": [
+        [
+          6.091226,
+          46.442665
+        ],
+        [
+          6.091001,
+          46.441487
+        ]
+      ]
+    },
+    {
+      "from": 70,
+      "to": 76,
+      "type": "skate",
+      "name": "Skate 57m",
+      "cost_base": 218.2,
+      "length_m": 57.2,
+      "elev_drop": -10.4,
+      "geometry": [
+        [
+          6.090502,
+          46.442791
+        ],
+        [
+          6.091226,
+          46.442665
+        ]
+      ]
+    },
+    {
+      "from": 8,
+      "to": 88,
+      "type": "skate",
+      "name": "Skate 102m",
+      "cost_base": 81.2,
+      "length_m": 102.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.057277,
+          46.452882
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 8,
+      "type": "skate",
+      "name": "Skate 102m",
+      "cost_base": 248.3,
+      "length_m": 102.5,
+      "elev_drop": -13.2,
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.057277,
+          46.452882
+        ]
+      ]
+    },
+    {
+      "from": 8,
+      "to": 89,
+      "type": "skate",
+      "name": "Skate 62m",
+      "cost_base": 221.4,
+      "length_m": 62.0,
+      "elev_drop": -6.3,
+      "geometry": [
+        [
+          6.057277,
+          46.452882
+        ],
+        [
+          6.058086,
+          46.452854
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 89,
+      "type": "skate",
+      "name": "Skate 159m",
+      "cost_base": 954.3,
+      "length_m": 159.3,
+      "elev_drop": -19.5,
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.058086,
+          46.452854
+        ]
+      ]
+    },
+    {
+      "from": 89,
+      "to": 88,
+      "type": "skate",
+      "name": "Skate 159m",
+      "cost_base": 109.6,
+      "length_m": 159.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.058086,
+          46.452854
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 45,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 72m",
+      "cost_base": 832.0,
+      "length_m": 72.0,
+      "elev_drop": -16.0,
+      "geometry": [
+        [
+          6.063476,
+          46.444999
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 11,
+      "type": "skate",
+      "name": "Skate 153m",
+      "cost_base": 282.3,
+      "length_m": 153.4,
+      "elev_drop": -6.5,
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 153m",
+      "cost_base": 106.7,
+      "length_m": 153.4,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 17,
+      "type": "skate",
+      "name": "Skate 184m",
+      "cost_base": 121.9,
+      "length_m": 183.8,
+      "elev_drop": -4.5,
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 17,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 184m",
+      "cost_base": 121.9,
+      "length_m": 183.8,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066333,
+          46.444909
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 27,
+      "type": "skate",
+      "name": "Skate 240m",
+      "cost_base": 149.8,
+      "length_m": 239.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.067059,
+          46.444819
+        ]
+      ]
+    },
+    {
+      "from": 27,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 240m",
+      "cost_base": 149.8,
+      "length_m": 239.7,
+      "elev_drop": -1.2,
+      "geometry": [
+        [
+          6.067059,
+          46.444819
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 73m",
+      "cost_base": 66.5,
+      "length_m": 73.0,
+      "elev_drop": -2.5,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 81,
+      "type": "skate",
+      "name": "Skate 123m",
+      "cost_base": 91.4,
+      "length_m": 122.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.06367,
+          46.446558
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 123m",
+      "cost_base": 261.9,
+      "length_m": 122.9,
+      "elev_drop": -15.0,
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 45,
+      "to": 11,
+      "type": "skate",
+      "name": "Skate 205m",
+      "cost_base": 1029.6,
+      "length_m": 204.6,
+      "elev_drop": -22.5,
+      "geometry": [
+        [
+          6.063476,
+          46.444999
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 45,
+      "to": 17,
+      "type": "skate",
+      "name": "Skate 219m",
+      "cost_base": 1024.1,
+      "length_m": 219.1,
+      "elev_drop": -20.5,
+      "geometry": [
+        [
+          6.063476,
+          46.444999
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 17,
+      "to": 45,
+      "type": "skate",
+      "name": "Skate 219m",
+      "cost_base": 139.5,
+      "length_m": 219.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066333,
+          46.444909
+        ],
+        [
+          6.063476,
+          46.444999
+        ]
+      ]
+    },
+    {
+      "from": 45,
+      "to": 39,
+      "type": "skate",
+      "name": "Skate 138m",
+      "cost_base": 271.8,
+      "length_m": 137.7,
+      "elev_drop": -13.5,
+      "geometry": [
+        [
+          6.063476,
+          46.444999
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 45,
+      "type": "skate",
+      "name": "Skate 138m",
+      "cost_base": 98.8,
+      "length_m": 137.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.063476,
+          46.444999
+        ]
+      ]
+    },
+    {
+      "from": 45,
+      "to": 81,
+      "type": "skate",
+      "name": "Skate 174m",
+      "cost_base": 117.0,
+      "length_m": 174.0,
+      "elev_drop": -1.0,
+      "geometry": [
+        [
+          6.063476,
+          46.444999
+        ],
+        [
+          6.06367,
+          46.446558
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 45,
+      "type": "skate",
+      "name": "Skate 174m",
+      "cost_base": 117.0,
+      "length_m": 174.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.063476,
+          46.444999
+        ]
+      ]
+    },
+    {
+      "from": 10,
+      "to": 48,
+      "type": "skate",
+      "name": "Skate 83m",
+      "cost_base": 71.7,
+      "length_m": 83.5,
+      "elev_drop": -2.0,
+      "geometry": [
+        [
+          6.054936,
+          46.456127
+        ],
+        [
+          6.054296,
+          46.45552
+        ]
+      ]
+    },
+    {
+      "from": 48,
+      "to": 10,
+      "type": "skate",
+      "name": "Skate 83m",
+      "cost_base": 71.7,
+      "length_m": 83.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.054296,
+          46.45552
+        ],
+        [
+          6.054936,
+          46.456127
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 17,
+      "type": "skate",
+      "name": "Skate 57m",
+      "cost_base": 58.5,
+      "length_m": 57.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 23,
+      "type": "skate",
+      "name": "Skate 100m",
+      "cost_base": 79.8,
+      "length_m": 99.7,
+      "elev_drop": -2.7,
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.067368,
+          46.445537
+        ]
+      ]
+    },
+    {
+      "from": 27,
+      "to": 11,
+      "type": "skate",
+      "name": "Skate 98m",
+      "cost_base": 245.5,
+      "length_m": 98.2,
+      "elev_drop": -7.7,
+      "geometry": [
+        [
+          6.067059,
+          46.444819
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 39,
+      "type": "skate",
+      "name": "Skate 170m",
+      "cost_base": 115.1,
+      "length_m": 170.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 11,
+      "type": "skate",
+      "name": "Skate 170m",
+      "cost_base": 293.5,
+      "length_m": 170.2,
+      "elev_drop": -9.0,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 11,
+      "to": 81,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 142.9,
+      "length_m": 225.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066084,
+          46.445393
+        ],
+        [
+          6.06367,
+          46.446558
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 11,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 1040.9,
+      "length_m": 225.9,
+      "elev_drop": -21.5,
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.066084,
+          46.445393
+        ]
+      ]
+    },
+    {
+      "from": 17,
+      "to": 23,
+      "type": "skate",
+      "name": "Skate 106m",
+      "cost_base": 82.9,
+      "length_m": 105.7,
+      "elev_drop": -4.7,
+      "geometry": [
+        [
+          6.066333,
+          46.444909
+        ],
+        [
+          6.067368,
+          46.445537
+        ]
+      ]
+    },
+    {
+      "from": 23,
+      "to": 17,
+      "type": "skate",
+      "name": "Skate 106m",
+      "cost_base": 82.9,
+      "length_m": 105.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.067368,
+          46.445537
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 17,
+      "to": 27,
+      "type": "skate",
+      "name": "Skate 57m",
+      "cost_base": 58.3,
+      "length_m": 56.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066333,
+          46.444909
+        ],
+        [
+          6.067059,
+          46.444819
+        ]
+      ]
+    },
+    {
+      "from": 17,
+      "to": 65,
+      "type": "skate",
+      "name": "Skate 224m",
+      "cost_base": 142.1,
+      "length_m": 224.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066333,
+          46.444909
+        ],
+        [
+          6.068695,
+          46.443719
+        ]
+      ]
+    },
+    {
+      "from": 65,
+      "to": 17,
+      "type": "skate",
+      "name": "Skate 224m",
+      "cost_base": 1025.2,
+      "length_m": 224.2,
+      "elev_drop": -20.1,
+      "geometry": [
+        [
+          6.068695,
+          46.443719
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 17,
+      "to": 39,
+      "type": "skate",
+      "name": "Skate 217m",
+      "cost_base": 138.3,
+      "length_m": 216.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.066333,
+          46.444909
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 17,
+      "type": "skate",
+      "name": "Skate 217m",
+      "cost_base": 324.4,
+      "length_m": 216.6,
+      "elev_drop": -7.0,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.066333,
+          46.444909
+        ]
+      ]
+    },
+    {
+      "from": 23,
+      "to": 27,
+      "type": "skate",
+      "name": "Skate 83m",
+      "cost_base": 71.6,
+      "length_m": 83.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.067368,
+          46.445537
+        ],
+        [
+          6.067059,
+          46.444819
+        ]
+      ]
+    },
+    {
+      "from": 27,
+      "to": 23,
+      "type": "skate",
+      "name": "Skate 83m",
+      "cost_base": 235.5,
+      "length_m": 83.2,
+      "elev_drop": -10.4,
+      "geometry": [
+        [
+          6.067059,
+          46.444819
+        ],
+        [
+          6.067368,
+          46.445537
+        ]
+      ]
+    },
+    {
+      "from": 23,
+      "to": 65,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 143.1,
+      "length_m": 226.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.067368,
+          46.445537
+        ],
+        [
+          6.068695,
+          46.443719
+        ]
+      ]
+    },
+    {
+      "from": 65,
+      "to": 23,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 1074.2,
+      "length_m": 226.2,
+      "elev_drop": -24.8,
+      "geometry": [
+        [
+          6.068695,
+          46.443719
+        ],
+        [
+          6.067368,
+          46.445537
+        ]
+      ]
+    },
+    {
+      "from": 65,
+      "to": 27,
+      "type": "skate",
+      "name": "Skate 175m",
+      "cost_base": 296.7,
+      "length_m": 175.1,
+      "elev_drop": -14.4,
+      "geometry": [
+        [
+          6.068695,
+          46.443719
+        ],
+        [
+          6.067059,
+          46.444819
+        ]
+      ]
+    },
+    {
+      "from": 15,
+      "to": 14,
+      "type": "skate",
+      "name": "Skate 105m",
+      "cost_base": 82.5,
+      "length_m": 105.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.136779,
+          46.53263
+        ],
+        [
+          6.135714,
+          46.533226
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 191m",
+      "cost_base": 991.9,
+      "length_m": 190.9,
+      "elev_drop": -20.1,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 20,
+      "type": "skate",
+      "name": "Skate 191m",
+      "cost_base": 125.4,
+      "length_m": 190.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 43,
+      "type": "skate",
+      "name": "Skate 129m",
+      "cost_base": 266.3,
+      "length_m": 129.5,
+      "elev_drop": -14.6,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 20,
+      "type": "skate",
+      "name": "Skate 129m",
+      "cost_base": 94.7,
+      "length_m": 129.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 52,
+      "type": "skate",
+      "name": "Skate 210m",
+      "cost_base": 320.1,
+      "length_m": 210.1,
+      "elev_drop": -5.8,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 20,
+      "type": "skate",
+      "name": "Skate 210m",
+      "cost_base": 135.1,
+      "length_m": 210.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 83,
+      "type": "skate",
+      "name": "Skate 57m",
+      "cost_base": 58.4,
+      "length_m": 56.9,
+      "elev_drop": -2.8,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.05398,
+          46.453911
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 88,
+      "type": "skate",
+      "name": "Skate 232m",
+      "cost_base": 1203.0,
+      "length_m": 232.0,
+      "elev_drop": -37.1,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 20,
+      "type": "skate",
+      "name": "Skate 232m",
+      "cost_base": 146.0,
+      "length_m": 232.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 20,
+      "to": 48,
+      "type": "skate",
+      "name": "Skate 192m",
+      "cost_base": 126.2,
+      "length_m": 192.4,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.05324,
+          46.45395
+        ],
+        [
+          6.054296,
+          46.45552
+        ]
+      ]
+    },
+    {
+      "from": 48,
+      "to": 20,
+      "type": "skate",
+      "name": "Skate 192m",
+      "cost_base": 308.3,
+      "length_m": 192.4,
+      "elev_drop": -10.9,
+      "geometry": [
+        [
+          6.054296,
+          46.45552
+        ],
+        [
+          6.05324,
+          46.45395
+        ]
+      ]
+    },
+    {
+      "from": 33,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 232m",
+      "cost_base": 1072.6,
+      "length_m": 231.6,
+      "elev_drop": -24.1,
+      "geometry": [
+        [
+          6.052755,
+          46.454457
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 33,
+      "type": "skate",
+      "name": "Skate 232m",
+      "cost_base": 145.8,
+      "length_m": 231.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 33,
+      "to": 43,
+      "type": "skate",
+      "name": "Skate 179m",
+      "cost_base": 965.1,
+      "length_m": 179.1,
+      "elev_drop": -18.6,
+      "geometry": [
+        [
+          6.052755,
+          46.454457
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 33,
+      "type": "skate",
+      "name": "Skate 179m",
+      "cost_base": 119.6,
+      "length_m": 179.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 33,
+      "to": 52,
+      "type": "skate",
+      "name": "Skate 225m",
+      "cost_base": 330.1,
+      "length_m": 225.1,
+      "elev_drop": -9.8,
+      "geometry": [
+        [
+          6.052755,
+          46.454457
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 33,
+      "type": "skate",
+      "name": "Skate 225m",
+      "cost_base": 142.6,
+      "length_m": 225.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 33,
+      "to": 83,
+      "type": "skate",
+      "name": "Skate 112m",
+      "cost_base": 254.5,
+      "length_m": 111.8,
+      "elev_drop": -6.8,
+      "geometry": [
+        [
+          6.052755,
+          46.454457
+        ],
+        [
+          6.05398,
+          46.453911
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 33,
+      "type": "skate",
+      "name": "Skate 112m",
+      "cost_base": 85.9,
+      "length_m": 111.8,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 33,
+      "to": 10,
+      "type": "skate",
+      "name": "Skate 250m",
+      "cost_base": 154.9,
+      "length_m": 249.8,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.052755,
+          46.454457
+        ],
+        [
+          6.054936,
+          46.456127
+        ]
+      ]
+    },
+    {
+      "from": 10,
+      "to": 33,
+      "type": "skate",
+      "name": "Skate 250m",
+      "cost_base": 346.5,
+      "length_m": 249.8,
+      "elev_drop": -8.9,
+      "geometry": [
+        [
+          6.054936,
+          46.456127
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 33,
+      "to": 48,
+      "type": "skate",
+      "name": "Skate 167m",
+      "cost_base": 113.5,
+      "length_m": 167.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.052755,
+          46.454457
+        ],
+        [
+          6.054296,
+          46.45552
+        ]
+      ]
+    },
+    {
+      "from": 48,
+      "to": 33,
+      "type": "skate",
+      "name": "Skate 167m",
+      "cost_base": 291.3,
+      "length_m": 167.0,
+      "elev_drop": -6.9,
+      "geometry": [
+        [
+          6.054296,
+          46.45552
+        ],
+        [
+          6.052755,
+          46.454457
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 66m",
+      "cost_base": 223.9,
+      "length_m": 65.8,
+      "elev_drop": -5.5,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 90m",
+      "cost_base": 240.0,
+      "length_m": 90.0,
+      "elev_drop": -14.3,
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 83,
+      "type": "skate",
+      "name": "Skate 135m",
+      "cost_base": 97.4,
+      "length_m": 134.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.05398,
+          46.453911
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 135m",
+      "cost_base": 907.9,
+      "length_m": 134.9,
+      "elev_drop": -17.3,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 8,
+      "type": "skate",
+      "name": "Skate 178m",
+      "cost_base": 1079.7,
+      "length_m": 177.7,
+      "elev_drop": -30.2,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.057277,
+          46.452882
+        ]
+      ]
+    },
+    {
+      "from": 8,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 178m",
+      "cost_base": 118.9,
+      "length_m": 177.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.057277,
+          46.452882
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 88,
+      "type": "skate",
+      "name": "Skate 83m",
+      "cost_base": 853.3,
+      "length_m": 83.3,
+      "elev_drop": -17.0,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 89,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 1190.8,
+      "length_m": 225.8,
+      "elev_drop": -36.5,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.058086,
+          46.452854
+        ]
+      ]
+    },
+    {
+      "from": 89,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 142.9,
+      "length_m": 225.8,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.058086,
+          46.452854
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 10,
+      "type": "skate",
+      "name": "Skate 237m",
+      "cost_base": 148.3,
+      "length_m": 236.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.054936,
+          46.456127
+        ]
+      ]
+    },
+    {
+      "from": 10,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 237m",
+      "cost_base": 1166.6,
+      "length_m": 236.6,
+      "elev_drop": -33.0,
+      "geometry": [
+        [
+          6.054936,
+          46.456127
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 48,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 195m",
+      "cost_base": 1104.9,
+      "length_m": 194.9,
+      "elev_drop": -31.0,
+      "geometry": [
+        [
+          6.054296,
+          46.45552
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 52,
+      "type": "skate",
+      "name": "Skate 126m",
+      "cost_base": 92.9,
+      "length_m": 125.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 43,
+      "type": "skate",
+      "name": "Skate 126m",
+      "cost_base": 263.8,
+      "length_m": 125.7,
+      "elev_drop": -8.8,
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 43,
+      "type": "skate",
+      "name": "Skate 73m",
+      "cost_base": 228.4,
+      "length_m": 72.6,
+      "elev_drop": -11.8,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 8,
+      "type": "skate",
+      "name": "Skate 210m",
+      "cost_base": 1167.3,
+      "length_m": 210.3,
+      "elev_drop": -35.7,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.057277,
+          46.452882
+        ]
+      ]
+    },
+    {
+      "from": 8,
+      "to": 43,
+      "type": "skate",
+      "name": "Skate 210m",
+      "cost_base": 135.2,
+      "length_m": 210.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.057277,
+          46.452882
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 88,
+      "type": "skate",
+      "name": "Skate 108m",
+      "cost_base": 932.9,
+      "length_m": 107.9,
+      "elev_drop": -22.5,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 48,
+      "type": "skate",
+      "name": "Skate 191m",
+      "cost_base": 125.6,
+      "length_m": 191.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.054296,
+          46.45552
+        ]
+      ]
+    },
+    {
+      "from": 48,
+      "to": 43,
+      "type": "skate",
+      "name": "Skate 191m",
+      "cost_base": 1046.2,
+      "length_m": 191.2,
+      "elev_drop": -25.5,
+      "geometry": [
+        [
+          6.054296,
+          46.45552
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 83,
+      "type": "skate",
+      "name": "Skate 166m",
+      "cost_base": 112.9,
+      "length_m": 165.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.05398,
+          46.453911
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 52,
+      "type": "skate",
+      "name": "Skate 166m",
+      "cost_base": 112.9,
+      "length_m": 165.9,
+      "elev_drop": -3.0,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 52,
+      "to": 88,
+      "type": "skate",
+      "name": "Skate 171m",
+      "cost_base": 1084.0,
+      "length_m": 171.0,
+      "elev_drop": -31.3,
+      "geometry": [
+        [
+          6.05563,
+          46.454876
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 52,
+      "type": "skate",
+      "name": "Skate 171m",
+      "cost_base": 115.5,
+      "length_m": 171.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 10,
+      "to": 52,
+      "type": "skate",
+      "name": "Skate 149m",
+      "cost_base": 935.9,
+      "length_m": 148.9,
+      "elev_drop": -18.7,
+      "geometry": [
+        [
+          6.054936,
+          46.456127
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 48,
+      "to": 52,
+      "type": "skate",
+      "name": "Skate 125m",
+      "cost_base": 891.7,
+      "length_m": 124.7,
+      "elev_drop": -16.7,
+      "geometry": [
+        [
+          6.054296,
+          46.45552
+        ],
+        [
+          6.05563,
+          46.454876
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 88,
+      "type": "skate",
+      "name": "Skate 177m",
+      "cost_base": 1119.6,
+      "length_m": 176.6,
+      "elev_drop": -34.3,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.056153,
+          46.453381
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 83,
+      "type": "skate",
+      "name": "Skate 177m",
+      "cost_base": 118.3,
+      "length_m": 176.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.05398,
+          46.453911
+        ]
+      ]
+    },
+    {
+      "from": 83,
+      "to": 48,
+      "type": "skate",
+      "name": "Skate 181m",
+      "cost_base": 120.3,
+      "length_m": 180.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.05398,
+          46.453911
+        ],
+        [
+          6.054296,
+          46.45552
+        ]
+      ]
+    },
+    {
+      "from": 48,
+      "to": 83,
+      "type": "skate",
+      "name": "Skate 181m",
+      "cost_base": 300.4,
+      "length_m": 180.5,
+      "elev_drop": -13.7,
+      "geometry": [
+        [
+          6.054296,
+          46.45552
+        ],
+        [
+          6.05398,
+          46.453911
+        ]
+      ]
+    },
+    {
+      "from": 62,
+      "to": 21,
+      "type": "skate",
+      "name": "Skate 78m",
+      "cost_base": 232.1,
+      "length_m": 78.2,
+      "elev_drop": -11.2,
+      "geometry": [
+        [
+          6.05812,
+          46.450002
+        ],
+        [
+          6.057667,
+          46.449373
+        ]
+      ]
+    },
+    {
+      "from": 62,
+      "to": 75,
+      "type": "skate",
+      "name": "Skate 229m",
+      "cost_base": 144.3,
+      "length_m": 228.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.05812,
+          46.450002
+        ],
+        [
+          6.059858,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 75,
+      "to": 62,
+      "type": "skate",
+      "name": "Skate 229m",
+      "cost_base": 144.3,
+      "length_m": 228.6,
+      "elev_drop": -2.5,
+      "geometry": [
+        [
+          6.059858,
+          46.451673
+        ],
+        [
+          6.05812,
+          46.450002
+        ]
+      ]
+    },
+    {
+      "from": 62,
+      "to": 85,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 1012.6,
+      "length_m": 225.6,
+      "elev_drop": -18.7,
+      "geometry": [
+        [
+          6.05812,
+          46.450002
+        ],
+        [
+          6.060732,
+          46.450939
+        ]
+      ]
+    },
+    {
+      "from": 85,
+      "to": 62,
+      "type": "skate",
+      "name": "Skate 226m",
+      "cost_base": 142.8,
+      "length_m": 225.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.060732,
+          46.450939
+        ],
+        [
+          6.05812,
+          46.450002
+        ]
+      ]
+    },
+    {
+      "from": 22,
+      "to": 66,
+      "type": "skate",
+      "name": "Skate 68m",
+      "cost_base": 64.0,
+      "length_m": 68.0,
+      "elev_drop": -2.8,
+      "geometry": [
+        [
+          6.078184,
+          46.447471
+        ],
+        [
+          6.078673,
+          46.446961
+        ]
+      ]
+    },
+    {
+      "from": 22,
+      "to": 47,
+      "type": "skate",
+      "name": "Skate 200m",
+      "cost_base": 313.7,
+      "length_m": 200.5,
+      "elev_drop": -9.3,
+      "geometry": [
+        [
+          6.078184,
+          46.447471
+        ],
+        [
+          6.080333,
+          46.446442
+        ]
+      ]
+    },
+    {
+      "from": 47,
+      "to": 22,
+      "type": "skate",
+      "name": "Skate 200m",
+      "cost_base": 130.2,
+      "length_m": 200.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.080333,
+          46.446442
+        ],
+        [
+          6.078184,
+          46.447471
+        ]
+      ]
+    },
+    {
+      "from": 22,
+      "to": 74,
+      "type": "skate",
+      "name": "Skate 187m",
+      "cost_base": 964.6,
+      "length_m": 186.6,
+      "elev_drop": -17.8,
+      "geometry": [
+        [
+          6.078184,
+          46.447471
+        ],
+        [
+          6.07937,
+          46.446006
+        ]
+      ]
+    },
+    {
+      "from": 74,
+      "to": 22,
+      "type": "skate",
+      "name": "Skate 187m",
+      "cost_base": 123.3,
+      "length_m": 186.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.07937,
+          46.446006
+        ],
+        [
+          6.078184,
+          46.447471
+        ]
+      ]
+    },
+    {
+      "from": 66,
+      "to": 47,
+      "type": "skate",
+      "name": "Skate 140m",
+      "cost_base": 273.1,
+      "length_m": 139.6,
+      "elev_drop": -6.5,
+      "geometry": [
+        [
+          6.078673,
+          46.446961
+        ],
+        [
+          6.080333,
+          46.446442
+        ]
+      ]
+    },
+    {
+      "from": 66,
+      "to": 74,
+      "type": "skate",
+      "name": "Skate 119m",
+      "cost_base": 259.2,
+      "length_m": 118.9,
+      "elev_drop": -15.0,
+      "geometry": [
+        [
+          6.078673,
+          46.446961
+        ],
+        [
+          6.07937,
+          46.446006
+        ]
+      ]
+    },
+    {
+      "from": 24,
+      "to": 28,
+      "type": "skate",
+      "name": "Skate 81m",
+      "cost_base": 70.4,
+      "length_m": 80.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.082506,
+          46.437787
+        ],
+        [
+          6.082863,
+          46.438472
+        ]
+      ]
+    },
+    {
+      "from": 24,
+      "to": 72,
+      "type": "skate",
+      "name": "Skate 249m",
+      "cost_base": 1140.2,
+      "length_m": 249.2,
+      "elev_drop": -29.1,
+      "geometry": [
+        [
+          6.082506,
+          46.437787
+        ],
+        [
+          6.085655,
+          46.438348
+        ]
+      ]
+    },
+    {
+      "from": 72,
+      "to": 24,
+      "type": "skate",
+      "name": "Skate 249m",
+      "cost_base": 154.6,
+      "length_m": 249.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.085655,
+          46.438348
+        ],
+        [
+          6.082506,
+          46.437787
+        ]
+      ]
+    },
+    {
+      "from": 28,
+      "to": 72,
+      "type": "skate",
+      "name": "Skate 214m",
+      "cost_base": 1112.5,
+      "length_m": 214.5,
+      "elev_drop": -29.8,
+      "geometry": [
+        [
+          6.082863,
+          46.438472
+        ],
+        [
+          6.085655,
+          46.438348
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 50,
+      "type": "skate",
+      "name": "Skate 174m",
+      "cost_base": 1325.1,
+      "length_m": 174.1,
+      "elev_drop": -55.1,
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.08902,
+          46.436106
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 60,
+      "type": "skate",
+      "name": "Skate 143m",
+      "cost_base": 1094.2,
+      "length_m": 143.2,
+      "elev_drop": -35.1,
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.08877,
+          46.436525
+        ]
+      ]
+    },
+    {
+      "from": 60,
+      "to": 25,
+      "type": "skate",
+      "name": "Skate 143m",
+      "cost_base": 101.6,
+      "length_m": 143.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08877,
+          46.436525
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 82,
+      "type": "skate",
+      "name": "Skate 233m",
+      "cost_base": 1517.0,
+      "length_m": 233.0,
+      "elev_drop": -68.4,
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.089566,
+          46.435672
+        ]
+      ]
+    },
+    {
+      "from": 82,
+      "to": 25,
+      "type": "skate",
+      "name": "Skate 233m",
+      "cost_base": 146.5,
+      "length_m": 233.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.089566,
+          46.435672
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 53,
+      "to": 25,
+      "type": "skate",
+      "name": "Skate 136m",
+      "cost_base": 973.5,
+      "length_m": 136.5,
+      "elev_drop": -23.7,
+      "geometry": [
+        [
+          6.086852,
+          46.437932
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 61,
+      "type": "skate",
+      "name": "Skate 121m",
+      "cost_base": 90.3,
+      "length_m": 120.5,
+      "elev_drop": -0.6,
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 25,
+      "type": "skate",
+      "name": "Skate 121m",
+      "cost_base": 90.3,
+      "length_m": 120.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 72,
+      "type": "skate",
+      "name": "Skate 207m",
+      "cost_base": 133.4,
+      "length_m": 206.8,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.085655,
+          46.438348
+        ]
+      ]
+    },
+    {
+      "from": 72,
+      "to": 25,
+      "type": "skate",
+      "name": "Skate 207m",
+      "cost_base": 1211.8,
+      "length_m": 206.8,
+      "elev_drop": -40.5,
+      "geometry": [
+        [
+          6.085655,
+          46.438348
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 25,
+      "to": 19,
+      "type": "skate",
+      "name": "Skate 179m",
+      "cost_base": 119.5,
+      "length_m": 179.0,
+      "elev_drop": -5.0,
+      "geometry": [
+        [
+          6.08692,
+          46.436705
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 25,
+      "type": "skate",
+      "name": "Skate 179m",
+      "cost_base": 119.5,
+      "length_m": 179.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.08692,
+          46.436705
+        ]
+      ]
+    },
+    {
+      "from": 31,
+      "to": 6,
+      "type": "skate",
+      "name": "Skate 201m",
+      "cost_base": 313.9,
+      "length_m": 200.9,
+      "elev_drop": -5.6,
+      "geometry": [
+        [
+          6.08803,
+          46.442715
+        ],
+        [
+          6.090577,
+          46.442287
+        ]
+      ]
+    },
+    {
+      "from": 31,
+      "to": 70,
+      "type": "skate",
+      "name": "Skate 190m",
+      "cost_base": 124.8,
+      "length_m": 189.6,
+      "elev_drop": -2.2,
+      "geometry": [
+        [
+          6.08803,
+          46.442715
+        ],
+        [
+          6.090502,
+          46.442791
+        ]
+      ]
+    },
+    {
+      "from": 70,
+      "to": 31,
+      "type": "skate",
+      "name": "Skate 190m",
+      "cost_base": 124.8,
+      "length_m": 189.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.090502,
+          46.442791
+        ],
+        [
+          6.08803,
+          46.442715
+        ]
+      ]
+    },
+    {
+      "from": 31,
+      "to": 76,
+      "type": "skate",
+      "name": "Skate 245m",
+      "cost_base": 343.3,
+      "length_m": 245.0,
+      "elev_drop": -12.6,
+      "geometry": [
+        [
+          6.08803,
+          46.442715
+        ],
+        [
+          6.091226,
+          46.442665
+        ]
+      ]
+    },
+    {
+      "from": 76,
+      "to": 31,
+      "type": "skate",
+      "name": "Skate 245m",
+      "cost_base": 152.5,
+      "length_m": 245.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.091226,
+          46.442665
+        ],
+        [
+          6.08803,
+          46.442715
+        ]
+      ]
+    },
+    {
+      "from": 44,
+      "to": 32,
+      "type": "skate",
+      "name": "Skate 74m",
+      "cost_base": 66.8,
+      "length_m": 73.5,
+      "elev_drop": -3.3,
+      "geometry": [
+        [
+          6.094254,
+          46.440169
+        ],
+        [
+          6.093624,
+          46.439671
+        ]
+      ]
+    },
+    {
+      "from": 80,
+      "to": 32,
+      "type": "skate",
+      "name": "Skate 130m",
+      "cost_base": 888.2,
+      "length_m": 130.2,
+      "elev_drop": -15.8,
+      "geometry": [
+        [
+          6.09194,
+          46.439514
+        ],
+        [
+          6.093624,
+          46.439671
+        ]
+      ]
+    },
+    {
+      "from": 44,
+      "to": 80,
+      "type": "skate",
+      "name": "Skate 192m",
+      "cost_base": 125.9,
+      "length_m": 191.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.094254,
+          46.440169
+        ],
+        [
+          6.09194,
+          46.439514
+        ]
+      ]
+    },
+    {
+      "from": 80,
+      "to": 44,
+      "type": "skate",
+      "name": "Skate 192m",
+      "cost_base": 307.8,
+      "length_m": 191.7,
+      "elev_drop": -12.5,
+      "geometry": [
+        [
+          6.09194,
+          46.439514
+        ],
+        [
+          6.094254,
+          46.440169
+        ]
+      ]
+    },
+    {
+      "from": 80,
+      "to": 64,
+      "type": "skate",
+      "name": "Skate 231m",
+      "cost_base": 145.4,
+      "length_m": 230.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.09194,
+          46.439514
+        ],
+        [
+          6.091001,
+          46.441487
+        ]
+      ]
+    },
+    {
+      "from": 64,
+      "to": 80,
+      "type": "skate",
+      "name": "Skate 231m",
+      "cost_base": 1207.9,
+      "length_m": 230.9,
+      "elev_drop": -37.7,
+      "geometry": [
+        [
+          6.091001,
+          46.441487
+        ],
+        [
+          6.09194,
+          46.439514
+        ]
+      ]
+    },
+    {
+      "from": 34,
+      "to": 38,
+      "type": "skate",
+      "name": "Skate 238m",
+      "cost_base": 149.0,
+      "length_m": 238.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.078378,
+          46.445757
+        ],
+        [
+          6.081442,
+          46.4454
+        ]
+      ]
+    },
+    {
+      "from": 38,
+      "to": 34,
+      "type": "skate",
+      "name": "Skate 238m",
+      "cost_base": 338.7,
+      "length_m": 238.1,
+      "elev_drop": -12.2,
+      "geometry": [
+        [
+          6.081442,
+          46.4454
+        ],
+        [
+          6.078378,
+          46.445757
+        ]
+      ]
+    },
+    {
+      "from": 34,
+      "to": 22,
+      "type": "skate",
+      "name": "Skate 191m",
+      "cost_base": 125.6,
+      "length_m": 191.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.078378,
+          46.445757
+        ],
+        [
+          6.078184,
+          46.447471
+        ]
+      ]
+    },
+    {
+      "from": 66,
+      "to": 34,
+      "type": "skate",
+      "name": "Skate 136m",
+      "cost_base": 1027.7,
+      "length_m": 135.7,
+      "elev_drop": -29.2,
+      "geometry": [
+        [
+          6.078673,
+          46.446961
+        ],
+        [
+          6.078378,
+          46.445757
+        ]
+      ]
+    },
+    {
+      "from": 34,
+      "to": 47,
+      "type": "skate",
+      "name": "Skate 168m",
+      "cost_base": 114.0,
+      "length_m": 168.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.078378,
+          46.445757
+        ],
+        [
+          6.080333,
+          46.446442
+        ]
+      ]
+    },
+    {
+      "from": 47,
+      "to": 34,
+      "type": "skate",
+      "name": "Skate 168m",
+      "cost_base": 995.0,
+      "length_m": 168.0,
+      "elev_drop": -22.7,
+      "geometry": [
+        [
+          6.080333,
+          46.446442
+        ],
+        [
+          6.078378,
+          46.445757
+        ]
+      ]
+    },
+    {
+      "from": 34,
+      "to": 74,
+      "type": "skate",
+      "name": "Skate 81m",
+      "cost_base": 70.4,
+      "length_m": 80.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.078378,
+          46.445757
+        ],
+        [
+          6.07937,
+          46.446006
+        ]
+      ]
+    },
+    {
+      "from": 74,
+      "to": 34,
+      "type": "skate",
+      "name": "Skate 81m",
+      "cost_base": 233.9,
+      "length_m": 80.9,
+      "elev_drop": -14.2,
+      "geometry": [
+        [
+          6.07937,
+          46.446006
+        ],
+        [
+          6.078378,
+          46.445757
+        ]
+      ]
+    },
+    {
+      "from": 36,
+      "to": 35,
+      "type": "skate",
+      "name": "Skate 157m",
+      "cost_base": 108.6,
+      "length_m": 157.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.067252,
+          46.449695
+        ],
+        [
+          6.068736,
+          46.45067
+        ]
+      ]
+    },
+    {
+      "from": 38,
+      "to": 37,
+      "type": "skate",
+      "name": "Skate 148m",
+      "cost_base": 104.0,
+      "length_m": 148.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.081442,
+          46.4454
+        ],
+        [
+          6.08336,
+          46.445244
+        ]
+      ]
+    },
+    {
+      "from": 47,
+      "to": 38,
+      "type": "skate",
+      "name": "Skate 144m",
+      "cost_base": 275.8,
+      "length_m": 143.7,
+      "elev_drop": -10.5,
+      "geometry": [
+        [
+          6.080333,
+          46.446442
+        ],
+        [
+          6.081442,
+          46.4454
+        ]
+      ]
+    },
+    {
+      "from": 38,
+      "to": 74,
+      "type": "skate",
+      "name": "Skate 172m",
+      "cost_base": 116.2,
+      "length_m": 172.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.081442,
+          46.4454
+        ],
+        [
+          6.07937,
+          46.446006
+        ]
+      ]
+    },
+    {
+      "from": 74,
+      "to": 38,
+      "type": "skate",
+      "name": "Skate 172m",
+      "cost_base": 116.2,
+      "length_m": 172.5,
+      "elev_drop": -2.0,
+      "geometry": [
+        [
+          6.07937,
+          46.446006
+        ],
+        [
+          6.081442,
+          46.4454
+        ]
+      ]
+    },
+    {
+      "from": 75,
+      "to": 41,
+      "type": "skate",
+      "name": "Skate 80m",
+      "cost_base": 233.2,
+      "length_m": 79.7,
+      "elev_drop": -5.6,
+      "geometry": [
+        [
+          6.059858,
+          46.451673
+        ],
+        [
+          6.060899,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 41,
+      "to": 85,
+      "type": "skate",
+      "name": "Skate 83m",
+      "cost_base": 838.6,
+      "length_m": 82.6,
+      "elev_drop": -15.6,
+      "geometry": [
+        [
+          6.060899,
+          46.451673
+        ],
+        [
+          6.060732,
+          46.450939
+        ]
+      ]
+    },
+    {
+      "from": 85,
+      "to": 41,
+      "type": "skate",
+      "name": "Skate 83m",
+      "cost_base": 71.3,
+      "length_m": 82.6,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.060732,
+          46.450939
+        ],
+        [
+          6.060899,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 75,
+      "to": 85,
+      "type": "skate",
+      "name": "Skate 106m",
+      "cost_base": 917.6,
+      "length_m": 105.6,
+      "elev_drop": -21.2,
+      "geometry": [
+        [
+          6.059858,
+          46.451673
+        ],
+        [
+          6.060732,
+          46.450939
+        ]
+      ]
+    },
+    {
+      "from": 75,
+      "to": 8,
+      "type": "skate",
+      "name": "Skate 239m",
+      "cost_base": 149.5,
+      "length_m": 239.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.059858,
+          46.451673
+        ],
+        [
+          6.057277,
+          46.452882
+        ]
+      ]
+    },
+    {
+      "from": 8,
+      "to": 75,
+      "type": "skate",
+      "name": "Skate 239m",
+      "cost_base": 1185.0,
+      "length_m": 239.0,
+      "elev_drop": -34.6,
+      "geometry": [
+        [
+          6.057277,
+          46.452882
+        ],
+        [
+          6.059858,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 89,
+      "to": 75,
+      "type": "skate",
+      "name": "Skate 189m",
+      "cost_base": 1071.9,
+      "length_m": 188.9,
+      "elev_drop": -28.3,
+      "geometry": [
+        [
+          6.058086,
+          46.452854
+        ],
+        [
+          6.059858,
+          46.451673
+        ]
+      ]
+    },
+    {
+      "from": 46,
+      "to": 51,
+      "type": "skate",
+      "name": "Skate 136m",
+      "cost_base": 927.2,
+      "length_m": 136.2,
+      "elev_drop": -19.1,
+      "geometry": [
+        [
+          6.061434,
+          46.44575
+        ],
+        [
+          6.062428,
+          46.444734
+        ]
+      ]
+    },
+    {
+      "from": 46,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 205m",
+      "cost_base": 1322.3,
+      "length_m": 205.3,
+      "elev_drop": -51.7,
+      "geometry": [
+        [
+          6.061434,
+          46.44575
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 46,
+      "type": "skate",
+      "name": "Skate 205m",
+      "cost_base": 132.7,
+      "length_m": 205.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.061434,
+          46.44575
+        ]
+      ]
+    },
+    {
+      "from": 46,
+      "to": 45,
+      "type": "skate",
+      "name": "Skate 177m",
+      "cost_base": 1134.4,
+      "length_m": 177.4,
+      "elev_drop": -35.7,
+      "geometry": [
+        [
+          6.061434,
+          46.44575
+        ],
+        [
+          6.063476,
+          46.444999
+        ]
+      ]
+    },
+    {
+      "from": 56,
+      "to": 46,
+      "type": "skate",
+      "name": "Skate 236m",
+      "cost_base": 1307.9,
+      "length_m": 235.9,
+      "elev_drop": -47.2,
+      "geometry": [
+        [
+          6.059281,
+          46.447267
+        ],
+        [
+          6.061434,
+          46.44575
+        ]
+      ]
+    },
+    {
+      "from": 46,
+      "to": 39,
+      "type": "skate",
+      "name": "Skate 213m",
+      "cost_base": 1304.7,
+      "length_m": 212.7,
+      "elev_drop": -49.2,
+      "geometry": [
+        [
+          6.061434,
+          46.44575
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 46,
+      "type": "skate",
+      "name": "Skate 213m",
+      "cost_base": 136.4,
+      "length_m": 212.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.061434,
+          46.44575
+        ]
+      ]
+    },
+    {
+      "from": 46,
+      "to": 81,
+      "type": "skate",
+      "name": "Skate 193m",
+      "cost_base": 1160.4,
+      "length_m": 193.4,
+      "elev_drop": -36.7,
+      "geometry": [
+        [
+          6.061434,
+          46.44575
+        ],
+        [
+          6.06367,
+          46.446558
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 46,
+      "type": "skate",
+      "name": "Skate 193m",
+      "cost_base": 126.7,
+      "length_m": 193.4,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.061434,
+          46.44575
+        ]
+      ]
+    },
+    {
+      "from": 51,
+      "to": 9,
+      "type": "skate",
+      "name": "Skate 152m",
+      "cost_base": 1078.4,
+      "length_m": 152.4,
+      "elev_drop": -32.6,
+      "geometry": [
+        [
+          6.062428,
+          46.444734
+        ],
+        [
+          6.064087,
+          46.445491
+        ]
+      ]
+    },
+    {
+      "from": 9,
+      "to": 51,
+      "type": "skate",
+      "name": "Skate 152m",
+      "cost_base": 106.2,
+      "length_m": 152.4,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.064087,
+          46.445491
+        ],
+        [
+          6.062428,
+          46.444734
+        ]
+      ]
+    },
+    {
+      "from": 51,
+      "to": 45,
+      "type": "skate",
+      "name": "Skate 86m",
+      "cost_base": 851.5,
+      "length_m": 85.5,
+      "elev_drop": -16.6,
+      "geometry": [
+        [
+          6.062428,
+          46.444734
+        ],
+        [
+          6.063476,
+          46.444999
+        ]
+      ]
+    },
+    {
+      "from": 51,
+      "to": 39,
+      "type": "skate",
+      "name": "Skate 205m",
+      "cost_base": 1106.1,
+      "length_m": 205.1,
+      "elev_drop": -30.1,
+      "geometry": [
+        [
+          6.062428,
+          46.444734
+        ],
+        [
+          6.06415,
+          46.446146
+        ]
+      ]
+    },
+    {
+      "from": 39,
+      "to": 51,
+      "type": "skate",
+      "name": "Skate 205m",
+      "cost_base": 132.5,
+      "length_m": 205.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.06415,
+          46.446146
+        ],
+        [
+          6.062428,
+          46.444734
+        ]
+      ]
+    },
+    {
+      "from": 51,
+      "to": 81,
+      "type": "skate",
+      "name": "Skate 224m",
+      "cost_base": 1000.0,
+      "length_m": 224.0,
+      "elev_drop": -17.6,
+      "geometry": [
+        [
+          6.062428,
+          46.444734
+        ],
+        [
+          6.06367,
+          46.446558
+        ]
+      ]
+    },
+    {
+      "from": 81,
+      "to": 51,
+      "type": "skate",
+      "name": "Skate 224m",
+      "cost_base": 142.0,
+      "length_m": 224.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.06367,
+          46.446558
+        ],
+        [
+          6.062428,
+          46.444734
+        ]
+      ]
+    },
+    {
+      "from": 47,
+      "to": 74,
+      "type": "skate",
+      "name": "Skate 88m",
+      "cost_base": 238.9,
+      "length_m": 88.3,
+      "elev_drop": -8.5,
+      "geometry": [
+        [
+          6.080333,
+          46.446442
+        ],
+        [
+          6.07937,
+          46.446006
+        ]
+      ]
+    },
+    {
+      "from": 74,
+      "to": 47,
+      "type": "skate",
+      "name": "Skate 88m",
+      "cost_base": 74.2,
+      "length_m": 88.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.07937,
+          46.446006
+        ],
+        [
+          6.080333,
+          46.446442
+        ]
+      ]
+    },
+    {
+      "from": 49,
+      "to": 55,
+      "type": "skate",
+      "name": "Skate 103m",
+      "cost_base": 887.6,
+      "length_m": 102.6,
+      "elev_drop": -18.5,
+      "geometry": [
+        [
+          6.097619,
+          46.431822
+        ],
+        [
+          6.098803,
+          46.431391
+        ]
+      ]
+    },
+    {
+      "from": 60,
+      "to": 50,
+      "type": "skate",
+      "name": "Skate 50m",
+      "cost_base": 850.3,
+      "length_m": 50.3,
+      "elev_drop": -20.0,
+      "geometry": [
+        [
+          6.08877,
+          46.436525
+        ],
+        [
+          6.08902,
+          46.436106
+        ]
+      ]
+    },
+    {
+      "from": 50,
+      "to": 82,
+      "type": "skate",
+      "name": "Skate 64m",
+      "cost_base": 222.6,
+      "length_m": 63.9,
+      "elev_drop": -13.3,
+      "geometry": [
+        [
+          6.08902,
+          46.436106
+        ],
+        [
+          6.089566,
+          46.435672
+        ]
+      ]
+    },
+    {
+      "from": 50,
+      "to": 61,
+      "type": "skate",
+      "name": "Skate 177m",
+      "cost_base": 118.4,
+      "length_m": 176.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08902,
+          46.436106
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 50,
+      "type": "skate",
+      "name": "Skate 177m",
+      "cost_base": 1321.7,
+      "length_m": 176.7,
+      "elev_drop": -54.5,
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.08902,
+          46.436106
+        ]
+      ]
+    },
+    {
+      "from": 50,
+      "to": 19,
+      "type": "skate",
+      "name": "Skate 186m",
+      "cost_base": 123.0,
+      "length_m": 186.1,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08902,
+          46.436106
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 50,
+      "type": "skate",
+      "name": "Skate 186m",
+      "cost_base": 1287.1,
+      "length_m": 186.1,
+      "elev_drop": -50.1,
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.08902,
+          46.436106
+        ]
+      ]
+    },
+    {
+      "from": 60,
+      "to": 82,
+      "type": "skate",
+      "name": "Skate 113m",
+      "cost_base": 1045.7,
+      "length_m": 112.7,
+      "elev_drop": -33.3,
+      "geometry": [
+        [
+          6.08877,
+          46.436525
+        ],
+        [
+          6.089566,
+          46.435672
+        ]
+      ]
+    },
+    {
+      "from": 82,
+      "to": 60,
+      "type": "skate",
+      "name": "Skate 113m",
+      "cost_base": 86.4,
+      "length_m": 112.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.089566,
+          46.435672
+        ],
+        [
+          6.08877,
+          46.436525
+        ]
+      ]
+    },
+    {
+      "from": 60,
+      "to": 53,
+      "type": "skate",
+      "name": "Skate 215m",
+      "cost_base": 137.3,
+      "length_m": 214.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08877,
+          46.436525
+        ],
+        [
+          6.086852,
+          46.437932
+        ]
+      ]
+    },
+    {
+      "from": 53,
+      "to": 60,
+      "type": "skate",
+      "name": "Skate 215m",
+      "cost_base": 1402.7,
+      "length_m": 214.7,
+      "elev_drop": -58.8,
+      "geometry": [
+        [
+          6.086852,
+          46.437932
+        ],
+        [
+          6.08877,
+          46.436525
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 60,
+      "type": "skate",
+      "name": "Skate 127m",
+      "cost_base": 1071.7,
+      "length_m": 126.7,
+      "elev_drop": -34.5,
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.08877,
+          46.436525
+        ]
+      ]
+    },
+    {
+      "from": 60,
+      "to": 19,
+      "type": "skate",
+      "name": "Skate 138m",
+      "cost_base": 98.9,
+      "length_m": 137.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08877,
+          46.436525
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 60,
+      "type": "skate",
+      "name": "Skate 138m",
+      "cost_base": 1038.9,
+      "length_m": 137.9,
+      "elev_drop": -30.1,
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.08877,
+          46.436525
+        ]
+      ]
+    },
+    {
+      "from": 82,
+      "to": 61,
+      "type": "skate",
+      "name": "Skate 239m",
+      "cost_base": 149.7,
+      "length_m": 239.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.089566,
+          46.435672
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 82,
+      "type": "skate",
+      "name": "Skate 239m",
+      "cost_base": 1517.3,
+      "length_m": 239.3,
+      "elev_drop": -67.8,
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.089566,
+          46.435672
+        ]
+      ]
+    },
+    {
+      "from": 82,
+      "to": 19,
+      "type": "skate",
+      "name": "Skate 242m",
+      "cost_base": 151.1,
+      "length_m": 242.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.089566,
+          46.435672
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 82,
+      "type": "skate",
+      "name": "Skate 242m",
+      "cost_base": 1476.3,
+      "length_m": 242.3,
+      "elev_drop": -63.4,
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.089566,
+          46.435672
+        ]
+      ]
+    },
+    {
+      "from": 53,
+      "to": 61,
+      "type": "skate",
+      "name": "Skate 97m",
+      "cost_base": 939.6,
+      "length_m": 96.6,
+      "elev_drop": -24.3,
+      "geometry": [
+        [
+          6.086852,
+          46.437932
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 72,
+      "to": 53,
+      "type": "skate",
+      "name": "Skate 103m",
+      "cost_base": 870.7,
+      "length_m": 102.7,
+      "elev_drop": -16.8,
+      "geometry": [
+        [
+          6.085655,
+          46.438348
+        ],
+        [
+          6.086852,
+          46.437932
+        ]
+      ]
+    },
+    {
+      "from": 53,
+      "to": 19,
+      "type": "skate",
+      "name": "Skate 141m",
+      "cost_base": 1028.3,
+      "length_m": 141.3,
+      "elev_drop": -28.7,
+      "geometry": [
+        [
+          6.086852,
+          46.437932
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 53,
+      "type": "skate",
+      "name": "Skate 141m",
+      "cost_base": 100.7,
+      "length_m": 141.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.086852,
+          46.437932
+        ]
+      ]
+    },
+    {
+      "from": 53,
+      "to": 18,
+      "type": "skate",
+      "name": "Skate 234m",
+      "cost_base": 147.1,
+      "length_m": 234.2,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.086852,
+          46.437932
+        ],
+        [
+          6.085774,
+          46.439902
+        ]
+      ]
+    },
+    {
+      "from": 18,
+      "to": 53,
+      "type": "skate",
+      "name": "Skate 234m",
+      "cost_base": 1250.2,
+      "length_m": 234.2,
+      "elev_drop": -41.6,
+      "geometry": [
+        [
+          6.085774,
+          46.439902
+        ],
+        [
+          6.086852,
+          46.437932
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 72,
+      "type": "skate",
+      "name": "Skate 199m",
+      "cost_base": 129.6,
+      "length_m": 199.3,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.085655,
+          46.438348
+        ]
+      ]
+    },
+    {
+      "from": 72,
+      "to": 61,
+      "type": "skate",
+      "name": "Skate 199m",
+      "cost_base": 1210.3,
+      "length_m": 199.3,
+      "elev_drop": -41.1,
+      "geometry": [
+        [
+          6.085655,
+          46.438348
+        ],
+        [
+          6.087961,
+          46.437518
+        ]
+      ]
+    },
+    {
+      "from": 61,
+      "to": 19,
+      "type": "skate",
+      "name": "Skate 61m",
+      "cost_base": 60.7,
+      "length_m": 61.5,
+      "elev_drop": -4.4,
+      "geometry": [
+        [
+          6.087961,
+          46.437518
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 72,
+      "to": 19,
+      "type": "skate",
+      "name": "Skate 241m",
+      "cost_base": 1295.7,
+      "length_m": 240.7,
+      "elev_drop": -45.5,
+      "geometry": [
+        [
+          6.085655,
+          46.438348
+        ],
+        [
+          6.08868,
+          46.437763
+        ]
+      ]
+    },
+    {
+      "from": 19,
+      "to": 72,
+      "type": "skate",
+      "name": "Skate 241m",
+      "cost_base": 150.4,
+      "length_m": 240.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.08868,
+          46.437763
+        ],
+        [
+          6.085655,
+          46.438348
+        ]
+      ]
+    },
+    {
+      "from": 18,
+      "to": 72,
+      "type": "skate",
+      "name": "Skate 173m",
+      "cost_base": 1021.1,
+      "length_m": 173.1,
+      "elev_drop": -24.8,
+      "geometry": [
+        [
+          6.085774,
+          46.439902
+        ],
+        [
+          6.085655,
+          46.438348
+        ]
+      ]
+    },
+    {
+      "from": 55,
+      "to": 54,
+      "type": "skate",
+      "name": "Skate 210m",
+      "cost_base": 1458.4,
+      "length_m": 210.4,
+      "elev_drop": -64.8,
+      "geometry": [
+        [
+          6.098803,
+          46.431391
+        ],
+        [
+          6.101229,
+          46.430505
+        ]
+      ]
+    },
+    {
+      "from": 54,
+      "to": 7,
+      "type": "skate",
+      "name": "Skate 88m",
+      "cost_base": 238.5,
+      "length_m": 87.8,
+      "elev_drop": -7.8,
+      "geometry": [
+        [
+          6.101229,
+          46.430505
+        ],
+        [
+          6.101992,
+          46.431094
+        ]
+      ]
+    },
+    {
+      "from": 55,
+      "to": 7,
+      "type": "skate",
+      "name": "Skate 247m",
+      "cost_base": 1572.6,
+      "length_m": 246.6,
+      "elev_drop": -72.6,
+      "geometry": [
+        [
+          6.098803,
+          46.431391
+        ],
+        [
+          6.101992,
+          46.431094
+        ]
+      ]
+    },
+    {
+      "from": 78,
+      "to": 56,
+      "type": "skate",
+      "name": "Skate 69m",
+      "cost_base": 226.2,
+      "length_m": 69.3,
+      "elev_drop": -9.5,
+      "geometry": [
+        [
+          6.059431,
+          46.447881
+        ],
+        [
+          6.059281,
+          46.447267
+        ]
+      ]
+    },
+    {
+      "from": 78,
+      "to": 21,
+      "type": "skate",
+      "name": "Skate 214m",
+      "cost_base": 137.0,
+      "length_m": 213.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.059431,
+          46.447881
+        ],
+        [
+          6.057667,
+          46.449373
+        ]
+      ]
+    },
+    {
+      "from": 21,
+      "to": 78,
+      "type": "skate",
+      "name": "Skate 214m",
+      "cost_base": 1119.9,
+      "length_m": 213.9,
+      "elev_drop": -30.6,
+      "geometry": [
+        [
+          6.057667,
+          46.449373
+        ],
+        [
+          6.059431,
+          46.447881
+        ]
+      ]
+    },
+    {
+      "from": 71,
+      "to": 58,
+      "type": "skate",
+      "name": "Skate 56m",
+      "cost_base": 217.0,
+      "length_m": 55.5,
+      "elev_drop": -8.3,
+      "geometry": [
+        [
+          6.081125,
+          46.431248
+        ],
+        [
+          6.080966,
+          46.430761
+        ]
+      ]
+    },
+    {
+      "from": 59,
+      "to": 32,
+      "type": "skate",
+      "name": "Skate 175m",
+      "cost_base": 1131.3,
+      "length_m": 175.3,
+      "elev_drop": -35.6,
+      "geometry": [
+        [
+          6.091881,
+          46.440692
+        ],
+        [
+          6.093624,
+          46.439671
+        ]
+      ]
+    },
+    {
+      "from": 59,
+      "to": 44,
+      "type": "skate",
+      "name": "Skate 191m",
+      "cost_base": 1113.9,
+      "length_m": 190.9,
+      "elev_drop": -32.3,
+      "geometry": [
+        [
+          6.091881,
+          46.440692
+        ],
+        [
+          6.094254,
+          46.440169
+        ]
+      ]
+    },
+    {
+      "from": 44,
+      "to": 59,
+      "type": "skate",
+      "name": "Skate 191m",
+      "cost_base": 125.5,
+      "length_m": 190.9,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.094254,
+          46.440169
+        ],
+        [
+          6.091881,
+          46.440692
+        ]
+      ]
+    },
+    {
+      "from": 59,
+      "to": 80,
+      "type": "skate",
+      "name": "Skate 131m",
+      "cost_base": 929.1,
+      "length_m": 131.1,
+      "elev_drop": -19.8,
+      "geometry": [
+        [
+          6.091881,
+          46.440692
+        ],
+        [
+          6.09194,
+          46.439514
+        ]
+      ]
+    },
+    {
+      "from": 59,
+      "to": 6,
+      "type": "skate",
+      "name": "Skate 204m",
+      "cost_base": 131.8,
+      "length_m": 203.5,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.091881,
+          46.440692
+        ],
+        [
+          6.090577,
+          46.442287
+        ]
+      ]
+    },
+    {
+      "from": 6,
+      "to": 59,
+      "type": "skate",
+      "name": "Skate 204m",
+      "cost_base": 1109.5,
+      "length_m": 203.5,
+      "elev_drop": -30.6,
+      "geometry": [
+        [
+          6.090577,
+          46.442287
+        ],
+        [
+          6.091881,
+          46.440692
+        ]
+      ]
+    },
+    {
+      "from": 64,
+      "to": 59,
+      "type": "skate",
+      "name": "Skate 111m",
+      "cost_base": 890.1,
+      "length_m": 111.1,
+      "elev_drop": -17.9,
+      "geometry": [
+        [
+          6.091001,
+          46.441487
+        ],
+        [
+          6.091881,
+          46.440692
+        ]
+      ]
+    },
+    {
+      "from": 59,
+      "to": 76,
+      "type": "skate",
+      "name": "Skate 225m",
+      "cost_base": 142.5,
+      "length_m": 225.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.091881,
+          46.440692
+        ],
+        [
+          6.091226,
+          46.442665
+        ]
+      ]
+    },
+    {
+      "from": 76,
+      "to": 59,
+      "type": "skate",
+      "name": "Skate 225m",
+      "cost_base": 1061.0,
+      "length_m": 225.0,
+      "elev_drop": -23.6,
+      "geometry": [
+        [
+          6.091226,
+          46.442665
+        ],
+        [
+          6.091881,
+          46.440692
+        ]
+      ]
+    },
+    {
+      "from": 79,
+      "to": 1,
+      "type": "skate",
+      "name": "Skate 113m",
+      "cost_base": 929.5,
+      "length_m": 113.5,
+      "elev_drop": -21.6,
+      "geometry": [
+        [
+          6.084257,
+          46.430085
+        ],
+        [
+          6.085553,
+          46.429592
+        ]
+      ]
+    },
+    {
+      "from": 84,
+      "to": 40,
+      "type": "skate",
+      "name": "Skate 115m",
+      "cost_base": 949.5,
+      "length_m": 114.5,
+      "elev_drop": -23.5,
+      "geometry": [
+        [
+          6.062364,
+          46.450134
+        ],
+        [
+          6.06273,
+          46.449136
+        ]
+      ]
+    },
+    {
+      "from": 41,
+      "to": 84,
+      "type": "skate",
+      "name": "Skate 205m",
+      "cost_base": 1077.6,
+      "length_m": 204.6,
+      "elev_drop": -27.3,
+      "geometry": [
+        [
+          6.060899,
+          46.451673
+        ],
+        [
+          6.062364,
+          46.450134
+        ]
+      ]
+    },
+    {
+      "from": 85,
+      "to": 84,
+      "type": "skate",
+      "name": "Skate 154m",
+      "cost_base": 282.5,
+      "length_m": 153.8,
+      "elev_drop": -11.7,
+      "geometry": [
+        [
+          6.060732,
+          46.450939
+        ],
+        [
+          6.062364,
+          46.450134
+        ]
+      ]
+    },
+    {
+      "from": 2,
+      "to": 86,
+      "type": "skate",
+      "name": "Skate 99m",
+      "cost_base": 855.7,
+      "length_m": 98.7,
+      "elev_drop": -15.7,
+      "geometry": [
+        [
+          6.065943,
+          46.453187
+        ],
+        [
+          6.064857,
+          46.452709
+        ]
+      ]
+    },
+    {
+      "from": 54,
+      "to": 87,
+      "type": "skate",
+      "name": "Skate 229m",
+      "cost_base": 1099.2,
+      "length_m": 229.2,
+      "elev_drop": -27.0,
+      "geometry": [
+        [
+          6.101229,
+          46.430505
+        ],
+        [
+          6.10022,
+          46.428565
+        ]
+      ]
+    },
+    {
+      "from": 90,
+      "to": 42,
+      "type": "skate",
+      "name": "Skate 225m",
+      "cost_base": 142.7,
+      "length_m": 225.4,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.056447,
+          46.452105
+        ],
+        [
+          6.055725,
+          46.45407
+        ]
+      ]
+    },
+    {
+      "from": 42,
+      "to": 90,
+      "type": "skate",
+      "name": "Skate 225m",
+      "cost_base": 1135.4,
+      "length_m": 225.4,
+      "elev_drop": -31.0,
+      "geometry": [
+        [
+          6.055725,
+          46.45407
+        ],
+        [
+          6.056447,
+          46.452105
+        ]
+      ]
+    },
+    {
+      "from": 90,
+      "to": 43,
+      "type": "skate",
+      "name": "Skate 227m",
+      "cost_base": 143.5,
+      "length_m": 227.0,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.056447,
+          46.452105
+        ],
+        [
+          6.054924,
+          46.453856
+        ]
+      ]
+    },
+    {
+      "from": 43,
+      "to": 90,
+      "type": "skate",
+      "name": "Skate 227m",
+      "cost_base": 1192.0,
+      "length_m": 227.0,
+      "elev_drop": -36.5,
+      "geometry": [
+        [
+          6.054924,
+          46.453856
+        ],
+        [
+          6.056447,
+          46.452105
+        ]
+      ]
+    },
+    {
+      "from": 8,
+      "to": 90,
+      "type": "skate",
+      "name": "Skate 107m",
+      "cost_base": 83.6,
+      "length_m": 107.3,
+      "elev_drop": -0.8,
+      "geometry": [
+        [
+          6.057277,
+          46.452882
+        ],
+        [
+          6.056447,
+          46.452105
+        ]
+      ]
+    },
+    {
+      "from": 88,
+      "to": 90,
+      "type": "skate",
+      "name": "Skate 144m",
+      "cost_base": 275.8,
+      "length_m": 143.7,
+      "elev_drop": -14.0,
+      "geometry": [
+        [
+          6.056153,
+          46.453381
+        ],
+        [
+          6.056447,
+          46.452105
+        ]
+      ]
+    },
+    {
+      "from": 90,
+      "to": 89,
+      "type": "skate",
+      "name": "Skate 151m",
+      "cost_base": 280.5,
+      "length_m": 150.7,
+      "elev_drop": -5.5,
+      "geometry": [
+        [
+          6.056447,
+          46.452105
+        ],
+        [
+          6.058086,
+          46.452854
+        ]
+      ]
+    },
+    {
+      "from": 89,
+      "to": 90,
+      "type": "skate",
+      "name": "Skate 151m",
+      "cost_base": 105.4,
+      "length_m": 150.7,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.058086,
+          46.452854
+        ],
+        [
+          6.056447,
+          46.452105
+        ]
+      ]
+    }
+  ],
+  "villages": {
+    "Les Rousses": {
+      "lat": 46.504,
+      "lon": 6.064,
+      "elev": 1120
+    },
+    "Lamoura": {
+      "lat": 46.457,
+      "lon": 5.971,
+      "elev": 1150
+    },
+    "Bois d'Amont": {
+      "lat": 46.53,
+      "lon": 6.086,
+      "elev": 1060
+    },
+    "Pr\u00e9manon": {
+      "lat": 46.486,
+      "lon": 6.044,
+      "elev": 1110
+    }
+  }
+}
