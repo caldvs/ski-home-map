@@ -51,7 +51,12 @@ function haversine(lat1, lon1, lat2, lon2) {
 
 function describeNodeShort(graph, id) {
   const n = graph.routingNodes[id];
-  return (n[3] || `node ${id}`).replace(/\s+\(top\)|\s+\(bottom\)/i, "");
+  const raw = n[3] || `node ${id}`;
+  // Node names in the graph are like "Combe Folle bottom" or
+  // "Tovière top" — the endpoint qualifier is data, not branding.
+  // Strip "top" / "bottom" (with or without parens) at the end so the
+  // Route Finder reads "Combe Folle" rather than "Combe Folle bottom".
+  return raw.replace(/\s+\(?(top|bottom)\)?\s*$/i, "");
 }
 
 function summariseRoute(graph, path, totalSeconds) {
