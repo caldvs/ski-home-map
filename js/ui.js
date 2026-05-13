@@ -17,7 +17,7 @@ import { renderItinerary, disposeItinerary } from "./itinerary.js";
 // downward-stem pentagon (accent for A, near-black for B).
 function pinMarkerSVG(letter) {
   const isB = letter === "B";
-  const fill = isB ? "#15130f" : "#c14b1d";
+  const fill = isB ? "#15130f" : "#2466ff";
   return `
     <svg class="pin-marker-svg" width="28" height="40" viewBox="-14 -32 28 40" aria-hidden="true">
       <ellipse cx="0" cy="2" rx="9" ry="2.6" fill="#000" opacity="0.22"/>

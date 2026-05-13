@@ -343,7 +343,7 @@ export function addGraphLayers(map, graph) {
     type: "circle",
     paint: {
       "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 5, 14, 8, 18, 12],
-      "circle-color": "#e74c3c",
+      "circle-color": "#2466ff",
       "circle-stroke-color": "#fff",
       "circle-stroke-width": 2.5,
     },
