@@ -290,7 +290,7 @@ body.sidebar-closed #sidebar {
 #bottom-pane {
   flex: 0 0 auto;
   min-height: 150px;
-  max-height: 320px;
+  max-height: 480px;
   background: #f5f6f8;
   color: #1a1c22;
   border-top: 1px solid #c6c8cc;
@@ -439,6 +439,96 @@ body.bottom-closed #bottom-pane {
   background: var(--route-colour);
   border: 2px solid #000;
   box-shadow: 0 0 8px rgba(255, 224, 0, 0.7);
+  pointer-events: none;
+}
+
+/* ───── Itinerary (step-by-step) ───── */
+
+.itinerary {
+  margin-top: 10px;
+  border: 1px solid #d8dade;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+}
+.itinerary[hidden] { display: none; }
+
+.itin-summary {
+  padding: 8px 12px;
+  background: #ebedf0;
+  border-bottom: 1px solid #d8dade;
+  font-size: 11px;
+  color: #424752;
+  font-family: ui-monospace, monospace;
+}
+.itin-summary .itin-down { color: #c33; font-weight: 600; }
+.itin-summary .itin-up   { color: #2466ff; font-weight: 600; }
+
+.itin-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.itin-step {
+  display: grid;
+  grid-template-columns: 22px 22px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-bottom: 1px solid #eef0f3;
+  font-size: 12px;
+  line-height: 1.35;
+  cursor: default;
+  transition: background 80ms ease;
+}
+.itin-step:last-child { border-bottom: none; }
+.itin-step:hover { background: #f5f6f8; }
+
+.itin-num {
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  color: #8a8e96;
+  text-align: right;
+}
+.itin-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.itin-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+.itin-action {
+  color: #1a1c22;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.itin-action strong { font-weight: 600; }
+.itin-action .leg-sub { color: #6a6e76; font-weight: 400; font-size: 11px; }
+.itin-detail {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  color: #6a6e76;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.itin-hover-marker {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--route-colour);
+  border: 3px solid #000;
+  box-shadow: 0 0 12px rgba(255, 224, 0, 0.8);
   pointer-events: none;
 }
 

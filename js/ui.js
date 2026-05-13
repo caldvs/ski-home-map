@@ -10,10 +10,27 @@ import {
   reachableCount,
 } from "./routing.js";
 import { renderElevationProfile, disposeElevationProfile } from "./elevation.js";
+import { renderItinerary, disposeItinerary } from "./itinerary.js";
 
 export function wireRouting(map, graph) {
   let startPin = null, endPin = null;
   let startNodeId = null, endNodeId = null;
+  let itinHoverMarker = null;
+
+  function setItinHover(leg, lat, lon) {
+    if (!leg) {
+      if (itinHoverMarker) { itinHoverMarker.remove(); itinHoverMarker = null; }
+      return;
+    }
+    if (!itinHoverMarker) {
+      const el = document.createElement("div");
+      el.className = "itin-hover-marker";
+      itinHoverMarker = new maplibregl.Marker({ element: el })
+        .setLngLat([lon, lat]).addTo(map);
+    } else {
+      itinHoverMarker.setLngLat([lon, lat]);
+    }
+  }
 
   function placePin(lat, lon, kind) {
     const nid = nearestNodeId(graph, lat, lon);
@@ -46,6 +63,8 @@ export function wireRouting(map, graph) {
     }
     stopAnimation();
     disposeElevationProfile(document.getElementById("elevation-profile"));
+    disposeItinerary(document.getElementById("itinerary"));
+    if (itinHoverMarker) { itinHoverMarker.remove(); itinHoverMarker = null; }
     document.getElementById("user-route-info").innerHTML =
       '<em class="muted">Click the map to place a start pin.</em>';
     document.getElementById("anim-stats").innerHTML =
@@ -131,6 +150,10 @@ export function wireRouting(map, graph) {
         document.getElementById("elevation-profile"),
         map, graph, result.path,
       );
+      renderItinerary(
+        document.getElementById("itinerary"), graph, result.path,
+        { onHover: setItinHover },
+      );
       return;
     }
     clearUserRoute();
@@ -211,6 +234,10 @@ export function wireRouting(map, graph) {
           renderElevationProfile(
             document.getElementById("elevation-profile"),
             map, graph, runner.foundPath,
+          );
+          renderItinerary(
+            document.getElementById("itinerary"), graph, runner.foundPath,
+            { onHover: setItinHover },
           );
           let totalSec = 0;
           runner.foundPath.forEach((eIdx) => {
