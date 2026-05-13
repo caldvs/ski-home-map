@@ -298,6 +298,13 @@ body.mode-sun #bottom-pane {
 body.mode-layers #bottom-toggle,
 body.mode-sun #bottom-toggle { display: none; }
 
+/* Route mode: signal "drop a pin" with a crosshair cursor. MapLibre
+   sets cursor inline during drag (→ grabbing) which beats this; the
+   per-feature pointer cursor set in ui.js also wins via inline style.
+   So the crosshair only shows when the user is idle on empty map. */
+body.mode-route .maplibregl-canvas-container,
+body.mode-route .maplibregl-canvas { cursor: crosshair; }
+
 .sidebar-section {
   padding: 16px 20px;
   border-bottom: 1px solid var(--l-line);

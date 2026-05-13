@@ -216,11 +216,40 @@ export function wireRouting(map, graph) {
     if (!n) return null;
     const el = document.createElement("div");
     el.innerHTML = pinMarkerSVG(kind === "end" ? "B" : "A");
-    el.style.cursor = "pointer";
-    const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
+    el.style.cursor = "grab";
+    const popup = new maplibregl.Popup({ offset: 22 }).setText(describeNode(graph, nid));
+    const marker = new maplibregl.Marker({
+      element: el,
+      anchor: "bottom",
+      draggable: true,
+    })
       .setLngLat([n[0], n[1]])
-      .setPopup(new maplibregl.Popup({ offset: 22 }).setText(describeNode(graph, nid)))
+      .setPopup(popup)
       .addTo(map);
+
+    marker.on("dragstart", () => {
+      el.style.cursor = "grabbing";
+      popup.remove();
+    });
+    marker.on("dragend", () => {
+      el.style.cursor = "grab";
+      const ll = marker.getLngLat();
+      const point = map.project(ll);
+      const { lat: nlat, lon: nlon } = pickCoordAtPoint(point, ll);
+      const newNid = nearestNodeId(graph, nlat, nlon);
+      if (newNid === null) {
+        // snap back to old position
+        marker.setLngLat([n[0], n[1]]);
+        return;
+      }
+      const newN = graph.routingNodes[newNid];
+      marker.setLngLat([newN[0], newN[1]]);
+      popup.setText(describeNode(graph, newNid));
+      if (kind === "start") startNodeId = newNid;
+      else                   endNodeId   = newNid;
+      if (startNodeId !== null && endNodeId !== null) recomputeRoute();
+    });
+
     return { marker, nodeId: nid };
   }
 
@@ -251,15 +280,71 @@ export function wireRouting(map, graph) {
     "stations-layer", "lift-labels",
   ];
 
-  function pickClickCoord(ev) {
+  // Given a screen point (plus a fallback LngLat for when no feature
+  // is hit), pick the coordinate to snap a pin to. Used by both the
+  // map-click handler AND the marker-drag handler.
+  function pickCoordAtPoint(point, fallbackLngLat) {
     const layers = SNAP_LAYERS.filter((id) => map.getLayer(id));
-    if (!layers.length) return { lat: ev.lngLat.lat, lon: ev.lngLat.lng };
-    const feats = map.queryRenderedFeatures(ev.point, { layers });
-    if (feats.length) {
-      const c = feats[0].geometry && feats[0].geometry.coordinates;
-      if (c && c.length >= 2) return { lat: c[1], lon: c[0] };
+    if (layers.length) {
+      // Query a few pixels around the point so a slightly-imprecise
+      // drag still snaps to nearby villages / lift labels.
+      const r = 8;
+      const bbox = [
+        [point.x - r, point.y - r],
+        [point.x + r, point.y + r],
+      ];
+      const feats = map.queryRenderedFeatures(bbox, { layers });
+      if (feats.length) {
+        const c = feats[0].geometry && feats[0].geometry.coordinates;
+        if (c && c.length >= 2) return { lat: c[1], lon: c[0] };
+      }
     }
-    return { lat: ev.lngLat.lat, lon: ev.lngLat.lng };
+    const ll = fallbackLngLat || map.unproject(point);
+    return { lat: ll.lat, lon: ll.lng };
+  }
+
+  function pickClickCoord(ev) {
+    return pickCoordAtPoint(ev.point, ev.lngLat);
+  }
+
+  // Run Dijkstra for the current startNodeId / endNodeId and update
+  // every piece of route UI (line, summary chips, elevation profile,
+  // itinerary, anim stats). Used after a pin drag too.
+  function recomputeRoute() {
+    if (startNodeId === null || endNodeId === null) return;
+    const mode = document.getElementById("user-difficulty").value;
+    const t0 = performance.now();
+    const result = runDijkstra(startNodeId, endNodeId, mode, graph);
+    const tMs = (performance.now() - t0).toFixed(0);
+    if (result.path === null) {
+      const POCKET_THRESHOLD = 25;
+      const PROBE = POCKET_THRESHOLD + 1;
+      const totalNodes = graph.routingNodes.length;
+      const fwd = reachableCount(graph, startNodeId, { limit: PROBE });
+      const rev = reachableCount(graph, endNodeId,   { limit: PROBE, reverse: true });
+      setNoRouteUI(graph, startNodeId, endNodeId, fwd, rev, POCKET_THRESHOLD, totalNodes);
+      if (map.getSource("user-route")) {
+        map.getSource("user-route").setData({ type: "FeatureCollection", features: [] });
+      }
+      disposeElevationProfile(document.getElementById("elevation-profile"));
+      disposeItinerary(document.getElementById("itinerary"));
+      return;
+    }
+    drawRoute(map, graph, result.path);
+    setRouteUI(graph, startNodeId, endNodeId, result);
+    renderElevationProfile(
+      document.getElementById("elevation-profile"), map, graph, result.path,
+    );
+    renderItinerary(
+      document.getElementById("itinerary"), graph, result.path,
+      { onHover: setItinHover },
+    );
+    const statsEl = document.getElementById("anim-stats");
+    if (statsEl) {
+      statsEl.innerHTML =
+        `Dijkstra visited <b>${result.visited}</b> nodes in ${tMs} ms · ` +
+        `path <b>${result.path.length}</b> edges`;
+    }
   }
 
   function handlePinClick({ lat, lon }) {
@@ -283,50 +368,23 @@ export function wireRouting(map, graph) {
       const r = placePin(lat, lon, "end");
       if (!r) return;
       endPin = r.marker; endNodeId = r.nodeId;
-      const t0 = performance.now();
-      const result = runDijkstra(startNodeId, endNodeId, mode, graph);
-      const tMs = (performance.now() - t0).toFixed(0);
-      if (result.path === null) {
-        const POCKET_THRESHOLD = 25;
-        const PROBE = POCKET_THRESHOLD + 1;
-        const totalNodes = graph.routingNodes.length;
-        const fwd = reachableCount(graph, startNodeId, { limit: PROBE });
-        const rev = reachableCount(graph, endNodeId, { limit: PROBE, reverse: true });
-        setNoRouteUI(graph, startNodeId, endNodeId, fwd, rev, POCKET_THRESHOLD, totalNodes);
-        return;
-      }
-      drawRoute(map, graph, result.path);
-      setRouteUI(graph, startNodeId, endNodeId, result);
-      renderElevationProfile(
-        document.getElementById("elevation-profile"),
-        map, graph, result.path,
-      );
-      renderItinerary(
-        document.getElementById("itinerary"), graph, result.path,
-        { onHover: setItinHover },
-      );
-      const statsEl = document.getElementById("anim-stats");
-      if (statsEl) {
-        statsEl.innerHTML =
-          `Dijkstra visited <b>${result.visited}</b> nodes in ${tMs} ms · ` +
-          `path <b>${result.path.length}</b> edges`;
-      }
+      recomputeRoute();
       return;
     }
+    // 3rd click → reset and start over
     clearUserRoute();
-    const r = placePin(lat, lon, "start");
-    if (!r) return;
-    startPin = r.marker; startNodeId = r.nodeId;
-    const info = document.getElementById("user-route-info");
-    info.innerHTML = `
+    const r3 = placePin(lat, lon, "start");
+    if (!r3) return;
+    startPin = r3.marker; startNodeId = r3.nodeId;
+    const info3 = document.getElementById("user-route-info");
+    info3.innerHTML = `
       <div class="ab-status">
         <span class="pin-dot">A</span>
-        <span>${describeNodeShort(graph, r.nodeId)}</span>
+        <span>${describeNodeShort(graph, r3.nodeId)}</span>
         <span class="arrow">→</span>
         <span class="empty">Click again to place pin B.</span>
       </div>`;
   }
-
   map.on("click", (ev) => handlePinClick(pickClickCoord(ev)));
 
   for (const layerId of SNAP_LAYERS) {
