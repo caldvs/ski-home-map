@@ -84,9 +84,10 @@ function setEmptyUI() {
   chips.hidden = true;
   chips.innerHTML = "";
   // Tab badges
-  document.getElementById("tab-count-itin").textContent = "—";
-  document.getElementById("tab-count-elev").textContent = "—";
-  document.getElementById("tab-count-alt").textContent  = "—";
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setText("tab-count-itin", "—");
+  setText("tab-count-elev", "—");
+  setText("tab-count-alt",  "—");
   // Tab content empty messages
   const itinEmpty = document.getElementById("itin-empty");
   const elevEmpty = document.getElementById("elev-empty");
@@ -119,9 +120,10 @@ function setRouteUI(graph, startId, endId, result) {
   chips.hidden = false;
 
   // Tab badges
-  document.getElementById("tab-count-itin").textContent = String(result.path.length);
-  document.getElementById("tab-count-elev").textContent = `+${summary.upM}`;
-  document.getElementById("tab-count-alt").textContent  = "—";
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setText("tab-count-itin", String(result.path.length));
+  setText("tab-count-elev", `+${summary.upM}`);
+  setText("tab-count-alt",  "—");
 
   // Hide empty messages
   const itinEmpty = document.getElementById("itin-empty");
