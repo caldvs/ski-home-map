@@ -150,9 +150,8 @@ body.sidebar-closed #sidebar {
   margin-bottom: 5px;
 }
 
-/* Buttons & form controls inside the sidebar */
-#sidebar button,
-#bottom-pane button {
+/* Buttons & form controls inside the sidebar (DARK) */
+#sidebar button {
   background: #2a2d35;
   color: #eee;
   border: 1px solid #3e424c;
@@ -162,17 +161,14 @@ body.sidebar-closed #sidebar {
   cursor: pointer;
   font-family: inherit;
 }
-#sidebar button:hover,
-#bottom-pane button:hover { background: #353944; }
-#sidebar button.primary,
-#bottom-pane button.primary {
+#sidebar button:hover { background: #353944; }
+#sidebar button.primary {
   background: #2466ff;
   border-color: #2466ff;
   font-weight: 600;
   color: white;
 }
-#sidebar select, #sidebar input[type=range], #sidebar input[type=date],
-#bottom-pane select, #bottom-pane input[type=range], #bottom-pane input[type=date] {
+#sidebar select, #sidebar input[type=range], #sidebar input[type=date] {
   width: 100%;
   background: #1a1c22;
   color: #eee;
@@ -183,6 +179,49 @@ body.sidebar-closed #sidebar {
   font-family: inherit;
 }
 #sidebar input[type=date] { width: auto; }
+
+/* Buttons & form controls inside the bottom pane (LIGHT) */
+#bottom-pane button {
+  background: #fff;
+  color: #1a1c22;
+  border: 1px solid #c6c8cc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+}
+#bottom-pane button:hover {
+  background: #ebedf0;
+  border-color: #9da3ad;
+}
+#bottom-pane button.primary {
+  background: #2466ff;
+  border-color: #2466ff;
+  font-weight: 600;
+  color: white;
+}
+#bottom-pane button.primary:hover { background: #4a83ff; }
+#bottom-pane select,
+#bottom-pane input[type=range],
+#bottom-pane input[type=date] {
+  width: 100%;
+  background: #fff;
+  color: #1a1c22;
+  border: 1px solid #c6c8cc;
+  border-radius: 5px;
+  padding: 5px 7px;
+  font-size: 12px;
+  font-family: inherit;
+}
+#bottom-pane input[type=date] { width: auto; }
+#bottom-pane select:focus,
+#bottom-pane input:focus {
+  outline: none;
+  border-color: #2466ff;
+  box-shadow: 0 0 0 2px rgba(36, 102, 255, 0.15);
+}
 
 .swatch {
   display: inline-block;
@@ -246,14 +285,15 @@ body.sidebar-closed #sidebar {
 .credits p { margin: 0 0 6px 0; }
 .credits a { color: #88c; }
 
-/* ───── Bottom pane ───── */
+/* ───── Bottom pane (LIGHT theme) ───── */
 
 #bottom-pane {
   flex: 0 0 auto;
   min-height: 150px;
   max-height: 320px;
-  background: var(--panel-bg);
-  border-top: 1px solid var(--panel-border);
+  background: #f5f6f8;
+  color: #1a1c22;
+  border-top: 1px solid #c6c8cc;
   padding: 10px 16px 12px;
   display: flex;
   flex-direction: column;
@@ -275,8 +315,8 @@ body.bottom-closed #bottom-pane {
   margin-bottom: 10px;
   flex: 0 0 auto;
 }
-.pane-header strong { font-size: 14px; }
-.pane-sub { font-size: 11px; }
+.pane-header strong { font-size: 14px; color: #1a1c22; }
+.pane-sub { font-size: 11px; color: #6a6e76; }
 .pane-header button { margin-left: auto; }
 
 .pane-body {
@@ -297,13 +337,13 @@ body.bottom-closed #bottom-pane {
 }
 .algo-col {
   flex: 1 1 auto;
-  border-left: 1px solid var(--panel-border);
+  border-left: 1px solid #d8dade;
   padding-left: 24px;
 }
 .pane-col label {
   display: block;
   font-size: 12px;
-  color: #ccc;
+  color: #424752;
   margin-bottom: 4px;
 }
 
@@ -311,13 +351,13 @@ body.bottom-closed #bottom-pane {
 .algo-col details > summary {
   cursor: pointer;
   font-size: 12px;
-  color: #bbb;
+  color: #5a5e66;
   padding: 2px 0;
   margin-bottom: 6px;
   user-select: none;
 }
 .algo-col details[open] > summary {
-  color: #eee;
+  color: #1a1c22;
   font-weight: 600;
 }
 .algo-controls {
@@ -333,7 +373,7 @@ body.bottom-closed #bottom-pane {
 }
 .algo-field label {
   font-size: 11px;
-  color: #999;
+  color: #6a6e76;
   margin-bottom: 3px;
 }
 .algo-buttons {
@@ -347,12 +387,12 @@ body.bottom-closed #bottom-pane {
   flex: 1 1 100%;
   margin-top: 4px;
   font-size: 11px;
-  color: #999;
+  color: #5a5e66;
   font-family: ui-monospace, monospace;
   line-height: 1.6;
 }
-#user-route-info { margin-top: 8px; font-size: 12px; line-height: 1.5; }
-#user-route-info .muted { color: #888; font-style: italic; }
+#user-route-info { margin-top: 8px; font-size: 12px; line-height: 1.5; color: #1a1c22; }
+#user-route-info .muted { color: #6a6e76; font-style: italic; }
 
 /* ───── Elevation profile ───── */
 
