@@ -7,14 +7,20 @@
  * in sync. Faithful but small; ~300 lines.
  */
 
+// Penalty added per run/connection edge by difficulty + mode. Lower
+// numbers than before in prefer-easy: the previous +600 for reds was
+// so aggressive that the algorithm preferred a downhill cable-car
+// ride over a normal red piste descent. The user's intuition is that
+// reds should still be skied even when "preferring easy" — they're
+// the standard intermediate piste, not a hardship.
 const DIFFICULTY_PENALTY = {
   "prefer-easy": {
-    novice: 0, easy: 0, intermediate: 600, advanced: 2000,
-    expert: 5000, freeride: 5000,
+    novice: 0, easy: 0, intermediate: 250, advanced: 1200,
+    expert: 3000, freeride: 3000,
   },
   "reds-if-needed": {
-    novice: 0, easy: 0, intermediate: 60, advanced: 800,
-    expert: 3000, freeride: 3000,
+    novice: 0, easy: 0, intermediate: 30, advanced: 600,
+    expert: 2000, freeride: 2000,
   },
   "any-piste": {
     novice: 0, easy: 0, intermediate: 0, advanced: 0,
@@ -24,10 +30,11 @@ const DIFFICULTY_PENALTY = {
 
 // Riding a lift downhill is a last-resort move — only acceptable when
 // no skiable route exists between two pocket areas. The graph builder
-// already gives lift_down edges a high base cost; we add another fixed
-// penalty here in EVERY mode so even big-detour piste routes win over
-// "just take the cable car down".
-const LIFT_DOWN_PENALTY = 1200;
+// already gives lift_down edges a high base cost; we add a heavy fixed
+// penalty here in EVERY mode so any reasonable piste descent wins.
+// Tuned so a ~10-edge red route still beats a single lift-down ride,
+// while a no-piste pocket can still force lift-down as the only path.
+const LIFT_DOWN_PENALTY = 3500;
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371000;

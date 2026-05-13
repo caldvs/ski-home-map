@@ -335,7 +335,9 @@
   }
   layersCollapseBtn.addEventListener("click", () =>
     applyLayersCollapse(!layersList.hidden));
-  applyLayersCollapse(localStorage.getItem("ski:layers-collapsed") === "1");
+  // Default collapsed on first visit so the route content gets the full
+  // panel height. Sticky after first toggle.
+  applyLayersCollapse(localStorage.getItem("ski:layers-collapsed") !== "0");
 
   // ── Mode picker (just Route · Sun) ──
   const modePicker = document.getElementById("mode-picker");
