@@ -57,19 +57,42 @@ export function wireSun(map) {
   function fmtTime(m) {
     return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
   }
+  function fmtDate(d) {
+    return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  }
+  const trackMarker = document.getElementById("sun-track-marker");
+  const sectionHeading = document.getElementById("sun-section-heading");
+  const sunStatusLine = document.getElementById("sun-status-line");
+  const sunShadowState = document.getElementById("sun-shadow-state");
+
+  function updateExternalSunChrome() {
+    const pct = (sunMinutes / 1440) * 100;
+    if (timeLabel) {
+      timeLabel.textContent = fmtTime(sunMinutes);
+      timeLabel.style.left = pct + "%";
+    }
+    if (trackMarker) trackMarker.style.left = pct + "%";
+    const d = dateEl.valueAsDate || new Date();
+    if (sectionHeading) sectionHeading.textContent = `Sun · ${fmtDate(d)} · ${fmtTime(sunMinutes)}`;
+    if (sunStatusLine) sunStatusLine.textContent = `${fmtDate(d)} · ${fmtTime(sunMinutes)}`;
+  }
+
   function setSunMinutes(m) {
     sunMinutes = ((m % 1440) + 1440) % 1440;
-    timeLabel.textContent = fmtTime(sunMinutes);
+    updateExternalSunChrome();
     if (shadeMap) shadeMap.setDate(currentSunDate());
   }
   function shouldShowShadows() {
     return shadowsWanted && shadeMap && map.getPitch() < SHADOW_PITCH_LIMIT;
   }
   function updateSunStatus() {
-    if (!shadeMap) return;
-    if (!shadowsWanted) sunStatus.textContent = "Shadows off";
-    else if (map.getPitch() >= SHADOW_PITCH_LIMIT) sunStatus.textContent = "Shadows hidden in 3D";
-    else sunStatus.textContent = "Shadows active";
+    let state = "off";
+    if (!shadeMap) state = "no key";
+    else if (!shadowsWanted) state = "off";
+    else if (map.getPitch() >= SHADOW_PITCH_LIMIT) state = "hidden in 3D";
+    else state = "active";
+    if (sunStatus) sunStatus.textContent = "Shadows " + state;
+    if (sunShadowState) sunShadowState.textContent = state;
   }
   function applyShadowVisibility() {
     if (!shadeMap) return;
@@ -126,6 +149,7 @@ export function wireSun(map) {
   document.getElementById("sun-m-plus").addEventListener("click", () => setSunMinutes(sunMinutes + 15));
   document.getElementById("sun-now").addEventListener("click", () => setSunMinutes(DEFAULT_MINUTES));
   dateEl.addEventListener("change", () => {
+    updateExternalSunChrome();
     if (shadeMap) shadeMap.setDate(currentSunDate());
   });
 
@@ -207,7 +231,7 @@ export function wireSun(map) {
     });
   }
 
-  timeLabel.textContent = fmtTime(sunMinutes);
+  updateExternalSunChrome();
   initShadows();
   applyShadowVisibility();
 }

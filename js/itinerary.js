@@ -101,67 +101,44 @@ function finalise(leg) {
   return leg;
 }
 
-function iconFor(leg) {
-  // SVG symbols rather than emoji for crisp rendering at any zoom.
-  if (leg.type === "lift") {
-    return `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-      <path d="M3 13 L13 3" stroke="#ff6f00" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="3" cy="13" r="1.5" fill="#ff6f00"/>
-      <circle cx="13" cy="3" r="1.5" fill="#ff6f00"/>
-      <path d="M8 11 L8 13.5 L6 13.5 L10 13.5" stroke="#ff6f00" stroke-width="1.2" fill="none"/>
-    </svg>`;
-  }
-  if (leg.type === "lift_down") {
-    return `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-      <path d="M3 3 L13 13" stroke="#ff6f00" stroke-width="2" stroke-linecap="round" stroke-dasharray="2,2"/>
-    </svg>`;
-  }
-  if (leg.type === "skate" || leg.type === "walk") {
-    const c = leg.type === "walk" ? "#7c4dff" : "#9aa3aa";
-    return `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-      <path d="M2 8 L13 8 M10 5 L13 8 L10 11" stroke="${c}" stroke-width="2" fill="none"
-        stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`;
-  }
-  // run / connection — coloured triangle pointing down
-  const colour = DIFFICULTY_COLOUR[leg.difficulty] || "#888";
-  return `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-    <path d="M3 4 L13 4 L8 13 Z" fill="${colour}" stroke="#fff" stroke-width="0.8"/>
-  </svg>`;
+function pipColourFor(leg) {
+  // Coloured square pip per the design — piste difficulty colour for runs,
+  // lift orange for lifts, grey for skates, purple for walks.
+  if (leg.type === "lift" || leg.type === "lift_down") return "#e87a25";
+  if (leg.type === "skate") return "#9aa3aa";
+  if (leg.type === "walk")  return "#7c4dff";
+  return DIFFICULTY_COLOUR[leg.difficulty] || "#888";
 }
 
-function labelFor(leg) {
+function nameFor(leg) {
   const name = (leg.name || "").trim();
   if (leg.type === "lift") {
     const liftType = LIFT_TYPE_LABEL[leg.lift_type] || "Lift";
-    return name
-      ? `<strong>${escapeHtml(name)}</strong> <span class="leg-sub">(${liftType.toLowerCase()})</span>`
-      : `<strong>${liftType}</strong>`;
+    return name ? `${name} ${liftType.toLowerCase()}` : liftType;
   }
   if (leg.type === "lift_down") {
     const liftType = LIFT_TYPE_LABEL[leg.lift_type] || "Lift";
-    return name
-      ? `<strong>${escapeHtml(name)}</strong> <span class="leg-sub">(${liftType.toLowerCase()} down)</span>`
-      : `<strong>${liftType} down</strong>`;
+    return name ? `${name} ${liftType.toLowerCase()} (down)` : `${liftType} (down)`;
   }
-  if (leg.type === "skate") return `<strong>Skate across</strong>`;
-  if (leg.type === "walk")  return `<strong>Walk</strong>`;
-  // run / connection
+  if (leg.type === "skate") return "Skate across";
+  if (leg.type === "walk")  return "Walk";
   const diff = DIFFICULTY_LABEL[leg.difficulty];
-  if (name) {
-    return diff
-      ? `<strong>${escapeHtml(name)}</strong> <span class="leg-sub">(${diff})</span>`
-      : `<strong>${escapeHtml(name)}</strong>`;
-  }
-  return diff ? `<strong>${diff[0].toUpperCase()}${diff.slice(1)} piste</strong>` : `<strong>Piste</strong>`;
+  if (name) return diff ? `${name} (${diff})` : name;
+  return diff ? `${diff[0].toUpperCase()}${diff.slice(1)} piste` : "Piste";
 }
 
-function verbFor(leg) {
-  if (leg.type === "lift")      return "Ride";
-  if (leg.type === "lift_down") return "Ride down";
-  if (leg.type === "skate")     return "Slide";
-  if (leg.type === "walk")      return "Walk";
-  return "Ski";
+function subFor(leg, graph) {
+  // Short context line: start node → end node (compact)
+  const a = graph.routingNodes[leg.startNodeId];
+  const b = graph.routingNodes[leg.endNodeId];
+  const aName = (a && a[3]) || "";
+  const bName = (b && b[3]) || "";
+  if (aName && bName) return `${aName} → ${bName}`;
+  if (leg.type === "lift")     return "Lift up";
+  if (leg.type === "lift_down")return "Lift down (penalty)";
+  if (leg.type === "skate")    return "Connector";
+  if (leg.type === "walk")     return "Foot traverse";
+  return "";
 }
 
 function formatDist(m) {
@@ -196,22 +173,27 @@ export function renderItinerary(container, graph, path, opts = {}) {
   const totalDown = legs.reduce((s, l) => s + (l.elevDelta < 0 ? -l.elevDelta : 0), 0);
   const totalUp   = legs.reduce((s, l) => s + (l.elevDelta > 0 ?  l.elevDelta : 0), 0);
 
-  let html = `<div class="itin-summary">`
-           + `${legs.length} steps · ${formatDist(totalDist)} · `
-           + `<span class="itin-down">↓ ${Math.round(totalDown)} m</span> · `
-           + `<span class="itin-up">↑ ${Math.round(totalUp)} m</span>`
+  let html = `<div class="itin-list-summary">`
+           + `<span>${legs.length} steps</span>`
+           + `<span>${formatDist(totalDist)}</span>`
+           + `<span class="down">↓ ${Math.round(totalDown)} m</span>`
+           + `<span class="up">↑ ${Math.round(totalUp)} m</span>`
            + `</div>`;
   html += `<ol class="itin-list">`;
   legs.forEach((leg, i) => {
-    const verb = verbFor(leg);
-    const label = labelFor(leg);
+    const colour = pipColourFor(leg);
+    const name = escapeHtml(nameFor(leg));
+    const sub = escapeHtml(subFor(leg, graph));
+    const gainCls = leg.elevDelta > 1 ? "up" : leg.elevDelta < -1 ? "down" : "";
+    const gainText = formatElev(leg.elevDelta);
     html += `<li class="itin-step" data-step="${i}">`
-          + `<span class="itin-num">${i + 1}</span>`
-          + `<span class="itin-icon">${iconFor(leg)}</span>`
-          + `<span class="itin-body">`
-          +   `<span class="itin-action">${verb} ${label}</span>`
-          +   `<span class="itin-detail">${formatDist(leg.distM)} · ${formatElev(leg.elevDelta)}</span>`
-          + `</span>`
+          + `<div class="num mono">${String(i + 1).padStart(2, "0")}</div>`
+          + `<div class="pip" style="background:${colour}"></div>`
+          + `<div class="label"><div class="name">${name}</div>`
+          +   (sub ? `<div class="sub">${sub}</div>` : "")
+          + `</div>`
+          + `<div class="dist mono">${formatDist(leg.distM)}</div>`
+          + `<div class="gain mono ${gainCls}">${gainText}</div>`
           + `</li>`;
   });
   html += `</ol>`;

@@ -133,13 +133,27 @@ export function renderElevationProfile(container, map, graph, path) {
   const elevPad  = elevSpan * 0.1;
   const eLo = minE - elevPad, eHi = maxE + elevPad;
 
+  // Compute total up/down for the meta row
+  let totalUp = 0, totalDown = 0;
+  for (let i = 1; i < points.length; i++) {
+    const delta = points[i].e - points[i - 1].e;
+    if (delta > 0) totalUp += delta; else totalDown -= delta;
+  }
+  let metaHtml = `<div class="meta">`
+    + `<span>↑ ${Math.round(totalUp)} m</span>`
+    + `<span>↓ ${Math.round(totalDown)} m</span>`
+    + `<span>${maxDist < 1000 ? Math.round(maxDist) + " m" : (maxDist / 1000).toFixed(1) + " km"}</span>`
+    + `<span>${points.length - 1} legs</span>`
+    + `<span class="route-dot">● route</span>`
+    + `</div>`;
+
   // Build SVG with viewBox so it scales to the container's width.
   // We use a logical 600-wide canvas; CSS makes it fill.
   const W = 600, H = CHART_H;
   const xs = (d) => PAD.left + (d / maxDist) * (W - PAD.left - PAD.right);
   const ys = (e) => H - PAD.bottom - ((e - eLo) / (eHi - eLo)) * (H - PAD.top - PAD.bottom);
 
-  let svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" `
+  let svg = metaHtml + `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" `
           + `style="width:100%;height:${H}px;display:block">`;
 
   // Y-axis grid lines every ~250m, rounded to nearest 100
