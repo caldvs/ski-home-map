@@ -403,12 +403,12 @@ export function addGraphLayers(map, graph) {
     source: "start-approach",
     type: "line",
     paint: {
-      "line-color": "#0284c7",
-      "line-width": 2,
-      "line-dasharray": [2, 2],
-      "line-opacity": 0.85,
+      "line-color": "#2466ff",
+      "line-width": 3.5,
+      "line-dasharray": [2, 1.8],
+      "line-opacity": 0.95,
     },
-    layout: { "line-cap": "round" },
+    layout: { "line-cap": "round", "line-join": "round" },
   });
 
   // Highlighted itinerary-leg source — populated on hover of a leg row

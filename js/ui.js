@@ -237,17 +237,25 @@ export function wireRouting(map, graph) {
   // nearest graph node).
   let startDisplay = null;  // { lat, lon }
 
-  function setStartApproach() {
+  // Pin-A's display location and routing node may differ. The dashed
+  // approach line bridges them. forceNid lets the caller pass the node
+  // explicitly when startNodeId hasn't been written yet (placePin runs
+  // before handlePinClick assigns the global).
+  function setStartApproach(forceNid) {
     const src = map.getSource("start-approach");
     if (!src) return;
-    if (!startDisplay || startNodeId === null) {
+    const nid = (forceNid != null) ? forceNid : startNodeId;
+    if (!startDisplay || nid == null) {
       src.setData({ type: "FeatureCollection", features: [] });
       return;
     }
-    const node = graph.routingNodes[startNodeId];
+    const node = graph.routingNodes[nid];
+    if (!node) {
+      src.setData({ type: "FeatureCollection", features: [] });
+      return;
+    }
     const dLon = Math.abs(node[0] - startDisplay.lon);
     const dLat = Math.abs(node[1] - startDisplay.lat);
-    // Don't render the approach line if pin A is essentially AT the node.
     if (dLon < 1e-6 && dLat < 1e-6) {
       src.setData({ type: "FeatureCollection", features: [] });
       return;
@@ -281,7 +289,7 @@ export function wireRouting(map, graph) {
       if (nid === null) return null;
       startDisplay = { lat, lon };
       const r = buildMarker(lat, lon, kind, nid);
-      setStartApproach();
+      setStartApproach(nid);
       return r;
     }
     // Pin B: visibly snaps to the nearest piste / lift node.
@@ -331,7 +339,7 @@ export function wireRouting(map, graph) {
         startDisplay = { lat: nlat, lon: nlon };
         startNodeId = newNid;
         popup.setText(describeNode(graph, newNid));
-        setStartApproach();
+        setStartApproach(newNid);
       } else {
         // Pin B always sits AT the snapped node.
         marker.setLngLat([newN[0], newN[1]]);
