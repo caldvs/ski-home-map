@@ -163,6 +163,30 @@ export function wireRouting(map, graph) {
   let startNodeId = null, endNodeId = null;
   let itinHoverMarker = null;
 
+  function setItinSelect(leg) {
+    if (!leg || !Array.isArray(leg.edges)) return;
+    let minLat =  Infinity, maxLat = -Infinity;
+    let minLon =  Infinity, maxLon = -Infinity;
+    for (const ei of leg.edges) {
+      const e = graph.routingEdges[ei];
+      if (!e || !e.g) continue;
+      for (const c of e.g) {
+        // c is [lat, lon] (routing edge storage)
+        if (c[0] < minLat) minLat = c[0];
+        if (c[0] > maxLat) maxLat = c[0];
+        if (c[1] < minLon) minLon = c[1];
+        if (c[1] > maxLon) maxLon = c[1];
+      }
+    }
+    if (minLat === Infinity) return;
+    // Frame the leg with some breathing room; clamp zoom so very
+    // short skating links don't shoot us to z19.
+    map.fitBounds(
+      [[minLon, minLat], [maxLon, maxLat]],
+      { padding: 60, duration: 700, maxZoom: 16.5 },
+    );
+  }
+
   function setItinHover(leg, lat, lon) {
     const highlightSrc = map.getSource("route-leg-highlight");
     if (!leg) {
@@ -341,7 +365,7 @@ export function wireRouting(map, graph) {
     );
     renderItinerary(
       document.getElementById("itinerary"), graph, result.path,
-      { onHover: setItinHover },
+      { onHover: setItinHover, onSelect: setItinSelect },
     );
     const statsEl = document.getElementById("anim-stats");
     if (statsEl) {
@@ -541,7 +565,7 @@ export function wireRouting(map, graph) {
           );
           renderItinerary(
             document.getElementById("itinerary"), graph, runner.foundPath,
-            { onHover: setItinHover },
+            { onHover: setItinHover, onSelect: setItinSelect },
           );
           let totalSec = 0;
           runner.foundPath.forEach((eIdx) => {

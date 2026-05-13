@@ -215,6 +215,17 @@ export function renderItinerary(container, graph, path, opts = {}) {
     });
   }
 
+  // Click wiring — zoom the map to fit the leg.
+  if (typeof opts.onSelect === "function") {
+    container.querySelectorAll(".itin-step").forEach((row) => {
+      row.style.cursor = "pointer";
+      row.addEventListener("click", () => {
+        const idx = parseInt(row.dataset.step, 10);
+        opts.onSelect(legs[idx]);
+      });
+    });
+  }
+
   return function dispose() {
     container.innerHTML = "";
     container.hidden = true;
