@@ -392,15 +392,17 @@ export function addGraphLayers(map, graph) {
     type: "geojson",
     data: { type: "FeatureCollection", features: [] },
   });
+  // Sky-blue highlight contrasts cleanly with the yellow route line,
+  // so a hovered / selected leg pops instead of blending in.
   map.addLayer({
     id: "route-leg-highlight-halo",
     source: "route-leg-highlight",
     type: "line",
     paint: {
-      "line-color": "#ffd45a",
-      "line-width": 14,
-      "line-opacity": 0.35,
-      "line-blur": 2,
+      "line-color": "#38bdf8",
+      "line-width": 16,
+      "line-opacity": 0.45,
+      "line-blur": 2.5,
     },
     layout: { "line-cap": "round", "line-join": "round" },
   });
@@ -409,8 +411,8 @@ export function addGraphLayers(map, graph) {
     source: "route-leg-highlight",
     type: "line",
     paint: {
-      "line-color": "#fff8dc",
-      "line-width": 6,
+      "line-color": "#0284c7",
+      "line-width": 5,
       "line-opacity": 1,
     },
     layout: { "line-cap": "round", "line-join": "round" },
