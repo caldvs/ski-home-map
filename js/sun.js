@@ -105,23 +105,101 @@ export function wireSun(map) {
     if (sunStatus) sunStatus.textContent = "Shadows " + state;
     if (sunShadowState) sunShadowState.textContent = state;
   }
+  // Find the most-recently-added custom layer — ShadeMap's layer.
+  // Brittle but the plugin is closed-source so it's the only handle.
+  function findShadeMapLayerId() {
+    try {
+      const layers = map.getStyle().layers || [];
+      for (let i = layers.length - 1; i >= 0; i--) {
+        if (layers[i].type === "custom") return layers[i].id;
+      }
+    } catch (e) {}
+    return null;
+  }
+
   function applyShadowVisibility() {
     if (!shadeMap) return;
     const want = shouldShowShadows();
     if (want && !shadowsCurrentlyAdded) {
       shadeMap.addTo(map);
       shadowsCurrentlyAdded = true;
+
+      // Tuck the ShadeMap layer underneath our resort mask so the
+      // shadow's outer cutoff is hidden behind a paper-coloured donut.
+      // Then re-promote our overlay layers (mask + pistes/lifts/etc.)
+      // so they stay on top of the shadow.
+      const shadeId = findShadeMapLayerId();
+      if (shadeId && map.getLayer("shadow-mask-layer")) {
+        try { map.moveLayer(shadeId, "shadow-mask-layer"); } catch (e) {}
+        map.setLayoutProperty("shadow-mask-layer", "visibility", "visible");
+      }
+      // Bring all the overlay layers back on top of the shadow.
+      const PROMOTE = [
+        "shadow-mask-layer",
+        "contour-lines", "contour-labels",
+        "pistes-outline", "pistes-layer", "piste-labels",
+        "lifts-casing", "lifts-layer", "lifts-down-layer", "lift-labels",
+        "skates-layer",
+        "stations-layer", "villages-layer", "villages-label",
+        "user-route-layer", "route-leg-highlight-halo", "route-leg-highlight-layer",
+        "anim-settled-layer",
+      ];
+      for (const id of PROMOTE) {
+        if (map.getLayer(id)) { try { map.moveLayer(id); } catch (e) {} }
+      }
+
       if (map.getLayer("hillshade")) {
         map.setLayoutProperty("hillshade", "visibility", "none");
       }
     } else if (!want && shadowsCurrentlyAdded) {
       shadeMap.remove();
       shadowsCurrentlyAdded = false;
+      if (map.getLayer("shadow-mask-layer")) {
+        map.setLayoutProperty("shadow-mask-layer", "visibility", "none");
+      }
       if (map.getLayer("hillshade")) {
         map.setLayoutProperty("hillshade", "visibility", "visible");
       }
     }
     updateSunStatus();
+  }
+
+  // Pre-warm Mapterhorn DEM tiles in a buffer around the resort so
+  // ShadeMap can sample distant terrain (peaks that cast shadows INTO
+  // the resort at low sun angles) without a noticeable load stall.
+  // Tiles land in the browser HTTP cache via plain fetch() — when
+  // ShadeMap later requests them with an <img>, the cache serves them
+  // instantly.
+  function prewarmDemTiles() {
+    const bbox = map._resortBbox;
+    if (!bbox) return;
+    const Z = 11;           // matches ShadeMap's terrainSource.maxZoom
+    const BUFFER_TILES = 2; // ~20 km of buffer beyond the resort at z11
+    function lon2tx(lon, z) {
+      return Math.floor(((lon + 180) / 360) * Math.pow(2, z));
+    }
+    function lat2ty(lat, z) {
+      const r = lat * Math.PI / 180;
+      return Math.floor(
+        (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z),
+      );
+    }
+    const x0 = lon2tx(bbox.minLon, Z) - BUFFER_TILES;
+    const x1 = lon2tx(bbox.maxLon, Z) + BUFFER_TILES;
+    const y0 = lat2ty(bbox.maxLat, Z) - BUFFER_TILES; // y inverted
+    const y1 = lat2ty(bbox.minLat, Z) + BUFFER_TILES;
+    let count = 0;
+    for (let x = x0; x <= x1; x++) {
+      for (let y = y0; y <= y1; y++) {
+        // Fire and forget. We don't await; just fill the cache.
+        fetch(`https://tiles.mapterhorn.com/${Z}/${x}/${y}.webp`, {
+          mode: "cors",
+          cache: "force-cache",
+        }).catch(() => {});
+        count++;
+      }
+    }
+    console.log(`[sun] pre-warmed ${count} DEM tiles around resort at z${Z}`);
   }
 
   function initShadows() {
@@ -145,7 +223,14 @@ export function wireSun(map) {
       apiKey,
       terrainSource: {
         tileSize: 512,
-        maxZoom: 13,
+        // maxZoom dropped from 13 → 11 so each DEM tile covers ~9.6 km
+        // instead of ~2.4 km. The plugin's "viewport + N-tile buffer"
+        // padding now reaches much farther out, so peaks 5–15 km away
+        // contribute to low-sun shadows and the harsh cutoff line
+        // disappears. We lose some shadow-edge precision at extreme
+        // zoom-in, but for a ski-resort scale (z 12–14) it's not
+        // visible.
+        maxZoom: 11,
         getSourceUrl: ({ x, y, z }) => `https://tiles.mapterhorn.com/${z}/${x}/${y}.webp`,
         getElevation: ({ r, g, b }) => r * 256 + g + b / 256 - 32768,
       },
@@ -282,4 +367,6 @@ export function wireSun(map) {
   updateExternalSunChrome();
   initShadows();
   applyShadowVisibility();
+  // Fire pre-warm a tick later so it doesn't block first paint.
+  setTimeout(prewarmDemTiles, 300);
 }

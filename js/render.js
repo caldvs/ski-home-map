@@ -131,6 +131,56 @@ export function addBaseLayers(map) {
 }
 
 export function addGraphLayers(map, graph) {
+  // Compute resort bbox once. Used by the shadow-mask layer below and
+  // exposed on the map instance so sun.js can pre-warm DEM tiles in
+  // a buffer around it.
+  let minLon = Infinity, maxLon = -Infinity;
+  let minLat = Infinity, maxLat = -Infinity;
+  for (const n of graph.raw.nodes) {
+    if (n.lon < minLon) minLon = n.lon;
+    if (n.lon > maxLon) maxLon = n.lon;
+    if (n.lat < minLat) minLat = n.lat;
+    if (n.lat > maxLat) maxLat = n.lat;
+  }
+  // Pad by ~1 km — enough to keep on-piste landmarks inside without
+  // bleeding the mask into distant terrain. 0.01 deg ≈ 1.1 km at lat 45.
+  const PAD_DEG = 0.012;
+  const inner = [
+    [minLon - PAD_DEG, minLat - PAD_DEG],
+    [maxLon + PAD_DEG, minLat - PAD_DEG],
+    [maxLon + PAD_DEG, maxLat + PAD_DEG],
+    [minLon - PAD_DEG, maxLat + PAD_DEG],
+    [minLon - PAD_DEG, minLat - PAD_DEG],
+  ];
+  const outer = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
+  map._resortBbox = { minLon, maxLon, minLat, maxLat };
+
+  // Shadow mask: a "donut" polygon covering everywhere EXCEPT the
+  // resort domain. When the ShadeMap layer is active, this mask is
+  // moved above it and painted with the paper basemap colour, so the
+  // shadow's harsh outer cutoff (which lives outside our terrain
+  // sampling window) is hidden behind a clean horizon.
+  // Layout-hidden until shadows are turned on.
+  map.addSource("shadow-mask", {
+    type: "geojson",
+    data: {
+      type: "Feature",
+      geometry: { type: "Polygon", coordinates: [outer, inner] },
+      properties: {},
+    },
+  });
+  map.addLayer({
+    id: "shadow-mask-layer",
+    source: "shadow-mask",
+    type: "fill",
+    paint: {
+      "fill-color": "#ecdfc5",   // matches --paper basemap background
+      "fill-opacity": 0.92,
+      "fill-antialias": false,
+    },
+    layout: { visibility: "none" },
+  });
+
   // Pistes — matched to openskimap.org's downhill-runs paint (without
   // their per-feature `downhill` offset, which we don't carry in our
   // graph format). Exponential interpolation, exp-base 1.1.
