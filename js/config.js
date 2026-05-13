@@ -10,6 +10,5 @@
  * To rotate: drop a new JWT here and push.
  */
 
-export const SHADEMAP_API_KEY =
-  "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImR2c2NsbG1AZ21haWwuY29tIiwiY3JlYXRlZCI6MTc3ODYxNTEyNTM2MiwiaWF0IjoxNzc4NjE1MTI1fQ.BksB4jACTBkBHLUiDvxbMGHc10UqHyy-EZJe4HxFQHU";
+export const SHADEMAP_API_KEY = "";
 
