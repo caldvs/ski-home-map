@@ -16,6 +16,11 @@
 const TILE_SIZE = 512;
 const DEM_ZOOM = 11;          // ~9.6 km / tile at z11; terrarium pixel ≈ 19 m
 const DEFAULT_BUFFER_KM = 12; // peaks within this radius cast into the bbox
+const GRID_RES = 256;         // tessellation: 256×256 verts → ~100 m cells over a 25 km bbox
+// MapLibre's MercatorCoordinate uses the mean-radius earth circumference
+// (2πR with R = 6371008.8). Match it exactly so meters→mercator-Z agrees
+// with the value MapLibre bakes into pixelPerMeter for the mvp matrix.
+const EARTH_CIRCUMFERENCE_M = 2 * Math.PI * 6371008.8;
 
 // Web-Mercator helpers (lat/lon → tile coords at zoom z) ------------------
 
@@ -41,7 +46,6 @@ function mercY(lat)  {
   const r = (lat * Math.PI) / 180;
   return (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2;
 }
-
 
 // DEM loader ---------------------------------------------------------------
 
@@ -147,12 +151,18 @@ function sampleMaxElev(canvas, ctx) {
 // Shader sources -----------------------------------------------------------
 
 const VERT = `
-attribute vec2 a_merc;
+attribute vec3 a_pos;     // (merc_x, merc_y, elev_metres)
 attribute vec2 a_uv;
 uniform mat4  u_matrix;
+uniform float u_meterToMerc;  // 1 / (earthCircumference * cos(currentMapCenterLat))
+uniform float u_centerElev;   // metres — terrain elevation at the camera target,
+                              // matches the -this.elevation translation in MapLibre's mvp
+uniform float u_elevScale;    // 0 when terrain is off (mesh collapses to z=0),
+                              // otherwise the terrain exaggeration factor.
 varying vec2  v_uv;
 void main() {
-  gl_Position = u_matrix * vec4(a_merc, 0.0, 1.0);
+  float mercZ = (a_pos.z - u_centerElev) * u_meterToMerc * u_elevScale;
+  gl_Position = u_matrix * vec4(a_pos.xy, mercZ, 1.0);
   v_uv = a_uv;
 }`;
 
@@ -266,27 +276,13 @@ export class ShadowLayer {
     if (lon < b.minLon || lon > b.maxLon || lat < b.minLat || lat > b.maxLat) {
       return null;
     }
-    if (!this._demImageData) {
-      const c = this.dem.canvas;
-      const ctx = c.getContext("2d", { willReadFrequently: true });
-      try {
-        this._demImageData = ctx.getImageData(0, 0, c.width, c.height);
-        this._demW = c.width;
-        this._demH = c.height;
-      } catch (e) {
-        // Tainted canvas (rare with CORS-enabled tiles) — bail.
-        return null;
-      }
-    }
+    this._ensureDemImageData();
+    if (!this._demImageData) return null;
     // Resort scale is small enough that lon/lat → uv linear mapping
     // matches Mercator within ~0.1 m at this latitude. Good enough.
     const u = (lon - b.minLon) / (b.maxLon - b.minLon);
     const v = (b.maxLat - lat) / (b.maxLat - b.minLat);
-    const px = Math.min(this._demW - 1, Math.max(0, Math.floor(u * (this._demW - 1))));
-    const py = Math.min(this._demH - 1, Math.max(0, Math.floor(v * (this._demH - 1))));
-    const idx = (py * this._demW + px) * 4;
-    const data = this._demImageData.data;
-    return data[idx] * 256 + data[idx + 1] + data[idx + 2] / 256 - 32768;
+    return this._sampleDemAtUv(u, v);
   }
 
   setSun(azimuth, altitude) {
@@ -317,10 +313,13 @@ export class ShadowLayer {
     }
     this._program = prog;
 
-    this._attribs.a_merc = gl.getAttribLocation(prog, "a_merc");
-    this._attribs.a_uv   = gl.getAttribLocation(prog, "a_uv");
-    this._uniforms.u_matrix    = gl.getUniformLocation(prog, "u_matrix");
-    this._uniforms.u_dem       = gl.getUniformLocation(prog, "u_dem");
+    this._attribs.a_pos = gl.getAttribLocation(prog, "a_pos");
+    this._attribs.a_uv  = gl.getAttribLocation(prog, "a_uv");
+    this._uniforms.u_matrix      = gl.getUniformLocation(prog, "u_matrix");
+    this._uniforms.u_meterToMerc = gl.getUniformLocation(prog, "u_meterToMerc");
+    this._uniforms.u_centerElev  = gl.getUniformLocation(prog, "u_centerElev");
+    this._uniforms.u_elevScale   = gl.getUniformLocation(prog, "u_elevScale");
+    this._uniforms.u_dem         = gl.getUniformLocation(prog, "u_dem");
     this._uniforms.u_sunStep   = gl.getUniformLocation(prog, "u_sunStep");
     this._uniforms.u_stepCount = gl.getUniformLocation(prog, "u_stepCount");
     this._uniforms.u_maxElev   = gl.getUniformLocation(prog, "u_maxElev");
@@ -328,6 +327,8 @@ export class ShadowLayer {
     this._uniforms.u_debugMode = gl.getUniformLocation(prog, "u_debugMode");
 
     this._buf = gl.createBuffer();
+    this._idxBuf = gl.createBuffer();
+    this._indexCount = 0;
 
     this._texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this._texture);
@@ -350,8 +351,9 @@ export class ShadowLayer {
     if (!gl) return;
     if (this._program) gl.deleteProgram(this._program);
     if (this._buf)     gl.deleteBuffer(this._buf);
+    if (this._idxBuf)  gl.deleteBuffer(this._idxBuf);
     if (this._texture) gl.deleteTexture(this._texture);
-    this._program = this._buf = this._texture = null;
+    this._program = this._buf = this._idxBuf = this._texture = null;
   }
 
   render(gl, matrix) {
@@ -373,8 +375,29 @@ export class ShadowLayer {
     const dv = -(northUnit * this.stepM) / this.dem.heightM;
     const dh =   upUnit    * this.stepM;
 
+    // Only elevate vertices when MapLibre's 3D terrain is active — otherwise
+    // the surrounding map is flat and the shadow should be too.
+    const terrain = this._map && this._map.getTerrain && this._map.getTerrain();
+    const elevScale = terrain ? (terrain.exaggeration ?? 1.0) : 0.0;
+
+    // Match MapLibre's metres→mercator-Z scaling: pixelPerMeter is built from
+    // mercatorZfromAltitude(1, center.lat), so use the *current* map-centre lat,
+    // not the per-vertex one. Also subtract the camera-target elevation — MapLibre's
+    // mvp matrix translates terrain vertices down by this.elevation but the
+    // mercatorMatrix (passed to custom layers) does not, so without this the
+    // shadow mesh floats above the terrain by that many metres.
+    const centerLatDeg = this._map.getCenter ? this._map.getCenter().lat : 0;
+    const meterToMerc = 1 / (EARTH_CIRCUMFERENCE_M * Math.cos(centerLatDeg * Math.PI / 180));
+    const centerElev =
+      (elevScale && this._map.getCameraTargetElevation)
+        ? (this._map.getCameraTargetElevation() || 0)
+        : 0;
+
     gl.useProgram(this._program);
     gl.uniformMatrix4fv(this._uniforms.u_matrix, false, matrix);
+    gl.uniform1f(this._uniforms.u_meterToMerc, meterToMerc);
+    gl.uniform1f(this._uniforms.u_centerElev, centerElev);
+    gl.uniform1f(this._uniforms.u_elevScale, elevScale);
     gl.uniform1i(this._uniforms.u_dem, 0);
     gl.uniform3f(this._uniforms.u_sunStep, du, dv, dh);
     gl.uniform1f(this._uniforms.u_stepCount, this.stepCount);
@@ -387,18 +410,30 @@ export class ShadowLayer {
     gl.bindTexture(gl.TEXTURE_2D, this._texture);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._buf);
-    const stride = 4 * 4;
-    gl.enableVertexAttribArray(this._attribs.a_merc);
-    gl.vertexAttribPointer(this._attribs.a_merc, 2, gl.FLOAT, false, stride, 0);
+    const stride = 5 * 4; // vec3 pos + vec2 uv = 20 bytes
+    gl.enableVertexAttribArray(this._attribs.a_pos);
+    gl.vertexAttribPointer(this._attribs.a_pos, 3, gl.FLOAT, false, stride, 0);
     gl.enableVertexAttribArray(this._attribs.a_uv);
-    gl.vertexAttribPointer(this._attribs.a_uv,   2, gl.FLOAT, false, stride, 8);
+    gl.vertexAttribPointer(this._attribs.a_uv,  2, gl.FLOAT, false, stride, 12);
 
-    gl.disable(gl.DEPTH_TEST);
+    // Depth-test against the terrain mesh that MapLibre has already drawn
+    // into the depth buffer: shadow fragments behind a closer terrain pixel
+    // (e.g. a valley behind a ridge) are culled. LEQUAL lets the shadow draw
+    // on the terrain surface; polygon offset pulls it a hair toward the camera
+    // so faces co-incident with the terrain don't z-fight. depthMask stays
+    // false so the shadow doesn't itself occlude later layers (routes, pins).
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.depthMask(false);
+    gl.enable(gl.POLYGON_OFFSET_FILL);
+    gl.polygonOffset(-1.0, -1.0);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._idxBuf);
+    gl.drawElements(gl.TRIANGLES, this._indexCount, gl.UNSIGNED_SHORT, 0);
 
-    gl.disableVertexAttribArray(this._attribs.a_merc);
+    gl.disable(gl.POLYGON_OFFSET_FILL);
+    gl.disableVertexAttribArray(this._attribs.a_pos);
     gl.disableVertexAttribArray(this._attribs.a_uv);
   }
 
@@ -414,20 +449,81 @@ export class ShadowLayer {
   }
 
   _buildQuad() {
-    if (!this.dem || !this._gl || !this._buf) return;
+    if (!this.dem || !this._gl || !this._buf || !this._idxBuf) return;
     const b = this.dem.bbox;
     const x0 = mercX(b.minLon), x1 = mercX(b.maxLon);
     const y0 = mercY(b.maxLat), y1 = mercY(b.minLat); // y0 < y1 (north has lower mercY)
-    // Triangle strip: NW, NE, SW, SE
-    // u,v: 0,0 NW   1,0 NE   0,1 SW   1,1 SE
-    const verts = new Float32Array([
-      x0, y0, 0, 0,   // NW
-      x1, y0, 1, 0,   // NE
-      x0, y1, 0, 1,   // SW
-      x1, y1, 1, 1,   // SE
-    ]);
+
+    // Make sure the cached DEM ImageData is populated before sampling.
+    this._ensureDemImageData();
+
+    const n = GRID_RES;
+    const verts = new Float32Array(n * n * 5);
+    let vi = 0;
+    for (let j = 0; j < n; j++) {
+      const v = j / (n - 1);
+      const y = y0 + (y1 - y0) * v;
+      for (let i = 0; i < n; i++) {
+        const u = i / (n - 1);
+        const x = x0 + (x1 - x0) * u;
+        const elev = this._sampleDemAtUv(u, v) || 0;
+        // a_pos = (mercator_x, mercator_y, elevation_metres). The shader
+        // converts the z to mercator units using the current map-centre
+        // latitude and subtracts the camera-target elevation so the mesh
+        // tracks MapLibre's terrain mesh exactly.
+        verts[vi++] = x;
+        verts[vi++] = y;
+        verts[vi++] = elev;
+        verts[vi++] = u;
+        verts[vi++] = v;
+      }
+    }
+
+    // Triangle list — fits Uint16 because (n*n - 1) ≤ 65535 when n ≤ 256.
+    const indices = new Uint16Array((n - 1) * (n - 1) * 6);
+    let ii = 0;
+    for (let j = 0; j < n - 1; j++) {
+      for (let i = 0; i < n - 1; i++) {
+        const a = j * n + i;
+        const bIdx = a + 1;
+        const c = a + n;
+        const d = c + 1;
+        indices[ii++] = a;
+        indices[ii++] = bIdx;
+        indices[ii++] = c;
+        indices[ii++] = bIdx;
+        indices[ii++] = d;
+        indices[ii++] = c;
+      }
+    }
+
     const gl = this._gl;
     gl.bindBuffer(gl.ARRAY_BUFFER, this._buf);
     gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._idxBuf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    this._indexCount = indices.length;
+  }
+
+  _ensureDemImageData() {
+    if (this._demImageData || !this.dem || !this.dem.canvas) return;
+    const c = this.dem.canvas;
+    try {
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      this._demImageData = ctx.getImageData(0, 0, c.width, c.height);
+      this._demW = c.width;
+      this._demH = c.height;
+    } catch (e) {
+      this._demImageData = null;
+    }
+  }
+
+  _sampleDemAtUv(u, v) {
+    if (!this._demImageData) return 0;
+    const px = Math.min(this._demW - 1, Math.max(0, Math.floor(u * (this._demW - 1))));
+    const py = Math.min(this._demH - 1, Math.max(0, Math.floor(v * (this._demH - 1))));
+    const idx = (py * this._demW + px) * 4;
+    const d = this._demImageData.data;
+    return d[idx] * 256 + d[idx + 1] + d[idx + 2] / 256 - 32768;
   }
 }
