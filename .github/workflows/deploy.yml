@@ -1,8 +1,6 @@
 name: deploy to pages
 
-# Builds the site with the ShadeMap JWT injected from a repo secret
-# (Settings → Secrets and variables → Actions → SHADEMAP_API_KEY)
-# and publishes via GitHub Pages.
+# Publishes the static site to GitHub Pages.
 
 on:
   push:
@@ -27,20 +25,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Inject runtime config from secret
-        env:
-          SHADEMAP_API_KEY: ${{ secrets.SHADEMAP_API_KEY }}
-        run: |
-          # The JWT lands in the published bundle (unavoidable for a
-          # client-only static site) but never sees git. Empty string
-          # if the secret isn't set — visitors then fall back to the
-          # localStorage / URL-param flow.
-          cat > js/config.js <<EOF
-          // Generated at deploy time. Do not edit.
-          export const SHADEMAP_API_KEY = "${SHADEMAP_API_KEY}";
-          EOF
-          echo "config.js written ($(wc -c < js/config.js) bytes)"
 
       - uses: actions/configure-pages@v5
 

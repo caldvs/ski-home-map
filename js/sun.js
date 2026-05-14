@@ -1,43 +1,14 @@
 /**
- * Shadow + time-of-day integration.
+ * Sun + time-of-day integration.
  *
- * The custom WebGL shadow renderer (ShadowLayer) is the default.
- * ?shadows=shademap forces the legacy ShadeMap path. Time of day is
- * driven entirely by the TimeScrubber in Sun mode — there's no
- * sidebar UI to mirror state into anymore.
+ * Drives the custom WebGL shadow renderer (ShadowLayer) from a master
+ * clock the TimeScrubber edits. There's no sidebar UI to mirror state
+ * into — the scrubber owns time.
  */
 
-import { SHADEMAP_API_KEY } from "./config.js";
 import { sunPosition } from "./sun-position.js";
 import { ShadowLayer } from "./shadow-layer.js";
 import { TimeScrubber } from "./time-scrubber.js";
-
-const SHADOW_ENGINE = (() => {
-  const p = new URLSearchParams(window.location.search);
-  const v = (p.get("shadows") || localStorage.getItem("ski:shadows") || "custom").toLowerCase();
-  return v === "shademap" ? "shademap" : "custom";
-})();
-
-let shadeMap = null;
-export function getShadeMap() { return shadeMap; }
-
-function getApiKey() {
-  if (SHADEMAP_API_KEY && SHADEMAP_API_KEY.trim()) return SHADEMAP_API_KEY.trim();
-  const params = new URLSearchParams(window.location.search);
-  if (params.has("shademap_key")) {
-    const k = (params.get("shademap_key") || "").trim();
-    if (k) {
-      localStorage.setItem("shademap_api_key", k);
-      params.delete("shademap_key");
-      const url = window.location.pathname
-        + (params.toString() ? "?" + params.toString() : "")
-        + window.location.hash;
-      window.history.replaceState({}, "", url);
-      return k;
-    }
-  }
-  return (localStorage.getItem("shademap_api_key") || "").trim();
-}
 
 export function wireSun(map) {
   // Master clock — every shadow update reads from here.
@@ -48,24 +19,14 @@ export function wireSun(map) {
   const centerLon = (bbox.minLon + bbox.maxLon) / 2;
   const centerLat = (bbox.minLat + bbox.maxLat) / 2;
 
-  // Shadow renderer instance.
-  let customShadow = null;
-  if (SHADOW_ENGINE === "custom") {
-    customShadow = new ShadowLayer({ opacity: 0.55 });
-  }
+  const customShadow = new ShadowLayer({ opacity: 0.55 });
   let shadowsCurrentlyAdded = false;
 
   // Shadows layer-toggle (in Layers mode bottom pane).
   const shadowsCheckbox = document.getElementById("lyr-shadows");
   let shadowsWanted = shadowsCheckbox ? shadowsCheckbox.checked : true;
 
-  function shouldShowShadows() {
-    if (SHADOW_ENGINE === "custom") return shadowsWanted && customShadow;
-    return shadowsWanted && shadeMap;
-  }
-
   function updateCustomShadowSun() {
-    if (!customShadow) return;
     const pos = sunPosition(currentDate, centerLat, centerLon);
     customShadow.setSun(pos.azimuth, pos.altitude);
   }
@@ -89,47 +50,18 @@ export function wireSun(map) {
   }
 
   function applyShadowVisibility() {
-    // ---- Custom WebGL path ----
-    if (SHADOW_ENGINE === "custom") {
-      if (!customShadow) return;
-      const want = shouldShowShadows();
-      if (want && !shadowsCurrentlyAdded) {
-        if (!map.getLayer(customShadow.id)) map.addLayer(customShadow);
-        shadowsCurrentlyAdded = true;
-        promoteOverlaysAboveShade();
-        if (map.getLayer("hillshade")) {
-          map.setLayoutProperty("hillshade", "visibility", "none");
-        }
-        updateCustomShadowSun();
-      } else if (!want && shadowsCurrentlyAdded) {
-        if (map.getLayer(customShadow.id)) map.removeLayer(customShadow.id);
-        shadowsCurrentlyAdded = false;
-        if (map.getLayer("hillshade")) {
-          map.setLayoutProperty("hillshade", "visibility", "visible");
-        }
-      }
-      return;
-    }
-
-    // ---- ShadeMap fallback path ----
-    if (!shadeMap) return;
-    const want = shouldShowShadows();
+    const want = shadowsWanted;
     if (want && !shadowsCurrentlyAdded) {
-      shadeMap.addTo(map);
+      if (!map.getLayer(customShadow.id)) map.addLayer(customShadow);
       shadowsCurrentlyAdded = true;
-      if (map.getLayer("shadow-mask-layer")) {
-        map.setLayoutProperty("shadow-mask-layer", "visibility", "visible");
-      }
       promoteOverlaysAboveShade();
       if (map.getLayer("hillshade")) {
         map.setLayoutProperty("hillshade", "visibility", "none");
       }
+      updateCustomShadowSun();
     } else if (!want && shadowsCurrentlyAdded) {
-      shadeMap.remove();
+      if (map.getLayer(customShadow.id)) map.removeLayer(customShadow.id);
       shadowsCurrentlyAdded = false;
-      if (map.getLayer("shadow-mask-layer")) {
-        map.setLayoutProperty("shadow-mask-layer", "visibility", "none");
-      }
       if (map.getLayer("hillshade")) {
         map.setLayoutProperty("hillshade", "visibility", "visible");
       }
@@ -137,7 +69,6 @@ export function wireSun(map) {
   }
 
   async function initCustomShadows() {
-    if (!customShadow) return;
     if (!map.getLayer(customShadow.id)) map.addLayer(customShadow);
     promoteOverlaysAboveShade();
     try {
@@ -158,25 +89,6 @@ export function wireSun(map) {
     applyShadowVisibility();
   }
 
-  function initShadeMap() {
-    const apiKey = getApiKey();
-    if (!apiKey || typeof ShadeMap === "undefined") return;
-    shadeMap = new ShadeMap({
-      date: currentDate,
-      color: "#01112f",
-      opacity: 0.55,
-      apiKey,
-      terrainSource: {
-        tileSize: 512,
-        maxZoom: 9,
-        getSourceUrl: ({ x, y, z }) => `https://tiles.mapterhorn.com/${z}/${x}/${y}.webp`,
-        getElevation: ({ r, g, b }) => r * 256 + g + b / 256 - 32768,
-      },
-    });
-    applyShadowVisibility();
-  }
-
-  // Layer-toggle wiring for the master shadow checkbox.
   if (shadowsCheckbox) {
     shadowsCheckbox.addEventListener("change", (e) => {
       shadowsWanted = e.target.checked;
@@ -184,7 +96,7 @@ export function wireSun(map) {
     });
   }
 
-  // ── Time scrubber ──
+  // Time scrubber
   const scrubberContainer = document.getElementById("time-scrubber");
   let scrubber = null;
   if (scrubberContainer) {
@@ -192,7 +104,6 @@ export function wireSun(map) {
       container: scrubberContainer,
       onChange: (date) => {
         currentDate = new Date(date.getTime());
-        if (shadeMap) shadeMap.setDate(currentDate);
         updateCustomShadowSun();
         // Implicitly turn shadows on when the user touches the time.
         if (!shadowsWanted) {
@@ -210,7 +121,5 @@ export function wireSun(map) {
     new ResizeObserver(() => scrubber.render()).observe(scrubberContainer);
   }
 
-  // Boot the right shadow engine.
-  if (SHADOW_ENGINE === "custom") initCustomShadows();
-  else initShadeMap();
+  initCustomShadows();
 }

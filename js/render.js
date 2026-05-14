@@ -27,6 +27,18 @@ export function initMap(container, initialView) {
 
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
   map.addControl(new maplibregl.ScaleControl(), "bottom-right");
+
+  // The vendored openskimap style references POI sprite icons that aren't
+  // in the OpenFreeMap sprite sheet (cycling, sports_centre, swimming_pool,
+  // recycling, lift_gate, gate, office, climbing_adventure, reservoir,
+  // guidepost, …). Without a handler MapLibre fires a warnOnce for each
+  // missing id every tile, flooding the console. Supply a 1×1 transparent
+  // placeholder so those layers silently render nothing.
+  map.on("styleimagemissing", (e) => {
+    if (map.hasImage(e.id)) return;
+    map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
+  });
+
   return map;
 }
 
@@ -157,11 +169,10 @@ export function addGraphLayers(map, graph) {
   map._resortBbox = { minLon, maxLon, minLat, maxLat };
 
   // Shadow mask: a "donut" polygon covering everywhere EXCEPT the
-  // resort domain. When the ShadeMap layer is active, this mask is
-  // moved above it and painted with the paper basemap colour, so the
-  // shadow's harsh outer cutoff (which lives outside our terrain
-  // sampling window) is hidden behind a clean horizon.
-  // Layout-hidden until shadows are turned on.
+  // resort domain, painted in the basemap paper colour. Sits above
+  // the shadow layer so the harsh outer cutoff of our stitched DEM
+  // (the edge of the loaded tiles + buffer) is hidden behind a clean
+  // horizon. Layout-hidden until shadows are turned on.
   map.addSource("shadow-mask", {
     type: "geojson",
     data: {

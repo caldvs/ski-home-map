@@ -10,7 +10,7 @@ import { WORLDS } from "./worlds.js?v=20260513c";
 import { loadGraph } from "./graph.js";
 import { initMap, addBaseLayers, addGraphLayers, wireLayerToggles } from "./render.js";
 import { wireRouting, wirePerfOverlay } from "./ui.js?v=20260513";
-import { wireSun, getShadeMap } from "./sun.js";
+import { wireSun } from "./sun.js";
 
 const params = new URLSearchParams(window.location.search);
 const worldId = params.get("world") || "tignes";
@@ -97,7 +97,7 @@ map.on("load", async () => {
     wireLayerToggles(map);
     wireRouting(map, graph);
     wireSun(map);
-    wirePerfOverlay(map, getShadeMap);
+    wirePerfOverlay(map);
 
     document.getElementById("toggle-3d").addEventListener("click", () => {
       const pitchNow = map.getPitch();

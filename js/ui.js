@@ -832,14 +832,13 @@ function drawRoute(map, graph, path, approachGeom) {
 // ============================================================
 // Perf overlay
 // ============================================================
-export function wirePerfOverlay(map, getShadeMap) {
+export function wirePerfOverlay(map) {
   const fpsEl = document.getElementById("perf-fps");
   const frameMsEl = document.getElementById("perf-frame-ms");
-  const shadowMsEl = document.getElementById("perf-shadow-ms");
   const tilesEl = document.getElementById("perf-tiles");
   // Perf overlay is dev-only chrome — if its DOM isn't present, skip
   // setting up any of the listeners.
-  if (!fpsEl || !frameMsEl || !shadowMsEl || !tilesEl) return;
+  if (!fpsEl || !frameMsEl || !tilesEl) return;
 
   let frameCount = 0, frameAccum = 0;
   let lastTickMs = performance.now();
@@ -857,27 +856,6 @@ export function wirePerfOverlay(map, getShadeMap) {
       frameCount = 0; frameAccum = 0;
     }
   });
-
-  const wrapShadeTiming = () => {
-    const sm = getShadeMap();
-    if (!sm || sm.__wrappedTiming) return;
-    sm.__wrappedTiming = true;
-    const orig = sm.setDate.bind(sm);
-    const ring = [];
-    sm.setDate = function (d) {
-      const t0 = performance.now();
-      const r = orig(d);
-      const t1 = performance.now();
-      ring.push(t1 - t0);
-      if (ring.length > 20) ring.shift();
-      const avg = ring.reduce((a, b) => a + b, 0) / ring.length;
-      shadowMsEl.textContent = avg.toFixed(1);
-      shadowMsEl.className = avg > 50 ? "alert" : avg > 20 ? "hi" : "";
-      return r;
-    };
-  };
-  setTimeout(wrapShadeTiming, 500);
-  setInterval(wrapShadeTiming, 2000);
 
   setInterval(() => {
     let total = 0;
