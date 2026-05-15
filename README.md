@@ -64,8 +64,10 @@ experiments with a better connector cost model.
   MapLibre. Contour lines generated on the fly by
   [maplibre-contour](https://github.com/onthegomap/maplibre-contour).
 - **Sun shadows.** [ShadeMap](https://shademap.app/) plugin — free
-  educational tier covers localhost / file://. The first visit prompts
-  for your API key, which is stored in `localStorage` only.
+  educational tier. Deployed site reads the key from a CI-generated
+  `js/config.js` (written from a `SHADEMAP_API_KEY` repo secret at
+  build time; never committed). Local dev: drop a `js/config.local.js`
+  exporting `SHADEMAP_API_KEY = "…"` (gitignored).
 
 ## System overview
 
@@ -137,13 +139,21 @@ the same JSON, exposes `/route`, `/villages`, `/status` over HTTP), but
 this map does not depend on it. The two run side-by-side as different
 ways to query the same data.
 
-## Sun mode requires a free ShadeMap key
+## Sun mode and the ShadeMap key
 
-The shadow renderer is [ShadeMap](https://shademap.app/), which
-requires a free educational-tier key. On first use the Sun panel
-shows an inline prompt — paste your key once and it's saved per-origin
-in `localStorage`. Developers can short-circuit the prompt by dropping
-a `js/config.local.js` (gitignored) exporting `SHADEMAP_API_KEY = "…"`.
+The shadow renderer is [ShadeMap](https://shademap.app/), which requires
+a free educational-tier key.
+
+- **Deployed site.** The GitHub Pages deploy workflow reads the
+  `SHADEMAP_API_KEY` repo secret and writes it into a gitignored
+  `js/config.js` at build time. Visitors get shadows out of the box;
+  the key never lives in git history.
+- **Local dev.** Create `js/config.local.js` (gitignored) exporting
+  `SHADEMAP_API_KEY = "…"`. Or override per-browser via DevTools:
+  `localStorage.setItem("ski:shademap-key","<jwt>")`.
+
+Rotate the deploy key any time at [shademap.app](https://shademap.app/)
+and update the repo secret. No code change needed.
 
 ## Use it locally
 

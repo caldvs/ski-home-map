@@ -26,6 +26,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Write SHADEMAP_API_KEY into js/config.js
+        # The key is held as a repo secret (Settings → Secrets and variables
+        # → Actions → SHADEMAP_API_KEY) and written into a gitignored file
+        # at deploy time so it never enters git history. sun.js imports
+        # ./config.js dynamically with a try/catch fallback.
+        env:
+          SHADEMAP_API_KEY: ${{ secrets.SHADEMAP_API_KEY }}
+        run: |
+          if [ -z "$SHADEMAP_API_KEY" ]; then
+            echo "::warning::SHADEMAP_API_KEY secret is unset — Sun-mode shadows will be disabled on the deployed site."
+            printf 'export const SHADEMAP_API_KEY = "";\n' > js/config.js
+          else
+            printf 'export const SHADEMAP_API_KEY = %s;\n' "$(jq -nr --arg k "$SHADEMAP_API_KEY" '$k')" > js/config.js
+          fi
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
