@@ -382,12 +382,15 @@
     const btn3d = document.getElementById("toggle-3d");
     if (m) {
       if (name === "sun") {
-        if (m.getPitch() > 1 || m.getBearing() !== 0) {
-          m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
+        // Flatten pitch only — bearing is preserved so the user keeps any
+        // rotation they had, and the dragRotate / touch rotation handlers
+        // stay enabled so they can spin the map underneath them.
+        if (m.getPitch() > 1) {
+          m.easeTo({ pitch: 0, duration: 500 });
         }
         m.setMaxPitch(0);
-        if (m.dragRotate)      m.dragRotate.disable();
-        if (m.touchZoomRotate) m.touchZoomRotate.disableRotation();
+        if (m.dragRotate)      m.dragRotate.enable();
+        if (m.touchZoomRotate) m.touchZoomRotate.enableRotation();
         if (btn3d) btn3d.textContent = "3D · 42°";
         // Disable the 3D terrain mesh so the map is a flat 2D raster render
         // — hillshade still gives the relief impression via its baked
