@@ -486,6 +486,10 @@ export function addGraphLayers(map, graph) {
       "icon-size": 0.85,
       "icon-rotation-alignment": "map",
       "icon-pitch-alignment": "map",
+      // Chevron sprite is drawn pointing up. symbol-placement:line aligns the
+      // icon's "right" axis with the line tangent, so rotate +90° to point
+      // the chevron tip in the direction of travel.
+      "icon-rotate": 90,
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
       // Arrow opacity tapers in as you zoom — invisible at low zoom where the
