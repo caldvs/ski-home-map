@@ -27,22 +27,29 @@ const DIFF_COLOURS_UI = {
   freeride: "#ff8800",
 };
 
-// ── Pin marker SVG: "node + chip" variant from the design canvas.
-// Ground node + dashed halo, with a small chip floating above on a
-// downward-stem pentagon (accent for A, near-black for B).
+// Pin marker SVG. Teardrop-shaped pin pointing down — the tip is at SVG
+// y=0 so MapLibre's anchor="bottom" lands the tip exactly at the geo
+// point. Inner white disc holds a semantic icon:
+//   A pin = start  → blue, "▶" play triangle
+//   B pin = end    → black, 2×2 checkered finish flag
 function pinMarkerSVG(letter) {
   const isB = letter === "B";
   const fill = isB ? "#15130f" : "#2466ff";
+  const icon = isB
+    ? // Checkered finish flag — coloured top-left + bottom-right squares;
+      // the white quadrants sit on the white inner disc.
+      `<rect x="-4.5" y="-4.5" width="4.5" height="4.5" fill="${fill}"/>
+       <rect x="0"    y="0"    width="4.5" height="4.5" fill="${fill}"/>`
+    : // Right-pointing play triangle — start.
+      `<path d="M -3,-4.5 L 5,0 L -3,4.5 Z" fill="${fill}"/>`;
   return `
-    <svg class="pin-marker-svg" width="28" height="40" viewBox="-14 -32 28 40" aria-hidden="true">
-      <ellipse cx="0" cy="2" rx="9" ry="2.6" fill="#000" opacity="0.22"/>
-      <circle cx="0" cy="0" r="11.5" fill="none" stroke="${fill}" stroke-opacity="0.35" stroke-width="1" stroke-dasharray="2 2"/>
-      <circle cx="0" cy="0" r="6" fill="${fill}" stroke="#fff" stroke-width="2"/>
-      <g transform="translate(-7, -26)">
-        <path d="M 0 0 L 14 0 L 14 12 L 9 12 L 7 16 L 5 12 L 0 12 Z" fill="${fill}"/>
-        <text x="7" y="9.5" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle"
-          font-family="Geist, sans-serif">${letter}</text>
-      </g>
+    <svg class="pin-marker-svg" width="32" height="46" viewBox="-16 -44 32 46" aria-hidden="true">
+      <ellipse cx="0" cy="1.5" rx="7" ry="2" fill="rgba(0,0,0,0.30)"/>
+      <path
+        d="M 0,0 C -2,-12 -14,-18 -14,-30 A 14,14 0 1 1 14,-30 C 14,-18 2,-12 0,0 Z"
+        fill="${fill}" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="0" cy="-30" r="8.5" fill="#ffffff"/>
+      <g transform="translate(0,-30)">${icon}</g>
     </svg>`;
 }
 

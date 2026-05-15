@@ -451,13 +451,11 @@ export function addGraphLayers(map, graph) {
     },
   });
 
-  // Direction-of-travel arrows along the route. Rendered as symbols placed
-  // along each leg's LineString; the SDK rotates them to follow the line
-  // tangent so they always point in the direction of motion (A → B).
+  // Direction-of-travel arrows along the route. Sprite is drawn in white +
+  // marked sdf:true so we can tint each instance via icon-color — that lets
+  // arrows on a piste leg take the piste's difficulty colour and arrows on a
+  // lift leg use purple, matching the underlying line.
   if (!map.hasImage("route-arrow")) {
-    // 22×22 black-edged dark chevron — subtle but legible over the
-    // coloured route line. Drawn pointing up (north) so symbol-placement:line
-    // rotates it along the line's local heading.
     const SIZE = 22;
     const cv = document.createElement("canvas");
     cv.width = SIZE; cv.height = SIZE;
@@ -466,14 +464,18 @@ export function addGraphLayers(map, graph) {
     cx.lineWidth = 3;
     cx.lineCap = "round";
     cx.lineJoin = "round";
-    cx.strokeStyle = "rgba(20,20,30,0.85)";
+    cx.strokeStyle = "#ffffff";
     cx.beginPath();
     cx.moveTo(-5, 3);
     cx.lineTo(0, -4);
     cx.lineTo(5, 3);
     cx.stroke();
     const data = cx.getImageData(0, 0, SIZE, SIZE);
-    map.addImage("route-arrow", { width: SIZE, height: SIZE, data: new Uint8Array(data.data.buffer) });
+    map.addImage(
+      "route-arrow",
+      { width: SIZE, height: SIZE, data: new Uint8Array(data.data.buffer) },
+      { sdf: true },
+    );
   }
   map.addLayer({
     id: "user-route-arrows",
@@ -486,17 +488,26 @@ export function addGraphLayers(map, graph) {
       "icon-size": 0.85,
       "icon-rotation-alignment": "map",
       "icon-pitch-alignment": "map",
-      // Chevron sprite is drawn pointing up. symbol-placement:line aligns the
-      // icon's "right" axis with the line tangent, so rotate +90° to point
-      // the chevron tip in the direction of travel.
+      // Sprite is drawn pointing up; symbol-placement:line aligns its right
+      // axis with the line, so +90 puts the chevron tip along the travel.
       "icon-rotate": 90,
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
-      // Arrow opacity tapers in as you zoom — invisible at low zoom where the
-      // route is a thin line, visible from mid-zooms onward.
     },
     paint: {
-      "icon-opacity": ["interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.75, 17, 0.95],
+      // Tint per feature: piste segments use their difficulty colour (set in
+      // ui.js drawRoute), lift segments use the route's purple. Falls back
+      // to a dark slate if a feature is missing the colour property.
+      "icon-color": [
+        "case",
+        ["==", ["get", "kind"], "lift"], "#8b5cf6",
+        ["coalesce", ["get", "colour"], "#222"],
+      ],
+      // White halo keeps the chevron legible against the dashed white piste
+      // overlay (where the colour can blend into the dash gaps).
+      "icon-halo-color": "#ffffff",
+      "icon-halo-width": 1.0,
+      "icon-opacity": ["interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.9, 17, 1.0],
     },
   });
 
