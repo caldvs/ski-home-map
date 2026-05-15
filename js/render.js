@@ -5,6 +5,33 @@
 
 import { LIFT_COLOUR } from "./graph.js";
 
+// Suppress two persistent warnings that come from the vendored openskimap
+// style processing OpenFreeMap POI / contour features, not our own code:
+//
+//   • Image "" could not be loaded.  — POI layers use
+//       ["match", ["get","subclass"], …, ["get","class"]]
+//     which evaluates to "" for the (rare) feature with both class and
+//     subclass missing. We already provide a 1×1 placeholder via the
+//     styleimagemissing event below, but MapLibre's warnOnce fires first.
+//
+//   • Expected value to be of type number, but found null instead.
+//     — emitted by the expression evaluator when a numeric coercion sees
+//     null (e.g. an interpolate input on a feature with a missing prop).
+//
+// We can't reach into the vendored expressions, so wrap console.warn once
+// to drop these specific lines. Anything else still goes through.
+(function _installMapLibreWarningFilter() {
+  if (typeof console === "undefined" || console._skiWarnFiltered) return;
+  const orig = console.warn.bind(console);
+  console._skiWarnFiltered = true;
+  console.warn = function (...args) {
+    const msg = args.length ? String(args[0] ?? "") : "";
+    if (msg.includes('Image "" could not be loaded')) return;
+    if (msg.includes("Expected value to be of type number, but found null")) return;
+    orig(...args);
+  };
+})();
+
 export function initMap(container, initialView) {
   const map = new maplibregl.Map({
     container,

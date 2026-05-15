@@ -21,17 +21,25 @@ import { TimeScrubber } from "./time-scrubber.js";
 // key is set, and it'll be saved per-origin in localStorage.
 const SHADEMAP_KEY_STORAGE = "ski:shademap-key";
 
+// Only attempt the config.local.js dynamic import on dev origins. On the
+// deployed site it will always be absent, and the failed import prints a
+// 404 in the network panel that no try/catch can swallow.
+function _isDevOrigin() {
+  if (typeof location === "undefined") return false;
+  const h = location.hostname;
+  return location.protocol === "file:"
+    || h === "localhost" || h === "127.0.0.1" || h === "0.0.0.0"
+    || h.endsWith(".local");
+}
+
 async function _resolveShadeMapKey() {
-  // config.local.js is the developer's local copy (gitignored). Import
-  // failures here are silent on the browser side but DO still print a
-  // 404 in the network panel — there's no way to feature-detect an ES
-  // module without attempting the import, so we accept that cost in
-  // exchange for "drop a config.local.js in and it just works".
   let key = "";
-  try {
-    const mod = await import("./config.local.js");
-    key = (mod.SHADEMAP_API_KEY || "").trim();
-  } catch (e) { /* config.local.js absent — fine on deployed CI */ }
+  if (_isDevOrigin()) {
+    try {
+      const mod = await import("./config.local.js");
+      key = (mod.SHADEMAP_API_KEY || "").trim();
+    } catch (e) { /* config.local.js absent on this dev box — fine */ }
+  }
   // localStorage is the deployed-user path: paste a key once via the
   // Sun-panel prompt, it sticks per-origin.
   if (!key && typeof localStorage !== "undefined") {
