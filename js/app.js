@@ -37,7 +37,7 @@ document.getElementById("back-link-resort").textContent = backLinkLabel;
 const titleEl = document.querySelector("title");
 if (titleEl) titleEl.textContent = `${world.name} · ski-home-map`;
 
-const map = initMap("map", world.initialView);
+const map = await initMap("map", world.initialView);
 const initialView = world.initialView;
 
 // ─── Cross-module namespace ─────────────────────────────────────────────

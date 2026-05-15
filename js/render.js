@@ -32,7 +32,49 @@ import { LIFT_COLOUR } from "./graph.js";
   };
 })();
 
-export function initMap(container, initialView) {
+// Recursively wrap any numeric-comparison filter with a `has` guard for
+// every property it reads, so the worker's number-assert step doesn't
+// see null when an OpenMapTiles feature is missing that prop. Without
+// this, `[">=", ["get","rank"], 20]` on a feature with no `rank` fires
+// "Expected value to be of type number, but found null" inside the
+// vector-tile worker — a warning our main-thread console.warn override
+// cannot suppress (workers have their own console).
+const _NUMERIC_OPS = new Set([">", "<", ">=", "<="]);
+function _collectGetProps(expr, out) {
+  if (!Array.isArray(expr)) return;
+  if (expr[0] === "get" && typeof expr[1] === "string") { out.add(expr[1]); return; }
+  for (let i = 1; i < expr.length; i++) _collectGetProps(expr[i], out);
+}
+function _patchFilter(filter) {
+  if (!Array.isArray(filter)) return filter;
+  const op = filter[0];
+  if (_NUMERIC_OPS.has(op)) {
+    const props = new Set();
+    for (let i = 1; i < filter.length; i++) _collectGetProps(filter[i], props);
+    if (!props.size) return filter;
+    const guards = Array.from(props, (p) => ["has", p]);
+    return ["all", ...guards, filter];
+  }
+  if (op === "all" || op === "any" || op === "!") {
+    return [op, ...filter.slice(1).map(_patchFilter)];
+  }
+  return filter;
+}
+async function _loadAndPatchStyle(styleUrl) {
+  const r = await fetch(styleUrl);
+  const style = await r.json();
+  if (Array.isArray(style.layers)) {
+    for (const layer of style.layers) {
+      if (layer && layer.filter) layer.filter = _patchFilter(layer.filter);
+    }
+  }
+  return style;
+}
+
+export async function initMap(container, initialView) {
+  // Patch the vendored openskimap style before handing it to MapLibre so
+  // the tile worker never sees a numeric filter that reads a null prop.
+  const patchedStyle = await _loadAndPatchStyle("./styles/terrain.json");
   const map = new maplibregl.Map({
     container,
     // Vendored openskimap terrain_v2 style: their basemap layers verbatim
@@ -40,7 +82,7 @@ export function initMap(container, initialView) {
     // own graph) and glyph/sprite urls repointed to OpenFreeMap. The
     // vector tiles themselves are OpenFreeMap, which is what openskimap
     // already uses upstream.
-    style: "./styles/terrain.json",
+    style: patchedStyle,
     center: initialView.center,
     zoom: initialView.zoom,
     pitch: initialView.pitch,
