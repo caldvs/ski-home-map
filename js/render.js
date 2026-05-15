@@ -383,21 +383,72 @@ export function addGraphLayers(map, graph) {
     },
   });
 
-  // Empty user-route source (filled when user drops two pins)
+  // Empty user-route source (filled when user drops two pins). Per-leg
+  // LineString features tagged with kind:"piste" | "lift" so we can style
+  // piste segments differently from lift segments — piste gets a thinner
+  // yellow base + white dashes (chevron feel), lift stays solid yellow.
   map.addSource("user-route", {
     type: "geojson",
     data: { type: "FeatureCollection", features: [] },
   });
+  // Piste base — colour-coded by piste difficulty (drawn from feature props).
+  // The white-dash overlay above gives an alternating piste-colour / white
+  // striping ("blue/white", "red/white", etc).
   map.addLayer({
-    id: "user-route-layer",
+    id: "user-route-piste-base",
     source: "user-route",
     type: "line",
+    filter: ["==", ["get", "kind"], "piste"],
     paint: {
-      "line-color": "#f0b323",
+      "line-color": ["coalesce", ["get", "colour"], "#1e88e5"],
+      "line-width": 4,
+      "line-opacity": 0.95,
+    },
+    layout: { "line-cap": "round", "line-join": "round" },
+  });
+  // White dashed overlay — creates the alternating colour/white pattern.
+  map.addLayer({
+    id: "user-route-piste-dash",
+    source: "user-route",
+    type: "line",
+    filter: ["==", ["get", "kind"], "piste"],
+    paint: {
+      "line-color": "#ffffff",
+      "line-width": 1.8,
+      "line-dasharray": [1.4, 1.4],
+      "line-opacity": 0.9,
+    },
+    layout: { "line-cap": "butt", "line-join": "round" },
+  });
+  // Lift segments — solid purple to distinguish from piste segments.
+  map.addLayer({
+    id: "user-route-lift",
+    source: "user-route",
+    type: "line",
+    filter: ["==", ["get", "kind"], "lift"],
+    paint: {
+      "line-color": "#8b5cf6",
       "line-width": 5,
       "line-opacity": 0.95,
     },
     layout: { "line-cap": "round", "line-join": "round" },
+  });
+  // Transition dots — placed at every piste↔lift boundary (lift termini).
+  // Coloured purple to read as "lift station".
+  map.addSource("user-route-transitions", {
+    type: "geojson",
+    data: { type: "FeatureCollection", features: [] },
+  });
+  map.addLayer({
+    id: "user-route-transitions-layer",
+    source: "user-route-transitions",
+    type: "circle",
+    paint: {
+      "circle-radius": 5,
+      "circle-color": "#8b5cf6",
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 1.5,
+    },
   });
 
   // Pin-A approach line — dashed grey connector from a free-form pin A
@@ -470,6 +521,13 @@ export function addGraphLayers(map, graph) {
       "circle-stroke-width": ["case", ["==", ["get", "meeting"], true], 2.5, 0],
     },
   });
+
+  // Labels above the route — piste / lift names should remain legible even
+  // when the yellow user-route line covers their geometry. moveLayer with no
+  // beforeId moves them to the very top of the layer stack.
+  for (const id of ["piste-labels", "lift-labels"]) {
+    if (map.getLayer(id)) map.moveLayer(id);
+  }
 }
 
 export function wireLayerToggles(map) {

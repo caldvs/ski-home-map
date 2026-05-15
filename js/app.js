@@ -99,6 +99,13 @@ map.on("load", async () => {
     wireSun(map);
     wirePerfOverlay(map);
 
+    // map.html's inline script set the mode body class before the map existed.
+    // Re-apply now that the map is ready so sun-mode's pitch-lock / 3D-toggle
+    // hiding / etc. actually take effect on first load.
+    if (typeof window._applyMode === "function") {
+      window._applyMode(localStorage.getItem("ski:mode") || "route");
+    }
+
     document.getElementById("toggle-3d").addEventListener("click", () => {
       const pitchNow = map.getPitch();
       const goingIn3D = pitchNow < 30;

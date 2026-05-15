@@ -1,0 +1,149 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "lon": 6.461352,
+      "lat": 45.866376,
+      "elev": 1637.1,
+      "name": "Col des Aravis Gauche top",
+      "villages": []
+    },
+    {
+      "id": 1,
+      "lon": 6.464926,
+      "lat": 45.871489,
+      "elev": 1484.7,
+      "name": "Col des Aravis Gauche bottom",
+      "villages": []
+    },
+    {
+      "id": 2,
+      "lon": 6.463782,
+      "lat": 45.872026,
+      "elev": 1484.5,
+      "name": "Col des Aravis Droite bottom",
+      "villages": []
+    }
+  ],
+  "edges": [
+    {
+      "from": 0,
+      "to": 1,
+      "type": "run",
+      "name": "Col des Aravis Gauche",
+      "cost_base": 81.3,
+      "length_m": 650.7,
+      "elev_drop": 152.4,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.461352,
+          45.866376
+        ],
+        [
+          6.462086,
+          45.8667
+        ],
+        [
+          6.463234,
+          45.867721
+        ],
+        [
+          6.464453,
+          45.870205
+        ],
+        [
+          6.464926,
+          45.871489
+        ]
+      ]
+    },
+    {
+      "from": 0,
+      "to": 2,
+      "type": "run",
+      "name": "Col des Aravis Droite",
+      "cost_base": 83.4,
+      "length_m": 666.8,
+      "elev_drop": 152.6,
+      "difficulty": "easy",
+      "geometry": [
+        [
+          6.461352,
+          45.866376
+        ],
+        [
+          6.461238,
+          45.867143
+        ],
+        [
+          6.461733,
+          45.868791
+        ],
+        [
+          6.462386,
+          45.870095
+        ],
+        [
+          6.463782,
+          45.872026
+        ]
+      ]
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "type": "skate",
+      "name": "Skate 107m",
+      "cost_base": 83.4,
+      "length_m": 106.8,
+      "elev_drop": 0,
+      "geometry": [
+        [
+          6.464926,
+          45.871489
+        ],
+        [
+          6.463782,
+          45.872026
+        ]
+      ]
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "type": "skate",
+      "name": "Skate 107m",
+      "cost_base": 83.4,
+      "length_m": 106.8,
+      "elev_drop": -0.2,
+      "geometry": [
+        [
+          6.463782,
+          45.872026
+        ],
+        [
+          6.464926,
+          45.871489
+        ]
+      ]
+    }
+  ],
+  "villages": {
+    "La Clusaz": {
+      "lat": 45.905,
+      "lon": 6.425,
+      "elev": 1100
+    },
+    "Le Grand-Bornand": {
+      "lat": 45.942,
+      "lon": 6.429,
+      "elev": 1000
+    },
+    "Manigod": {
+      "lat": 45.847,
+      "lon": 6.406,
+      "elev": 950
+    }
+  }
+}

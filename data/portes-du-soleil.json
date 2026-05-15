@@ -1,0 +1,31 @@
+{
+  "nodes": [],
+  "edges": [],
+  "villages": {
+    "Avoriaz": {
+      "lat": 46.188,
+      "lon": 6.774,
+      "elev": 1800
+    },
+    "Morzine": {
+      "lat": 46.18,
+      "lon": 6.708,
+      "elev": 1000
+    },
+    "Les Gets": {
+      "lat": 46.159,
+      "lon": 6.668,
+      "elev": 1170
+    },
+    "Ch\u00e2tel": {
+      "lat": 46.263,
+      "lon": 6.84,
+      "elev": 1180
+    },
+    "Abondance": {
+      "lat": 46.279,
+      "lon": 6.724,
+      "elev": 930
+    }
+  }
+}

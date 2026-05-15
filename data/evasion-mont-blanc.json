@@ -1,0 +1,31 @@
+{
+  "nodes": [],
+  "edges": [],
+  "villages": {
+    "Meg\u00e8ve": {
+      "lat": 45.858,
+      "lon": 6.617,
+      "elev": 1110
+    },
+    "Saint-Gervais": {
+      "lat": 45.891,
+      "lon": 6.714,
+      "elev": 850
+    },
+    "Les Contamines": {
+      "lat": 45.823,
+      "lon": 6.727,
+      "elev": 1170
+    },
+    "Combloux": {
+      "lat": 45.899,
+      "lon": 6.645,
+      "elev": 1000
+    },
+    "La Giettaz": {
+      "lat": 45.866,
+      "lon": 6.532,
+      "elev": 1140
+    }
+  }
+}

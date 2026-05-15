@@ -1,0 +1,26 @@
+{
+  "nodes": [],
+  "edges": [],
+  "villages": {
+    "Brian\u00e7on": {
+      "lat": 44.898,
+      "lon": 6.636,
+      "elev": 1326
+    },
+    "Chantemerle": {
+      "lat": 44.929,
+      "lon": 6.571,
+      "elev": 1350
+    },
+    "Villeneuve": {
+      "lat": 44.943,
+      "lon": 6.552,
+      "elev": 1400
+    },
+    "Le Mon\u00eatier-les-Bains": {
+      "lat": 44.976,
+      "lon": 6.507,
+      "elev": 1500
+    }
+  }
+}

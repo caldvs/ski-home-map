@@ -61,14 +61,16 @@ export class TimeScrubber {
       <div class="scrub-head">
         <div class="scrub-date mono"><span id="sc-date">—</span> · <span id="sc-time">—</span></div>
         <div class="scrub-stats mono"><span id="sc-stats">—</span></div>
-        <div class="scrub-actions">
-          <button class="scrub-btn" data-action="wk-back"  title="−1 week">‹‹‹ Wk</button>
-          <button class="scrub-btn" data-action="day-back" title="−1 day">‹‹ Day</button>
-          <button class="scrub-btn" data-action="hr-back"  title="−1 hour">‹ Hr</button>
-          <button class="scrub-btn" data-action="now"      title="Reset to now">Now</button>
-          <button class="scrub-btn" data-action="hr-fwd"   title="+1 hour">Hr ›</button>
-          <button class="scrub-btn" data-action="day-fwd"  title="+1 day">Day ››</button>
-          <button class="scrub-btn" data-action="wk-fwd"   title="+1 week">Wk ›››</button>
+        <div class="scrub-actions scrub-shift-row">
+          <button class="scrub-btn" data-action="wk-back"  title="−1 week">−1w</button>
+          <button class="scrub-btn" data-action="day-back" title="−1 day">−1d</button>
+          <button class="scrub-btn" data-action="hr-back"  title="−1 hour">−1h</button>
+          <button class="scrub-btn" data-action="hr-fwd"   title="+1 hour">+1h</button>
+          <button class="scrub-btn" data-action="day-fwd"  title="+1 day">+1d</button>
+          <button class="scrub-btn" data-action="wk-fwd"   title="+1 week">+1w</button>
+        </div>
+        <div class="scrub-actions scrub-now-row">
+          <button class="scrub-btn" data-action="now" title="Reset to now">Now</button>
           <button class="scrub-btn primary" data-action="play" title="Animate one day">▶ Day</button>
         </div>
       </div>

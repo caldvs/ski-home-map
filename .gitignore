@@ -10,3 +10,5 @@ __pycache__/
 # Raw upstream of the openskimap style for diffing; the cleaned
 # styles/terrain.json is what we ship. Regenerate with build_style.py.
 /styles/_openskimap_terrain_v2.json
+env.local
+/js/config.local.js

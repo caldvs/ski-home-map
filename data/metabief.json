@@ -1,0 +1,16 @@
+{
+  "nodes": [],
+  "edges": [],
+  "villages": {
+    "M\u00e9tabief": {
+      "lat": 46.77,
+      "lon": 6.345,
+      "elev": 1000
+    },
+    "Mont d'Or": {
+      "lat": 46.76,
+      "lon": 6.305,
+      "elev": 1430
+    }
+  }
+}

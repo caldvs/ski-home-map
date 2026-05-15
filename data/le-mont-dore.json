@@ -1,0 +1,11 @@
+{
+  "nodes": [],
+  "edges": [],
+  "villages": {
+    "Le Mont-Dore": {
+      "lat": 45.58,
+      "lon": 2.808,
+      "elev": 1050
+    }
+  }
+}

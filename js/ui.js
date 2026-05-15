@@ -12,6 +12,7 @@ import {
 } from "./routing.js?v=20260513";
 import { renderElevationProfile, disposeElevationProfile } from "./elevation.js";
 import { renderItinerary, disposeItinerary } from "./itinerary.js";
+import { DIFF_COLOURS } from "./graph.js";
 
 // Mirrors graph.js's DIFF_COLOURS — kept here so the route-finder UI can
 // colour the piste icon without depending on the graph module's internal
@@ -146,6 +147,9 @@ function summariseRoute(graph, path, totalSeconds) {
 }
 
 function setEmptyUI() {
+  // Collapse the panel back to its compact "no route" size.
+  document.body.classList.remove("has-route");
+  if (typeof window._skihomeMap !== "undefined") setRouteDimming(window._skihomeMap, false);
   const info = document.getElementById("user-route-info");
   info.innerHTML =
     `<div class="ab-status"><span class="empty">Click the map to place pin A.</span></div>`;
@@ -164,7 +168,134 @@ function setEmptyUI() {
   if (elevEmpty) elevEmpty.hidden = false;
 }
 
+// Original opacity values per layer — used to restore when the route is
+// cleared (setPaintProperty overwrites the source style).
+const PISTE_LIFT_LAYER_RESTORE = {
+  "pistes-outline": { prop: "line-opacity",   value: ["interpolate", ["linear"], ["zoom"], 5, 0, 18, 1] },
+  "pistes-layer":   { prop: "line-opacity",   value: ["interpolate", ["linear"], ["zoom"], 5, 0, 18, 1] },
+  "lifts-casing":   { prop: "line-opacity",   value: ["interpolate", ["linear"], ["zoom"], 5, 0, 18, 1] },
+  "lifts-layer":    { prop: "line-opacity",   value: 0.8 },
+  "skates-layer":   { prop: "line-opacity",   value: 0.5 },
+  "piste-labels":   { prop: "text-opacity",   value: 1.0 },
+  "lift-labels":    { prop: "text-opacity",   value: 1.0 },
+  "stations-layer": { prop: "circle-opacity", value: 1.0 },
+};
+
+// Non-route opacity multiplier. 0.8 ≈ "dim by 20%" — colours stay recognisable
+// while the route line and labels in the route stand out clearly.
+const NON_ROUTE_OPACITY = 0.8;
+
+// Build a "case" expression that keeps route members at their normal opacity
+// and applies the dim multiplier to everything else, by matching on feature
+// name. (Pistes/lifts source features don't have stable feature.ids, so we
+// match on the `name` property which is set in graph.js.)
+function dimmedExpr(restoreValue, routeNames, multiplier) {
+  const dimmed =
+    typeof restoreValue === "number"
+      ? restoreValue * multiplier
+      : ["*", restoreValue, multiplier];
+  if (!routeNames || routeNames.length === 0) return dimmed;
+  return [
+    "case",
+    ["in", ["get", "name"], ["literal", routeNames]],
+    restoreValue,
+    dimmed,
+  ];
+}
+
+// Layer → which set of route names to preserve at full opacity.
+const LAYER_ROUTE_KEY = {
+  "pistes-outline": "pistes",
+  "pistes-layer":   "pistes",
+  "lifts-casing":   "lifts",
+  "lifts-layer":    "lifts",
+  "skates-layer":   null,         // skates are never part of a route — always dim
+  "piste-labels":   "pistes",
+  "lift-labels":    "lifts",
+  "stations-layer": null,         // station dots: dim uniformly (no name link)
+};
+
+function setRouteDimming(map, dimmed) {
+  const members = (dimmed && window._routeMembers) || { pistes: [], lifts: [] };
+  for (const [id, { prop, value: restoreValue }] of Object.entries(PISTE_LIFT_LAYER_RESTORE)) {
+    if (!map.getLayer(id)) continue;
+    if (!dimmed) {
+      map.setPaintProperty(id, prop, restoreValue);
+      continue;
+    }
+    const key = LAYER_ROUTE_KEY[id];
+    const routeNames = key ? (members[key] || []) : [];
+    map.setPaintProperty(id, prop, dimmedExpr(restoreValue, routeNames, NON_ROUTE_OPACITY));
+  }
+}
+
+// Build a JSON-serialisable snapshot of the current route for debugging.
+// Captures pin lat/lng, mode, total time, and a flat list of legs with the
+// fields most useful for sanity-checking ("why did it pick this lift / piste?").
+function buildRouteSnapshot(graph, startId, endId, mode, result, startPin, endPin,
+                            approachGeom, startEdge, endEdge) {
+  const ll = (m) => {
+    if (!m) return null;
+    try {
+      const x = m.getLngLat ? m.getLngLat() : m._lngLat || m;
+      return { lat: +x.lat.toFixed(6), lng: +x.lng.toFixed(6) };
+    } catch { return null; }
+  };
+  const nodeName = (id) => {
+    if (id == null) return null;
+    const n = graph.routingNodes[id];
+    return n && n.name ? n.name : null;
+  };
+  const legs = (result.path || []).map((eIdx) => {
+    const e = graph.routingEdges[eIdx];
+    if (!e) return { edgeIdx: eIdx, ok: false };
+    return {
+      edgeIdx: eIdx,
+      type: e.ty,              // run | lift | lift_down | skate | connection | walk
+      name: e.n || null,
+      from: e.f,
+      to: e.t,
+      fromName: nodeName(e.f),
+      toName: nodeName(e.t),
+      difficulty: e.d ?? null, // piste difficulty colour code
+      liftType: e.lt ?? null,  // chairlift / gondola / etc.
+      costSeconds: e.c ?? null,
+      // Two-point summary of the geometry — full line omitted to keep payload light.
+      first: e.g && e.g[0] ? [e.g[0][0], e.g[0][1]] : null,
+      last:  e.g && e.g[e.g.length-1] ? [e.g[e.g.length-1][0], e.g[e.g.length-1][1]] : null,
+      pointCount: e.g ? e.g.length : 0,
+    };
+  });
+  // Roll up a small per-leg summary for "what's in this route" at a glance.
+  const summary = {
+    totalSeconds: result.totalSeconds ?? null,
+    legCount:    legs.length,
+    runLegs:     legs.filter(l => l.type === "run").length,
+    liftLegs:    legs.filter(l => l.type === "lift").length,
+    liftDownLegs: legs.filter(l => l.type === "lift_down").length,
+    skateLegs:   legs.filter(l => l.type === "skate").length,
+    connectionLegs: legs.filter(l => l.type === "connection").length,
+  };
+  return {
+    capturedAt: new Date().toISOString(),
+    resort: (typeof window._currentWorldName === "string") ? window._currentWorldName : null,
+    mode,
+    pinA: { ...ll(startPin), nodeId: startId, nodeName: nodeName(startId),
+            startEdgeIdx: startEdge ?? null,
+            approachGeom: approachGeom || null },
+    pinB: { ...ll(endPin), nodeId: endId, nodeName: nodeName(endId),
+            endEdgeIdx: endEdge ?? null },
+    summary,
+    legs,
+  };
+}
+
 function setRouteUI(graph, startId, endId, result, startEdge, endEdge) {
+  // Flag the body so the left panel can expand from its compact "no route"
+  // size to full height (CSS transitions max-height).
+  document.body.classList.add("has-route");
+  // Dim non-route pistes / lifts so the yellow route line dominates.
+  if (typeof window._skihomeMap !== "undefined") setRouteDimming(window._skihomeMap, true);
   const summary = summariseRoute(graph, result.path, result.totalSeconds);
 
   // A→B status line
@@ -237,6 +368,10 @@ export function wireRouting(map, graph) {
   // Representative edges for each pin's snapped node — drives the small
   // piste/lift icon shown next to each pin's name in the route finder.
   let startEdge = null, endEdge = null;
+  // Optional "via" forced through the route — set by clicking on a piste
+  // segment of the rendered route. Clears when route is cleared.
+  let viaNodeId = null;
+  let viaPin = null;
   let itinHoverMarker = null;
 
   function setItinSelect(leg) {
@@ -442,6 +577,8 @@ export function wireRouting(map, graph) {
   function clearUserRoute() {
     if (startPin) { startPin.remove(); startPin = null; }
     if (endPin) { endPin.remove(); endPin = null; }
+    if (viaPin) { viaPin.remove(); viaPin = null; }
+    viaNodeId = null;
     startNodeId = null; endNodeId = null;
     startEdge = null; endEdge = null;
     startDisplay = null;
@@ -452,6 +589,9 @@ export function wireRouting(map, graph) {
     }
     if (map.getSource("user-route")) {
       map.getSource("user-route").setData({ type: "FeatureCollection", features: [] });
+    }
+    if (map.getSource("user-route-transitions")) {
+      map.getSource("user-route-transitions").setData({ type: "FeatureCollection", features: [] });
     }
     if (map.getSource("anim-settled")) {
       map.getSource("anim-settled").setData({ type: "FeatureCollection", features: [] });
@@ -504,7 +644,27 @@ export function wireRouting(map, graph) {
     if (startNodeId === null || endNodeId === null) return;
     const mode = document.getElementById("user-difficulty").value;
     const t0 = performance.now();
-    const result = runDijkstra(startNodeId, endNodeId, mode, graph);
+    // Forced-via support: split into two Dijkstras (A→via and via→B) and
+    // concatenate. Falls back to direct routing if either half is unreachable.
+    let result;
+    if (viaNodeId != null && viaNodeId !== startNodeId && viaNodeId !== endNodeId) {
+      const r1 = runDijkstra(startNodeId, viaNodeId, mode, graph);
+      const r2 = runDijkstra(viaNodeId, endNodeId, mode, graph);
+      if (r1.path && r2.path) {
+        result = {
+          path: r1.path.concat(r2.path),
+          totalSeconds: (r1.totalSeconds || 0) + (r2.totalSeconds || 0),
+          visited: (r1.visited || 0) + (r2.visited || 0),
+        };
+      } else {
+        // Either half blocked — drop via and try direct.
+        if (viaPin) { viaPin.remove(); viaPin = null; }
+        viaNodeId = null;
+        result = runDijkstra(startNodeId, endNodeId, mode, graph);
+      }
+    } else {
+      result = runDijkstra(startNodeId, endNodeId, mode, graph);
+    }
     const tMs = (performance.now() - t0).toFixed(0);
     if (result.path === null) {
       const POCKET_THRESHOLD = 25;
@@ -516,11 +676,21 @@ export function wireRouting(map, graph) {
       if (map.getSource("user-route")) {
         map.getSource("user-route").setData({ type: "FeatureCollection", features: [] });
       }
+      if (map.getSource("user-route-transitions")) {
+        map.getSource("user-route-transitions").setData({ type: "FeatureCollection", features: [] });
+      }
       disposeElevationProfile(document.getElementById("elevation-profile"));
       disposeItinerary(document.getElementById("itinerary"));
       return;
     }
     drawRoute(map, graph, result.path, startApproachGeom);
+    // Stash a serialisable snapshot of the route for the Copy-data button.
+    // Includes pin lat/lng, mode, edge-level legs with type/name/elev/length —
+    // enough to debug "why did it suggest this routing".
+    window._lastRouteData = buildRouteSnapshot(
+      graph, startNodeId, endNodeId, mode, result,
+      startPin, endPin, startApproachGeom, startEdge, endEdge,
+    );
     setRouteUI(graph, startNodeId, endNodeId, result, startEdge, endEdge);
     renderElevationProfile(
       document.getElementById("elevation-profile"), map, graph, result.path,
@@ -577,16 +747,79 @@ export function wireRouting(map, graph) {
         <span class="empty">Click again to place pin B.</span>
       </div>`;
   }
-  map.on("click", (ev) => handlePinClick(pickClickCoord(ev)));
+  // Clicking on a piste segment of the rendered route forces the route to
+  // pass through that point (snapped to the nearest piste/lift graph node).
+  // Set before the general click handler so we can swallow the event.
+  let _routeClickedThisTick = false;
+  map.on("click", "user-route-piste-base", (ev) => {
+    if (startNodeId == null || endNodeId == null) return;
+    const ll = ev.lngLat;
+    const nid = nearestPisteOrLiftNodeId(graph, ll.lat, ll.lng);
+    if (nid == null || nid === startNodeId || nid === endNodeId) return;
+    viaNodeId = nid;
+    if (viaPin) viaPin.remove();
+    const n = graph.routingNodes[viaNodeId];
+    if (n) {
+      const el = document.createElement("div");
+      el.style.cssText = "width:14px;height:14px;border-radius:50%;background:#8b5cf6;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.25);cursor:pointer;";
+      el.title = "Forced waypoint — click to clear";
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        viaNodeId = null;
+        if (viaPin) { viaPin.remove(); viaPin = null; }
+        recomputeRoute();
+      });
+      viaPin = new maplibregl.Marker({ element: el, anchor: "center" })
+        .setLngLat([n[0], n[1]])
+        .addTo(map);
+    }
+    _routeClickedThisTick = true;
+    setTimeout(() => { _routeClickedThisTick = false; }, 0);
+    recomputeRoute();
+  });
+  // Cursor affordance when hovering the route's piste segments.
+  map.on("mouseenter", "user-route-piste-base", () => { map.getCanvas().style.cursor = "pointer"; });
+  map.on("mouseleave", "user-route-piste-base", () => { map.getCanvas().style.cursor = ""; });
+
+  map.on("click", (ev) => {
+    if (_routeClickedThisTick) return;
+    handlePinClick(pickClickCoord(ev));
+  });
 
   for (const layerId of POINT_SNAP_LAYERS) {
     map.on("mouseenter", layerId, () => { map.getCanvas().style.cursor = "pointer"; });
     map.on("mouseleave", layerId, () => { map.getCanvas().style.cursor = ""; });
   }
 
-  // Optional Clear button (hidden in new chrome but still wired for safety)
+  // Clear / Copy buttons (visible only when body.has-route).
   const clearBtn = document.getElementById("clear-route-btn");
   if (clearBtn) clearBtn.addEventListener("click", clearUserRoute);
+  const copyBtn  = document.getElementById("copy-route-btn");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", async () => {
+      const snapshot = window._lastRouteData;
+      if (!snapshot) return;
+      const json = JSON.stringify(snapshot, null, 2);
+      try {
+        await navigator.clipboard.writeText(json);
+        copyBtn.textContent = "Copied ✓";
+        copyBtn.classList.add("copied");
+      } catch (e) {
+        // Clipboard API may fail (insecure context etc) — fall back to a textarea hack.
+        const ta = document.createElement("textarea");
+        ta.value = json;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); copyBtn.textContent = "Copied ✓"; copyBtn.classList.add("copied"); }
+        catch { copyBtn.textContent = "Copy failed"; }
+        document.body.removeChild(ta);
+      }
+      setTimeout(() => {
+        copyBtn.textContent = "Copy data";
+        copyBtn.classList.remove("copied");
+      }, 1500);
+    });
+  }
 
   // Recompute the live route whenever the user switches difficulty mode.
   const diffSelect = document.getElementById("user-difficulty");
@@ -793,40 +1026,88 @@ export function wireRouting(map, graph) {
   setEmptyUI();
 }
 
+// Use the exact same DIFF_COLOURS palette graph.js applies to the basemap
+// pistes-layer, so the route piste segments match the underlying piste
+// difficulty colour for every difficulty. (Previously this had its own
+// hard-coded mapping which got out of sync — e.g. "easy" rendered green
+// even though the basemap colours "easy" as blue.)
+function pisteColourFromEdge(e) {
+  return DIFF_COLOURS[(e.d || "").toLowerCase()] || "#888";
+}
+
 function drawRoute(map, graph, path, approachGeom) {
-  const coords = [];
-  // Optional approach prefix — when pin A is free-form, this is the
-  // partial-piste polyline from the perpendicular foot to the routing
-  // source node. Yellow line then starts at the projection point so
-  // there's no visible gap between the dashed bridge and the route.
-  if (approachGeom && approachGeom.length >= 2) {
-    for (const c of approachGeom) {
-      const lonLat = [c[1], c[0]];
-      if (coords.length &&
-          coords[coords.length - 1][0] === lonLat[0] &&
-          coords[coords.length - 1][1] === lonLat[1]) continue;
-      coords.push(lonLat);
-    }
-  }
-  path.forEach((eIdx) => {
-    const e = graph.routingEdges[eIdx];
-    if (!e.g) return;
-    e.g.forEach((c) => {
-      const lonLat = [c[1], c[0]];
-      if (coords.length &&
-          coords[coords.length - 1][0] === lonLat[0] &&
-          coords[coords.length - 1][1] === lonLat[1]) return;
-      coords.push(lonLat);
-    });
-  });
-  map.getSource("user-route").setData({
-    type: "FeatureCollection",
-    features: [{
+  // Emit one LineString feature per edge so each piste segment can render in
+  // its own difficulty colour. Transition points dropped at every piste↔lift
+  // boundary (the lift termini). Also collect the unique piste / lift names
+  // present in the route so the dimming logic can preserve them.
+  const lineFeatures = [];
+  const transitionFeatures = [];
+  const routePisteNames = new Set();
+  const routeLiftNames  = new Set();
+
+  function emitLeg(coords, props) {
+    if (coords.length < 2) return;
+    lineFeatures.push({
       type: "Feature",
       geometry: { type: "LineString", coordinates: coords },
-      properties: {},
-    }],
+      properties: props,
+    });
+  }
+  function dedupedPush(arr, lonLat) {
+    if (arr.length &&
+        arr[arr.length - 1][0] === lonLat[0] &&
+        arr[arr.length - 1][1] === lonLat[1]) return;
+    arr.push(lonLat);
+  }
+
+  // Approach prefix (when pin A is free-form) — counted as piste.
+  let prefixCoords = [];
+  if (approachGeom && approachGeom.length >= 2) {
+    for (const c of approachGeom) dedupedPush(prefixCoords, [c[1], c[0]]);
+    if (prefixCoords.length >= 2) {
+      emitLeg(prefixCoords, { kind: "piste", colour: "#888" });
+    }
+  }
+
+  let prevKind = prefixCoords.length ? "piste" : null;
+  let prevTail = prefixCoords.length ? prefixCoords[prefixCoords.length - 1] : null;
+
+  for (const eIdx of path) {
+    const e = graph.routingEdges[eIdx];
+    if (!e.g) continue;
+    const kind = (e.ty === "lift" || e.ty === "lift_down") ? "lift" : "piste";
+    const colour = kind === "lift" ? "#8b5cf6" : pisteColourFromEdge(e);
+    if (e.n) (kind === "lift" ? routeLiftNames : routePisteNames).add(e.n);
+
+    // Build the leg's coords. If joining onto a previous tail, prefix with it.
+    const coords = [];
+    if (prevTail && prevKind !== kind) {
+      coords.push(prevTail.slice());
+      // Drop a transition dot at the boundary.
+      transitionFeatures.push({
+        type: "Feature",
+        geometry: { type: "Point", coordinates: prevTail.slice() },
+        properties: { from: prevKind, to: kind },
+      });
+    }
+    for (const c of e.g) dedupedPush(coords, [c[1], c[0]]);
+    emitLeg(coords, { kind, colour, name: e.n || "" });
+    prevKind = kind;
+    prevTail = coords[coords.length - 1];
+  }
+
+  map.getSource("user-route").setData({
+    type: "FeatureCollection",
+    features: lineFeatures,
   });
+  const tSrc = map.getSource("user-route-transitions");
+  if (tSrc) tSrc.setData({ type: "FeatureCollection", features: transitionFeatures });
+
+  // Expose route members so setRouteDimming can preserve their visibility.
+  window._routeMembers = {
+    pistes: Array.from(routePisteNames),
+    lifts:  Array.from(routeLiftNames),
+  };
 }
 
 // ============================================================

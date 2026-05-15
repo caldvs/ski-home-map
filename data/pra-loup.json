@@ -1,0 +1,16 @@
+{
+  "nodes": [],
+  "edges": [],
+  "villages": {
+    "Pra Loup 1500": {
+      "lat": 44.368,
+      "lon": 6.591,
+      "elev": 1500
+    },
+    "Pra Loup 1600": {
+      "lat": 44.364,
+      "lon": 6.587,
+      "elev": 1600
+    }
+  }
+}

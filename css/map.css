@@ -79,9 +79,8 @@ body {
 }
 body.ui-hidden .top-left,
 body.ui-hidden .mode-bar,
+body.ui-hidden .left-panel,
 body.ui-hidden .view-controls .floating-btn:not(#ui-toggle),
-body.ui-hidden #bottom-pane,
-body.ui-hidden #bottom-toggle,
 body.ui-hidden .attribution-corner { display: none !important; }
 
 .mono {
@@ -359,10 +358,35 @@ body.ui-hidden .attribution-corner { display: none !important; }
   overflow: hidden;
   transition: width 220ms ease;
 }
-body.mode-route .left-panel { width: 340px; }
-/* Sun mode: hide the left panel entirely — there are no layer
-   toggles to surface here, and the scrubber owns the bottom. */
-body.mode-sun   .left-panel { display: none; }
+/* Left panel is visible in BOTH modes — sun controls live inside .sun-section
+   so the map height stays constant when toggling modes (no bottom row inserts). */
+.left-panel { width: 340px; }
+
+/* Panel sizes to content, capped at viewport height. The max-height value
+   transitions when the body gets / loses the .has-route class — so the
+   panel animates smoothly between its compact "no data yet" size and the
+   full-height "route calculated, itinerary visible" size. Vertical scroll
+   kicks in if the LAYERS section is expanded and content still overflows. */
+.left-panel {
+  bottom: auto;
+  height: auto;
+  max-height: 520px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: max-height 320ms ease;
+}
+/* Sun mode: always compact (no route ever) — let content set its size. */
+body.mode-sun .left-panel { max-height: calc(100vh - 102px); }
+/* Route mode without a route — fits LAYERS (expanded) + route-finder empty state. */
+body.mode-route .left-panel { max-height: 520px; }
+/* Route calculated — expand to fit the itinerary / elevation / algorithm tabs. */
+body.mode-route.has-route .left-panel { max-height: calc(100vh - 102px); }
+
+/* Sun section: only visible in sun mode. Sized to its content (not flex-grow)
+   so it doesn't stretch to fill the panel — the sun controls are compact and
+   look silly with hundreds of pixels of empty space below them. */
+.left-section.sun-section { display: none; }
+body.mode-sun .left-section.sun-section { display: flex; flex: 0 0 auto; }
 
 .left-section {
   display: flex;
@@ -404,9 +428,11 @@ body.mode-sun   .left-panel { display: none; }
 .layers-section { flex: 0 0 auto; }
 .layers-list {
   padding: 4px 14px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+  /* Two-column grid — saves vertical space and groups checkboxes by sight. */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 12px;
+  row-gap: 7px;
 }
 .layers-list[hidden] { display: none; }
 .layers-list .layer {
@@ -466,8 +492,10 @@ body.mode-route .route-section { display: flex; }
 
 /* ───── Bottom-pane visibility per mode ───── */
 
-body.mode-route #bottom-pane { display: none; }
-body.mode-sun   #bottom-pane { flex: 0 0 180px; height: 180px; }
+
+/* Sun mode is 2D-only: hide the 3D pitch toggle so the camera can't be tilted
+   while shadows are being rendered. */
+body.mode-sun #toggle-3d { display: none; }
 
 /* Route mode: signal "drop a pin" with a crosshair cursor. MapLibre
    sets cursor inline during drag (→ grabbing) which beats this; the
@@ -483,7 +511,6 @@ body.mode-route .maplibregl-canvas { cursor: crosshair; }
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 100%;
 }
 .time-scrubber[hidden] { display: none; }
 
@@ -511,7 +538,13 @@ body.mode-route .maplibregl-canvas { cursor: crosshair; }
 .scrub-actions {
   display: flex;
   gap: 4px;
+  width: 100%;   /* fill scrub-head's row so flex:1 buttons can stretch */
 }
+/* Shift buttons (−1w, −1d, −1h, +1h, +1d, +1w) — evenly distributed in one
+   symmetric row of 6, 3-back + 3-forward. */
+.scrub-shift-row .scrub-btn { flex: 1; text-align: center; }
+/* Now / play row — two big buttons sharing the width. */
+.scrub-now-row .scrub-btn { flex: 1; text-align: center; }
 .scrub-btn {
   appearance: none;
   background: var(--l-bg-2);
@@ -519,10 +552,11 @@ body.mode-route .maplibregl-canvas { cursor: crosshair; }
   color: var(--l-text);
   font: inherit;
   font-size: 11px;
-  padding: 5px 9px;
+  padding: 5px 6px;
   border-radius: 4px;
   cursor: pointer;
   font-family: "JetBrains Mono", monospace;
+  white-space: nowrap;
 }
 .scrub-btn:hover { background: var(--l-bg-3); }
 .scrub-btn.primary {
@@ -578,43 +612,8 @@ body.mode-route .maplibregl-canvas { cursor: crosshair; }
 /* Fixed pane height so switching tabs doesn't grow / shrink the
    pane. The tab-content area scrolls internally if a tab needs more
    room than that. */
-#bottom-pane {
-  flex: 0 0 380px;
-  height: 380px;
-  background: var(--l-bg);
-  color: var(--l-text);
-  border-top: 1px solid var(--l-line);
-  display: flex;
-  flex-direction: column;
-  transition: flex-basis 220ms ease, height 220ms ease;
-  overflow: hidden;
-}
-body.bottom-closed #bottom-pane {
-  flex: 0 0 0;
-  height: 0;
-  border-top: none;
-}
-
-/* Top bar (RouteFinder | Sun) */
-.bottom-topbar {
-  display: flex;
-  align-items: stretch;
-  border-bottom: 1px solid var(--l-line);
-  flex: 0 0 auto;
-}
-.bottom-topbar .col {
-  flex: 1;
-  padding: 12px 18px;
-  border-right: 1px solid var(--l-line);
-}
-.bottom-topbar .col:last-child { border-right: none; flex: 0 0 320px; }
-.col-title {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--l-text-3);
-  margin-bottom: 6px;
-}
+/* Old bottom-pane CSS removed — the pane was replaced by the .sun-section
+   inside .left-panel so the map height stays constant when toggling modes. */
 
 /* A → B status line */
 .ab-status {
@@ -686,6 +685,27 @@ body.bottom-closed #bottom-pane {
 .difficulty-seg button:hover:not(.on) {
   background: var(--l-bg-2);
 }
+
+/* Route action row — Clear, Copy etc. Only visible when a route is set. */
+.route-action-row {
+  display: none;
+  gap: 6px;
+  margin: 6px 0 0;
+}
+body.has-route .route-action-row { display: flex; }
+.route-action-btn {
+  appearance: none;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 11.5px;
+  border-radius: 4px;
+  border: 1px solid var(--l-line);
+  background: var(--l-bg-2);
+  color: var(--l-text);
+  cursor: pointer;
+}
+.route-action-btn:hover { background: var(--l-bg-3); border-color: var(--l-text-3); }
+.route-action-btn.copied { background: #2bd391; color: #0e3a26; border-color: #2bd391; }
 .difficulty-seg .seg-pips {
   display: inline-flex;
   gap: 3px;
@@ -1190,16 +1210,6 @@ body.bottom-closed #bottom-pane {
   font-family: inherit;
 }
 .rail-toggle:hover { background: rgba(40, 34, 24, 0.95); color: var(--d-text); }
-
-#bottom-toggle {
-  width: 80px;
-  height: 14px;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-}
 
 /* ───── Map markers (overrides MapLibre defaults) ───── */
 

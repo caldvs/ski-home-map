@@ -1,0 +1,67 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "lon": 6.863502,
+      "lat": 47.922212,
+      "elev": 940.8,
+      "name": "",
+      "villages": []
+    },
+    {
+      "id": 1,
+      "lon": 6.864329,
+      "lat": 47.922368,
+      "elev": 935.4,
+      "name": "",
+      "villages": []
+    }
+  ],
+  "edges": [
+    {
+      "from": 0,
+      "to": 1,
+      "type": "skate",
+      "name": "Run 53856",
+      "cost_base": 30,
+      "length_m": 5.1,
+      "elev_drop": 0.4,
+      "geometry": [
+        [
+          6.863502,
+          47.922212
+        ],
+        [
+          6.864329,
+          47.922368
+        ]
+      ]
+    },
+    {
+      "from": 1,
+      "to": 0,
+      "type": "skate",
+      "name": "Skate 64m",
+      "cost_base": 222.7,
+      "length_m": 64.1,
+      "elev_drop": -5.4,
+      "geometry": [
+        [
+          6.864329,
+          47.922368
+        ],
+        [
+          6.863502,
+          47.922212
+        ]
+      ]
+    }
+  ],
+  "villages": {
+    "Ventron": {
+      "lat": 47.946,
+      "lon": 6.881,
+      "elev": 900
+    }
+  }
+}

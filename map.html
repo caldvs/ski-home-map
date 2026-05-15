@@ -6,11 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
+<link rel="preconnect" href="https://tiles.mapterhorn.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
 <link rel="stylesheet" href="./css/map.css">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/maplibre-contour@0.0.7/dist/index.min.js"></script>
+<script src="./dist/mapbox-gl-shadow-simulator.umd.min.js"></script>
 </head>
 <body>
 
@@ -123,12 +127,8 @@
             <span class="name">3D terrain</span>
             <span class="count mono">DEM</span>
           </label>
-          <label class="layer">
-            <input type="checkbox" class="checkbox" id="lyr-shadows" checked>
-            <span class="swatch" style="background:#15130f"></span>
-            <span class="name">Shadows</span>
-            <span class="count mono">live</span>
-          </label>
+          <!-- Shadows checkbox removed — shadows are mode-driven: forbidden in
+               route mode (no shadows on 3D terrain) and mandatory in sun mode. -->
         </div>
       </section>
 
@@ -176,7 +176,10 @@
           </select>
 
           <div class="summary-chips" id="route-summary-chips" hidden></div>
-          <button id="clear-route-btn" style="display:none">Clear</button>
+          <div class="route-action-row">
+            <button id="clear-route-btn"  class="route-action-btn">Clear route</button>
+            <button id="copy-route-btn"   class="route-action-btn" title="Copy route JSON to clipboard">Copy data</button>
+          </div>
         </div>
 
         <div class="tabs" id="route-tabs" role="tablist">
@@ -220,9 +223,20 @@
         </div>
       </section>
 
+      <!-- Sun section (visible in Sun mode only). Re-uses the left panel
+           rather than the bottom pane so the map area doesn't change height
+           when the user switches modes. -->
+      <section class="left-section sun-section" id="sun-section">
+        <header class="left-section-head">
+          <h3>Sun &amp; shadows</h3>
+        </header>
+        <div class="sun-body">
+          <div id="time-scrubber" class="time-scrubber"></div>
+        </div>
+      </section>
+
     </aside>
 
-    <button id="bottom-toggle" class="rail-toggle" title="Hide bottom panel">⌃</button>
 
     <div id="algo-hero" hidden>
       <div class="algo-hero-head">
@@ -250,16 +264,14 @@
       <a href="https://openfreemap.org/">OpenFreeMap</a> ·
       <a href="https://mapterhorn.com/">Mapterhorn</a> ·
       <a href="https://openskidata.org/">OpenSkiData</a> ·
-      Shadows: custom WebGL ray-tracer ·
+      Sun shadows by <a href="https://shademap.app/">ShadeMap</a> ·
       Style ex <a href="https://openskimap.org/">openskimap.org</a> ·
       <a href="https://github.com/caldvs/skiroute">skiroute</a> MIT
     </div>
   </div>
 
-  <!-- BOTTOM PANE — only used by Sun mode now ────────────────────── -->
-  <div id="bottom-pane">
-    <div id="time-scrubber" class="time-scrubber"></div>
-  </div>
+  <!-- Bottom pane removed — sun controls now live in the left panel so the
+       map height doesn't change when toggling modes. -->
 
 </div>
 
@@ -301,14 +313,8 @@
     });
   });
 
-  // ── Hide UI / bottom pane ──
-  const bBtn  = document.getElementById("bottom-toggle");
+  // ── Hide UI ──
   const uiBtn = document.getElementById("ui-toggle");
-  function setBottom(open) {
-    document.body.classList.toggle("bottom-closed", !open);
-    bBtn.textContent = open ? "⌃" : "⌄";
-  }
-  bBtn.addEventListener("click", () => setBottom(document.body.classList.contains("bottom-closed")));
   uiBtn.addEventListener("click", () => {
     const closed = !document.body.classList.contains("ui-hidden");
     document.body.classList.toggle("ui-hidden", closed);
@@ -366,16 +372,53 @@
 
     if (name === "sun" && window._renderTimeScrubber) window._renderTimeScrubber();
 
-    // Route mode flattens to 2D for cleaner pin placement.
+    // Camera + shadow rules:
+    //   • Sun mode: 2D-only (pitch locked at 0), ShadeMap shadows ON.
+    //   • Route mode: 2D by default, but the 3D toggle is exposed so the user
+    //     can tilt for route work; shadows are OFF (only make sense in 2D and
+    //     route mode never wants them anyway).
     const m = window._skihomeMap;
-    if (m && name === "route" && m.getPitch() > 1) {
-      m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
-      const btn3d = document.getElementById("toggle-3d");
-      if (btn3d) btn3d.textContent = "3D · 42°";
+    const terrainCb = document.getElementById("lyr-terrain");
+    const btn3d = document.getElementById("toggle-3d");
+    if (m) {
+      if (name === "sun") {
+        if (m.getPitch() > 1 || m.getBearing() !== 0) {
+          m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
+        }
+        m.setMaxPitch(0);
+        if (m.dragRotate)      m.dragRotate.disable();
+        if (m.touchZoomRotate) m.touchZoomRotate.disableRotation();
+        if (btn3d) btn3d.textContent = "3D · 42°";
+        // Disable the 3D terrain mesh so the map is a flat 2D raster render
+        // — hillshade still gives the relief impression via its baked
+        // shading. ShadeMap doesn't rely on MapLibre's terrain (has its own
+        // DEM source) so shadows still work.
+        m.setTerrain(null);
+        if (terrainCb && terrainCb.checked) terrainCb.checked = false;
+        // Shadows always on in sun mode.
+        if (typeof window._setShadowsEnabled === "function") window._setShadowsEnabled(true);
+      } else { // route
+        if (m.getPitch() > 1 || m.getBearing() !== 0) {
+          m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
+        }
+        m.setMaxPitch(75);
+        if (m.dragRotate)      m.dragRotate.enable();
+        if (m.touchZoomRotate) m.touchZoomRotate.enableRotation();
+        // Restore 3D terrain (the style declares the source as "terrain").
+        if (!m.getTerrain()) m.setTerrain({ source: "terrain", exaggeration: 1.0 });
+        if (terrainCb && !terrainCb.checked) terrainCb.checked = true;
+        // Shadows always off in route mode.
+        if (typeof window._setShadowsEnabled === "function") window._setShadowsEnabled(false);
+      }
     }
     setTimeout(() => { if (m && m.resize) m.resize(); }, 240);
   }
   modeBtns.forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
+  // Expose for app.js — the initial setMode call below runs before the map
+  // has been initialised (the module script loads after this inline one),
+  // so app.js re-applies the current mode after `map.on("load")` to actually
+  // commit the camera + maxPitch state.
+  window._applyMode = setMode;
   setMode(localStorage.getItem("ski:mode") || "route");
 
   // ── ResizeObserver: keep MapLibre's canvas correctly sized ──
