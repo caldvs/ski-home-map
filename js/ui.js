@@ -391,10 +391,20 @@ export function wireRouting(map, graph) {
     }
     if (minLat === Infinity) return;
     // Frame the leg with some breathing room; clamp zoom so very
-    // short skating links don't shoot us to z19.
+    // short skating links don't shoot us to z19. The left-side padding
+    // expands to clear the sidebar so the framed segment isn't tucked
+    // under the panel.
+    const panel = document.getElementById("left-panel");
+    let leftPad = 60;
+    if (panel && getComputedStyle(panel).display !== "none") {
+      const r = panel.getBoundingClientRect();
+      // Right edge of the panel + a small buffer.
+      leftPad = Math.max(60, Math.round(r.right) + 20);
+    }
     map.fitBounds(
       [[minLon, minLat], [maxLon, maxLat]],
-      { padding: 60, duration: 700, maxZoom: 16.5 },
+      { padding: { top: 60, right: 60, bottom: 60, left: leftPad },
+        duration: 700, maxZoom: 16.5 },
     );
   }
 
