@@ -1,0 +1,136 @@
+{
+  "graph": "../data/tignes.json",
+  "comment": "Canonical OD scenarios for the front-end JS Dijkstra. Node IDs are stable identifiers from the map's tignes.json. If you regenerate the graph (skiroute.build_graph), the IDs may shift — re-derive them from named features (lift/run top/bottom) and village bases.",
+  "scenarios": [
+    {
+      "label": "Fresse lift bottom → Tignes Le Lac",
+      "startNodeId": 22,
+      "endNodeId": 230,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 1,
+        "maxMinutes": 60,
+        "minLifts": 1
+      }
+    },
+    {
+      "label": "Tovière top → Tignes Val Claret",
+      "startNodeId": 20,
+      "endNodeId": 370,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 2,
+        "maxMinutes": 45,
+        "minRuns": 1
+      }
+    },
+    {
+      "label": "Grande Motte top → Tignes Val Claret",
+      "startNodeId": 49,
+      "endNodeId": 370,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 5,
+        "maxMinutes": 60,
+        "minRuns": 1
+      }
+    },
+    {
+      "label": "Funival top → Val d'Isère La Daille",
+      "startNodeId": 45,
+      "endNodeId": 54,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 1,
+        "maxMinutes": 30,
+        "minRuns": 1
+      }
+    },
+    {
+      "label": "Solaise top → Val d'Isère Centre (cross-resort)",
+      "startNodeId": 109,
+      "endNodeId": 111,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 1,
+        "maxMinutes": 60,
+        "minRuns": 1
+      }
+    },
+    {
+      "label": "Tignes Val Claret → Val d'Isère Centre (inter-valley)",
+      "startNodeId": 370,
+      "endNodeId": 111,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 5,
+        "maxMinutes": 120,
+        "minLifts": 1
+      }
+    },
+    {
+      "label": "Solaise top → Les Brévières (longest journey)",
+      "startNodeId": 109,
+      "endNodeId": 4,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 10,
+        "maxMinutes": 180
+      }
+    },
+    {
+      "label": "Fresse top → Mont Blanc run (the worked example)",
+      "startNodeId": 100,
+      "endNodeId": 204,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 1,
+        "maxMinutes": 60
+      }
+    },
+    {
+      "label": "Grande Motte → Val Claret on prefer-easy minimises blacks",
+      "comment": "Grande Motte (3447m) is the highest point in Tignes; the glacier summit has 'Descente' (advanced) as effectively the only exit. We allow ≤ 1 black leg and rely on the cost penalty to keep it minimal.",
+      "startNodeId": 49,
+      "endNodeId": 370,
+      "mode": "prefer-easy",
+      "expect": {
+        "pathExists": true,
+        "maxBlackRuns": 1
+      }
+    },
+    {
+      "label": "prefer-easy is never faster than any-piste (same OD)",
+      "startNodeId": 20,
+      "endNodeId": 230,
+      "mode": "prefer-easy",
+      "compareTo": {
+        "mode": "any-piste",
+        "thisModeAtLeastAsLong": true
+      },
+      "expect": {
+        "pathExists": true
+      }
+    },
+    {
+      "label": "Digues home run: bottom of piste must reach Tignes Le Lac",
+      "comment": "Digues is purely a 'home run' — used at end of day to ski back to accommodation. Without the manual override (Digues bottom → Lavachet bottom skate edge in tignes_overrides.json), this OD pair was unreachable. Regression test ensures the override survives future rebuilds.",
+      "startNodeId": 347,
+      "endNodeId": 15,
+      "mode": "any-piste",
+      "expect": {
+        "pathExists": true,
+        "minMinutes": 0.5,
+        "maxMinutes": 15
+      }
+    }
+  ]
+}

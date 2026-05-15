@@ -45,6 +45,90 @@ experiments with a better connector cost model.
   educational tier covers localhost / file://. The first visit prompts
   for your API key, which is stored in `localStorage` only.
 
+## System overview
+
+This map and the [skiroute](https://github.com/caldvs/skiroute) library
+share a routing graph as their data contract. The map does its own
+Dijkstra in the browser on the pre-built JSON graph — it does NOT call
+out to any routing API at runtime.
+
+```
+                       ┌────────────────────────────────┐
+                       │  OpenSkiData GeoPackage (.gpkg)│
+                       │  ~500 MB · every resort in the │
+                       │  world · ODbL                  │
+                       └──────────────┬─────────────────┘
+                                      │
+                                      │  build-time only:
+                                      │  skiroute.build_graph(
+                                      │     gpkg, ResortFilter,
+                                      │     destinations, overrides_path)
+                                      ▼
+                       ┌────────────────────────────────┐
+                       │  skiroute  (Python library)    │
+                       │  ├─ builder    gap-bridging,   │
+                       │  │             village tagging │
+                       │  ├─ overrides  JSON-driven     │
+                       │  │             patches (add/   │
+                       │  │             remove/rename/  │
+                       │  │             re-type edges)  │
+                       │  └─ algorithms                 │
+                       │      Dijkstra · A* · Bidir ·   │
+                       │      Contraction Hierarchies   │
+                       └──────────────┬─────────────────┘
+                                      │
+                                      │  tignes.json, espace-diamant.json,
+                                      │  les-arcs.json, … (per-resort
+                                      │  routable graphs)
+                                      ▼
+                       ┌────────────────────────────────┐
+                       │   data/  (committed JSON)      │
+                       │   nodes + edges + villages     │
+                       └──────────────┬─────────────────┘
+                                      │
+                                      │  fetched at page load,
+                                      │  cached in browser
+                                      ▼
+                       ┌────────────────────────────────┐
+                       │   ski-home-map  (this repo)    │
+                       │                                │
+                       │   Static JS on GitHub Pages —  │
+                       │   no server, no API calls:     │
+                       │   ├─ dashboard ("pick a world")│
+                       │   ├─ 3D MapLibre map           │
+                       │   ├─ browser-side Dijkstra /   │
+                       │   │     A* / Bidirectional     │
+                       │   ├─ Sun + ShadeMap shadows    │
+                       │   └─ Discover mode (inspect    │
+                       │       nodes / test routes)     │
+                       └────────────────────────────────┘
+```
+
+Routing happens entirely client-side: when you load `?world=tignes`
+the browser fetches `data/tignes.json` once, then runs Dijkstra against
+the in-memory graph for every pin pair. No HTTP round-trips for
+routing.
+
+A separate Python FastAPI service ([ski-home-api](https://github.com/caldvs/ski-home-api))
+also exists — it's an *independent consumer* of the same graph (loads
+the same JSON, exposes `/route`, `/villages`, `/status` over HTTP), but
+this map does not depend on it. The two run side-by-side as different
+ways to query the same data.
+
+## Known issues
+
+- **Sun-mode shadows do not render** in the bundled
+  `dist/mapbox-gl-shadow-simulator.umd.min.js` against MapLibre 4.7.1.
+  Symptom: `WebGL: INVALID_VALUE: texSubImage2D: no pixels (0 args)`
+  in the console; the sun mode tab shows the time scrubber but no
+  shadow pixels are painted regardless of date/time. Root cause is a
+  ShadeMap ↔ MapLibre 4.x prerender-hook incompatibility — the lib
+  hands MapLibre an `undefined` image which then fails the GPU
+  upload. Fix requires rebuilding ShadeMap from source against the
+  newer MapLibre API or pinning MapLibre to a version ShadeMap was
+  built against. Sun-position widget, time scrubber, and route-mode
+  pin handling are unaffected.
+
 ## Use it locally
 
 Just open `index.html`. No build, no dev server.

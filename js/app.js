@@ -11,6 +11,7 @@ import { loadGraph } from "./graph.js";
 import { initMap, addBaseLayers, addGraphLayers, wireLayerToggles } from "./render.js";
 import { wireRouting, wirePerfOverlay } from "./ui.js?v=20260513";
 import { wireSun } from "./sun.js";
+import { wireDiscover } from "./discover.js";
 
 const params = new URLSearchParams(window.location.search);
 const worldId = params.get("world") || "tignes";
@@ -39,7 +40,35 @@ if (titleEl) titleEl.textContent = `${world.name} · ski-home-map`;
 const map = initMap("map", world.initialView);
 const initialView = world.initialView;
 
-window._skihomeMap = map;
+// ─── Cross-module namespace ─────────────────────────────────────────────
+// Every module that needs to expose state to the rest of the app should
+// hang it off `window._ski.<thing>` rather than `window._<thing>`. We
+// keep the legacy flat names as aliases below so existing call sites
+// don't break — new code should prefer the namespace.
+//
+// Catalogue of state currently exposed (as of this commit):
+//   _ski.map               — the MapLibre map instance
+//   _ski.world             — the WORLDS entry for the current resort (world.id, etc.)
+//   _ski.lastRouteData     — JSON snapshot of the most recent route (route mode)
+//   _ski.routeMembers      — { pistes: Set, lifts: Set } currently part of the displayed route
+//   _ski.applyMode         — function: set the active mode-bar tab ("route" / "sun" / "discover")
+//   _ski.setShadowsEnabled — function: toggle ShadeMap on/off (sun mode)
+//   _ski.setDiscoverModeActive — function: notify the discover module of mode changes
+//   _ski.renderTimeScrubber    — function: redraw the sun-mode time scrubber
+//   _ski.refreshElevation      — function: redraw the elevation profile
+//   _ski.shadowDem         — the DEM source used by routing.js for piste-snap uphill penalties
+//   _ski.shadeMap          — the ShadeMap instance
+//   _ski.stopAnimation     — function: stop the algorithm-animation overlay
+//   _ski.activateRouteTab  — function: switch the bottom-of-route-finder tabs
+//
+// All of the above are also still accessible at their legacy
+// `window._<thing>` paths; do not remove those aliases without migrating
+// every caller (search for `window\._[a-zA-Z]` to enumerate them).
+window._ski = window._ski || {};
+window._ski.map = map;
+window._ski.world = world;
+window._skihomeMap = map;  // legacy alias — keep until callers migrate
+window._currentWorldName = world.name;  // legacy alias
 
 function fmtNum(n) {
   if (typeof n !== "number") return n;
@@ -97,6 +126,7 @@ map.on("load", async () => {
     wireLayerToggles(map);
     wireRouting(map, graph);
     wireSun(map);
+    wireDiscover(map, graph);
     wirePerfOverlay(map);
 
     // map.html's inline script set the mode body class before the map existed.

@@ -120,7 +120,12 @@ function addWalkEdges(routingNodes, routingEdges, adj, reverseAdj) {
 
 
 export async function loadGraph(url) {
-  const resp = await fetch(url);
+  // Bypass the HTTP cache so the page always reflects the latest graph
+  // build. The override system mutates the graph file on rebuild and
+  // node IDs shift — a cached copy in the browser leads to "node X is Y"
+  // diagnostics that don't match the live data.
+  const bust = (url.includes("?") ? "&" : "?") + "ts=" + Date.now();
+  const resp = await fetch(url + bust, { cache: "no-store" });
   if (!resp.ok) throw new Error(`Failed to load graph: ${resp.status} ${resp.statusText}`);
   return reshapeGraph(await resp.json());
 }
@@ -182,8 +187,6 @@ function reshapeGraph(raw) {
       n.name || "",
     ];
   }
-
-  const nodeById = (id) => raw.nodes.find((n) => n.id === id); // fallback; rarely needed
 
   // Build a quick id lookup for geometry fallback
   const nodeLookup = {};
@@ -279,9 +282,10 @@ function reshapeGraph(raw) {
   // a relatively high cost so Dijkstra only chooses them when there's
   // no skiable alternative.
   const walkCount = addWalkEdges(routingNodes, routingEdges, adj, reverseAdj);
-  if (walkCount > 0) {
-    console.log(`[graph] added ${walkCount} synthetic walk edges (≤100 m, ≤5 m Δelev)`);
-  }
+  // Synthetic walk edges are an internal builder detail — silent in
+  // production. Stash the count on the graph so a debug overlay or test
+  // can read it if needed.
+  void walkCount;
 
   // Set of node IDs that participate in any run / connection / lift /
   // lift_down edge. Used by the routing UI to constrain pin B to

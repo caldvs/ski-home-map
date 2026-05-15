@@ -14,148 +14,23 @@ import { renderElevationProfile, disposeElevationProfile } from "./elevation.js"
 import { renderItinerary, disposeItinerary } from "./itinerary.js";
 import { DIFF_COLOURS } from "./graph.js";
 
-// Mirrors graph.js's DIFF_COLOURS — kept here so the route-finder UI can
-// colour the piste icon without depending on the graph module's internal
-// constants. Black covers both `advanced` and `expert` because in
-// OpenSkiData both are drawn as a black piste.
-const DIFF_COLOURS_UI = {
-  novice: "#00b050",
-  easy: "#1e88e5",
-  intermediate: "#e53935",
-  advanced: "#2c2c2c",
-  expert: "#2c2c2c",
-  freeride: "#ff8800",
-};
-
-// Pin marker SVG. Teardrop-shaped pin pointing down — the tip is at SVG
-// y=0 so MapLibre's anchor="bottom" lands the tip exactly at the geo
-// point. Inner white disc holds a semantic icon:
-//   A pin = start  → blue, "▶" play triangle
-//   B pin = end    → black, 2×2 checkered finish flag
-function pinMarkerSVG(letter) {
-  const isB = letter === "B";
-  const fill = isB ? "#15130f" : "#2466ff";
-  const icon = isB
-    ? // Checkered finish flag — coloured top-left + bottom-right squares;
-      // the white quadrants sit on the white inner disc.
-      `<rect x="-4.5" y="-4.5" width="4.5" height="4.5" fill="${fill}"/>
-       <rect x="0"    y="0"    width="4.5" height="4.5" fill="${fill}"/>`
-    : // Right-pointing play triangle — start.
-      `<path d="M -3,-4.5 L 5,0 L -3,4.5 Z" fill="${fill}"/>`;
-  return `
-    <svg class="pin-marker-svg" width="32" height="46" viewBox="-16 -44 32 46" aria-hidden="true">
-      <ellipse cx="0" cy="1.5" rx="7" ry="2" fill="rgba(0,0,0,0.30)"/>
-      <path
-        d="M 0,0 C -2,-12 -14,-18 -14,-30 A 14,14 0 1 1 14,-30 C 14,-18 2,-12 0,0 Z"
-        fill="${fill}" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
-      <circle cx="0" cy="-30" r="8.5" fill="#ffffff"/>
-      <g transform="translate(0,-30)">${icon}</g>
-    </svg>`;
-}
-
-function formatSecs(seconds) {
-  const m = Math.round(seconds / 60);
-  if (m < 60) return `${m} min`;
-  const h = Math.floor(m / 60); const r = m % 60;
-  return `${h}h${String(r).padStart(2, "0")}`;
-}
-function formatDistM(m) {
-  if (m < 1000) return `${Math.round(m)} m`;
-  return `${(m / 1000).toFixed(m < 10000 ? 1 : 0)} km`;
-}
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371000, toRad = (d) => d * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function describeNodeShort(graph, id) {
-  const n = graph.routingNodes[id];
-  const raw = n[3] || `node ${id}`;
-  // Node names in the graph are like "Combe Folle bottom" or
-  // "Tovière top" — the endpoint qualifier is data, not branding.
-  // Strip "top" / "bottom" (with or without parens) at the end so the
-  // Route Finder reads "Combe Folle" rather than "Combe Folle bottom".
-  return raw.replace(/\s+\(?(top|bottom)\)?\s*$/i, "");
-}
-
-// Pick a "representative" edge for a node so the route-finder can show
-// what the user has snapped to. Pin B's node may sit at the bottom of
-// a piste AND at the bottom of a lift — we prefer to describe it as the
-// piste, since that's almost always what the user clicked towards.
-// Priority: run/connection touching this node → lift touching this node
-// → fall back to anything.
-function pickRepresentativeEdge(graph, nodeId) {
-  const out = graph.adj[nodeId] || [];
-  const inc = graph.reverseAdj[nodeId] || [];
-  const all = [...out.map((i) => [i, true]), ...inc.map((i) => [i, false])];
-  const byType = (types) => all.find(([i]) =>
-    types.includes(graph.routingEdges[i].ty),
-  );
-  const piste = byType(["run", "connection"]);
-  if (piste) return graph.routingEdges[piste[0]];
-  const lift = byType(["lift", "lift_down"]);
-  if (lift) return graph.routingEdges[lift[0]];
-  return null;
-}
-
-// Tiny inline SVG that distinguishes piste vs lift in the route finder.
-// Piste: filled triangle in the difficulty colour.
-// Lift bottom (this node is e.f, lift goes up from here): up arrow.
-// Lift top (this node is e.t, lift terminates here): down arrow.
-// The lift/piste distinction matters because French resorts often name
-// the piste and the lift identically, so just the name isn't enough.
-function featureIcon(edge, nodeId) {
-  if (!edge) return "";
-  const isLift = edge.ty === "lift" || edge.ty === "lift_down";
-  if (isLift) {
-    const isBottom = edge.f === nodeId;  // standing where the lift starts
-    const up = `
-      <svg class="feat-ic lift" viewBox="0 0 12 12" width="12" height="12" aria-label="lift bottom">
-        <path d="M6 1.5 L6 10.5 M2.5 5 L6 1.5 L9.5 5"
-          stroke="#000" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`;
-    const down = `
-      <svg class="feat-ic lift" viewBox="0 0 12 12" width="12" height="12" aria-label="lift top">
-        <path d="M6 1.5 L6 10.5 M2.5 7 L6 10.5 L9.5 7"
-          stroke="#000" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`;
-    return isBottom ? up : down;
-  }
-  const colour = DIFF_COLOURS_UI[edge.d] || "#666";
-  return `
-    <svg class="feat-ic" viewBox="0 0 12 12" width="12" height="12" aria-label="piste">
-      <path d="M1.5 2.5 L10.5 2.5 L6 10.5 Z" fill="${colour}" stroke="#fff" stroke-width="0.8"/>
-    </svg>`;
-}
-
-function summariseRoute(graph, path, totalSeconds) {
-  let dist = 0, up = 0, down = 0, lifts = new Set();
-  for (const ei of path) {
-    const e = graph.routingEdges[ei];
-    const a = graph.routingNodes[e.f], b = graph.routingNodes[e.t];
-    if (e.g && e.g.length >= 2) {
-      for (let i = 1; i < e.g.length; i++) {
-        dist += haversine(e.g[i - 1][0], e.g[i - 1][1], e.g[i][0], e.g[i][1]);
-      }
-    }
-    const delta = b[2] - a[2];
-    if (delta > 0) up += delta; else down -= delta;
-    if (e.ty === "lift" && e.n) lifts.add(e.n);
-  }
-  return {
-    distM: dist,
-    upM: Math.round(up),
-    downM: Math.round(down),
-    timeSec: totalSeconds,
-    lifts: lifts.size,
-  };
-}
+// Leaf presentation helpers — pure utilities (no DOM, no globals) that
+// were inlined here for years and have now been pulled out so this file
+// can focus on stateful flow. See route-presentation.js for details.
+import {
+  pinMarkerSVG,
+  formatSecs,
+  formatDistM,
+  haversine,
+  describeNodeShort,
+  pickRepresentativeEdge,
+  featureIcon,
+  summariseRoute,
+} from "./route-presentation.js?v=20260515";
 
 function setEmptyUI() {
   // Collapse the panel back to its compact "no route" size.
-  document.body.classList.remove("has-route");
+  document.body.classList.remove("has-route", "has-no-route");
   if (typeof window._skihomeMap !== "undefined") setRouteDimming(window._skihomeMap, false);
   const info = document.getElementById("user-route-info");
   info.innerHTML =
@@ -298,10 +173,87 @@ function buildRouteSnapshot(graph, startId, endId, mode, result, startPin, endPi
   };
 }
 
+// Snapshot for the no-route case — Dijkstra returned null. Captures
+// enough context for someone to debug why the path doesn't exist:
+// both endpoints, the reachable-node probes, and every incident edge
+// on each endpoint (which feature is supposed to connect onward).
+function buildNoRouteSnapshot(graph, startId, endId, mode, fwd, rev, pocketThreshold,
+                              startPin, endPin, startEdge, endEdge) {
+  const ll = (m) => {
+    if (!m) return null;
+    try {
+      const x = m.getLngLat ? m.getLngLat() : m._lngLat || m;
+      return { lat: +x.lat.toFixed(6), lng: +x.lng.toFixed(6) };
+    } catch { return null; }
+  };
+  const nodeInfo = (id) => {
+    if (id == null) return null;
+    const n = graph.routingNodes[id];
+    if (!n) return { id };
+    // [lon, lat, elev, name]
+    return {
+      id,
+      name: n[3] || null,
+      lon: +(+n[0]).toFixed(6),
+      lat: +(+n[1]).toFixed(6),
+      elev: n[2],
+    };
+  };
+  const incidentEdges = (id, dir) => {
+    if (id == null) return [];
+    const out = [];
+    for (let i = 0; i < graph.routingEdges.length; i++) {
+      const e = graph.routingEdges[i];
+      const include = dir === "out" ? e.f === id : e.t === id;
+      if (!include) continue;
+      const otherId = dir === "out" ? e.t : e.f;
+      const other = graph.routingNodes[otherId];
+      out.push({
+        type: e.ty,
+        name: e.n || null,
+        difficulty: e.d || null,
+        from: e.f,
+        to: e.t,
+        otherNodeId: otherId,
+        otherNodeName: (other && other[3]) || null,
+      });
+    }
+    return out;
+  };
+  let why;
+  if (fwd <= pocketThreshold && rev > pocketThreshold) {
+    why = `start_pocket (${fwd} reachable)`;
+  } else if (rev <= pocketThreshold && fwd > pocketThreshold) {
+    why = `end_pocket (${rev} reachable backward)`;
+  } else if (fwd <= pocketThreshold && rev <= pocketThreshold) {
+    why = `both_in_pockets (start=${fwd}, end=${rev})`;
+  } else {
+    why = `no_path (likely missing one-way edge between two well-connected sub-graphs)`;
+  }
+  return {
+    capturedAt: new Date().toISOString(),
+    resort: (typeof window._currentWorldName === "string") ? window._currentWorldName : null,
+    mode,
+    routeFound: false,
+    reason: why,
+    fwdReachable: fwd,
+    revReachable: rev,
+    pocketThreshold,
+    pinA: { ...ll(startPin), ...nodeInfo(startId),
+            outgoing: incidentEdges(startId, "out"),
+            incoming: incidentEdges(startId, "in") },
+    pinB: { ...ll(endPin), ...nodeInfo(endId),
+            outgoing: incidentEdges(endId, "out"),
+            incoming: incidentEdges(endId, "in") },
+  };
+}
+
+
 function setRouteUI(graph, startId, endId, result, startEdge, endEdge) {
   // Flag the body so the left panel can expand from its compact "no route"
   // size to full height (CSS transitions max-height).
   document.body.classList.add("has-route");
+  document.body.classList.remove("has-no-route");
   // Dim non-route pistes / lifts so the yellow route line dominates.
   if (typeof window._skihomeMap !== "undefined") setRouteDimming(window._skihomeMap, true);
   const summary = summariseRoute(graph, result.path, result.totalSeconds);
@@ -342,10 +294,15 @@ function setRouteUI(graph, startId, endId, result, startEdge, endEdge) {
   if (elevEmpty) elevEmpty.hidden = true;
 
   // Auto-switch to Itinerary tab
-  if (typeof window.activateRouteTab === "function") window.activateRouteTab("itin");
+  const activateRouteTab = (window._ski && window._ski.activateRouteTab) || window.activateRouteTab;
+  if (typeof activateRouteTab === "function") activateRouteTab("itin");
 }
 
 function setNoRouteUI(graph, startId, endId, fwd, rev, threshold, total, startEdge, endEdge) {
+  // Surface the "Copy data" / "Clear route" buttons even when there's no
+  // route — the user still wants to share / clear the failed attempt.
+  document.body.classList.remove("has-route");
+  document.body.classList.add("has-no-route");
   const info = document.getElementById("user-route-info");
   let why;
   if (fwd <= threshold && rev > threshold) {
@@ -571,6 +528,14 @@ export function wireRouting(map, graph) {
       element: el,
       anchor: "bottom",
       draggable: true,
+      // MapLibre auto-dims markers to opacityWhenCovered (default 0.2) when
+      // it considers them occluded by terrain — which fires for pins at
+      // valley-floor lat/lons even in 2D, since the DEM at the village
+      // base sits above the marker's sea-level altitude. Force full
+      // opacity so the route's start/end stays sharp; only the non-route
+      // pistes / lifts / station dots should fade.
+      opacity: 1,
+      opacityWhenCovered: 1,
     })
       .setLngLat([lon, lat])
       .setPopup(popup)
@@ -710,10 +675,19 @@ export function wireRouting(map, graph) {
     if (result.path === null) {
       const POCKET_THRESHOLD = 25;
       const PROBE = POCKET_THRESHOLD + 1;
-      const totalNodes = graph.routingNodes.length;
+      const totalNodes = Object.keys(graph.routingNodes).length;
       const fwd = reachableCount(graph, startNodeId, { limit: PROBE });
       const rev = reachableCount(graph, endNodeId,   { limit: PROBE, reverse: true });
       setNoRouteUI(graph, startNodeId, endNodeId, fwd, rev, POCKET_THRESHOLD, totalNodes, startEdge, endEdge);
+      // Stash a diagnostic snapshot so Copy data still produces something
+      // useful when no route was found — the user can paste it to flag a
+      // broken path / missing connection for further investigation.
+      const noRouteSnap = buildNoRouteSnapshot(
+        graph, startNodeId, endNodeId, mode, fwd, rev, POCKET_THRESHOLD,
+        startPin, endPin, startEdge, endEdge,
+      );
+      (window._ski = window._ski || {}).lastRouteData = noRouteSnap;
+      window._lastRouteData = noRouteSnap;  // legacy alias
       if (map.getSource("user-route")) {
         map.getSource("user-route").setData({ type: "FeatureCollection", features: [] });
       }
@@ -728,10 +702,12 @@ export function wireRouting(map, graph) {
     // Stash a serialisable snapshot of the route for the Copy-data button.
     // Includes pin lat/lng, mode, edge-level legs with type/name/elev/length —
     // enough to debug "why did it suggest this routing".
-    window._lastRouteData = buildRouteSnapshot(
+    const routeSnap = buildRouteSnapshot(
       graph, startNodeId, endNodeId, mode, result,
       startPin, endPin, startApproachGeom, startEdge, endEdge,
     );
+    (window._ski = window._ski || {}).lastRouteData = routeSnap;
+    window._lastRouteData = routeSnap;  // legacy alias
     setRouteUI(graph, startNodeId, endNodeId, result, startEdge, endEdge);
     renderElevationProfile(
       document.getElementById("elevation-profile"), map, graph, result.path,
@@ -871,6 +847,10 @@ export function wireRouting(map, graph) {
   map.on("click", (ev) => {
     // Drag ended on this tick — don't also handle as a pin-place click.
     if (_routeDragSwallowsClick) return;
+    // Pin placement only belongs to route mode. In sun / edit mode the
+    // click is consumed by those modes' own handlers (or simply ignored)
+    // so we must NOT drop a pin.
+    if (!document.body.classList.contains("mode-route")) return;
     handlePinClick(pickClickCoord(ev));
   });
 
@@ -882,6 +862,9 @@ export function wireRouting(map, graph) {
   // Clear / Copy buttons (visible only when body.has-route).
   const clearBtn = document.getElementById("clear-route-btn");
   if (clearBtn) clearBtn.addEventListener("click", clearUserRoute);
+  // Expose so the mode-switcher in map.html can wipe the route + restore
+  // dimming when the user leaves route mode (entering sun, discover, etc).
+  (window._ski = window._ski || {}).clearUserRoute = clearUserRoute;
   const copyBtn  = document.getElementById("copy-route-btn");
   if (copyBtn) {
     copyBtn.addEventListener("click", async () => {
@@ -994,7 +977,8 @@ export function wireRouting(map, graph) {
     }
     hideHero();
   }
-  window.stopAnimation = stopAnimation;
+  (window._ski = window._ski || {}).stopAnimation = stopAnimation;
+  window.stopAnimation = stopAnimation;  // legacy alias
 
   function runAnimation(algorithm, src, tgt, mode, nodesPerSec) {
     stopAnimation();
@@ -1004,7 +988,7 @@ export function wireRouting(map, graph) {
     else runner = new DijkstraRunner(src, tgt, mode, graph);
 
     const statsEl = document.getElementById("anim-stats");
-    const totalNodes = graph.routingNodes.length;
+    const totalNodes = Object.keys(graph.routingNodes).length;
     showHero(algorithm, nodesPerSec);
 
     const t0 = performance.now();
@@ -1204,10 +1188,12 @@ function drawRoute(map, graph, path, approachGeom) {
   if (tSrc) tSrc.setData({ type: "FeatureCollection", features: transitionFeatures });
 
   // Expose route members so setRouteDimming can preserve their visibility.
-  window._routeMembers = {
+  const routeMembers = {
     pistes: Array.from(routePisteNames),
     lifts:  Array.from(routeLiftNames),
   };
+  (window._ski = window._ski || {}).routeMembers = routeMembers;
+  window._routeMembers = routeMembers;  // legacy alias
 }
 
 // ============================================================

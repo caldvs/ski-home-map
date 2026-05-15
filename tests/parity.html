@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Front-end routing parity tests</title>
+<style>
+  body { font: 13px/1.5 -apple-system, system-ui, sans-serif; margin: 0; color: #222; }
+  header { padding: 12px 18px; background: #1a1a1a; color: white; display: flex; align-items: baseline; gap: 16px; }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; }
+  header .meta { color: #aaa; font-size: 12px; }
+  .summary { padding: 10px 18px; background: #f4f4f4; border-bottom: 1px solid #ddd;
+             display: flex; gap: 20px; }
+  .summary .stat strong { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .summary .stat span { font-size: 12px; color: #555; }
+  .summary .stat.pass strong { color: #1f6b2f; }
+  .summary .stat.fail strong { color: #9b1c1c; }
+  main { padding: 12px 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 6px 10px; border-bottom: 2px solid #ccc; font-weight: 600; color: #444; }
+  td { padding: 6px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  tr.pass td.status { color: #1f6b2f; font-weight: 600; }
+  tr.fail td.status { color: #9b1c1c; font-weight: 600; }
+  tr.fail { background: #fde7e7; }
+  tr.error { background: #fff5d6; }
+  .scenario .label { font-weight: 500; }
+  .scenario .od { font-size: 11px; color: #666; font-family: monospace; }
+  .details { font-size: 11px; color: #555; font-family: monospace; white-space: pre-wrap; }
+  .miss { color: #9b1c1c; }
+  .ok { color: #1f6b2f; }
+  footer { padding: 12px 18px; color: #888; font-size: 11px; border-top: 1px solid #eee; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Front-end routing parity tests</h1>
+  <span class="meta" id="meta">loading…</span>
+</header>
+
+<div class="summary" id="summary"></div>
+
+<main>
+  <table id="results">
+    <thead>
+      <tr>
+        <th style="width: 80px">Status</th>
+        <th>Scenario</th>
+        <th>Mode</th>
+        <th>Time / legs</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</main>
+
+<footer>
+  Loads the production <code>routing.js</code> + <code>graph.js</code> and runs each
+  fixture against the live JS Dijkstra. No production code is modified.
+  Open via <code>http-server</code> or <code>python3 -m http.server</code> at the
+  repo root, then navigate to <code>/tests/parity.html</code>.
+</footer>
+
+<script type="module">
+import { loadGraph } from "../js/graph.js";
+import { runDijkstra } from "../js/routing.js";
+
+const meta = document.getElementById("meta");
+const summary = document.getElementById("summary");
+const tbody = document.querySelector("#results tbody");
+
+window._parityResults = null;  // populated when done — used by automation
+
+function logRow(cls, scenario, modeText, timeText, detailsHTML) {
+  const tr = document.createElement("tr");
+  tr.className = cls;
+  tr.innerHTML = `
+    <td class="status">${cls.toUpperCase()}</td>
+    <td class="scenario">
+      <div class="label">${scenario.label}</div>
+      <div class="od">node ${scenario.startNodeId} → ${scenario.endNodeId}</div>
+    </td>
+    <td>${modeText}</td>
+    <td>${timeText}</td>
+    <td><div class="details">${detailsHTML}</div></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function summariseRouteLegs(graph, path) {
+  // Routing-edge schema (from graph.js): { f, t, c, ty, d, lt, n, g }.
+  // Count one lift / run leg per *name change*, not per edge (a single
+  // named piste is split into many short edges in OpenSkiData).
+  let lifts = 0, runs = 0, blacks = 0;
+  let prevKey = null;
+  for (const ei of path) {
+    const e = graph.routingEdges[ei];
+    if (!e) continue;
+    const isLift = e.ty === "lift" || e.ty === "lift_down";
+    const isRun  = e.ty === "run" || e.ty === "connection";
+    if (!isLift && !isRun) { prevKey = null; continue; }
+    const key = `${e.ty}|${e.n}`;
+    if (key !== prevKey) {
+      if (isLift) lifts++;
+      if (isRun) {
+        runs++;
+        if (e.d === "advanced" || e.d === "expert") blacks++;
+      }
+    }
+    prevKey = key;
+  }
+  return { lifts, runs, blacks };
+}
+
+async function main() {
+  // Bypass HTTP cache so the harness always reflects the latest fixtures + graph.
+  const noCache = { cache: "no-store" };
+  const fx = await fetch("./fixtures.json", noCache).then(r => r.json());
+  const graph = await loadGraph(fx.graph + "?ts=" + Date.now());
+  meta.textContent = `${graph.stats.nodes} nodes · ${graph.stats.edges} edges · ${fx.scenarios.length} scenarios`;
+
+  const cache = new Map();
+  function routeOnce(startId, endId, mode) {
+    const key = `${startId}-${endId}-${mode}`;
+    if (cache.has(key)) return cache.get(key);
+    const r = runDijkstra(startId, endId, mode, graph);
+    cache.set(key, r);
+    return r;
+  }
+
+  const results = { pass: 0, fail: 0, error: 0, total: fx.scenarios.length };
+
+  for (const sc of fx.scenarios) {
+    const expect = sc.expect || {};
+    try {
+      const result = routeOnce(sc.startNodeId, sc.endNodeId, sc.mode);
+      const failures = [];
+
+      if (expect.pathExists && (!result || !result.path)) {
+        failures.push("no path returned");
+      }
+      if (result && result.path) {
+        const minutes = (result.totalSeconds || 0) / 60;
+        const summary = summariseRouteLegs(graph, result.path);
+
+        if (expect.minMinutes != null && minutes < expect.minMinutes) {
+          failures.push(`minutes ${minutes.toFixed(1)} < min ${expect.minMinutes}`);
+        }
+        if (expect.maxMinutes != null && minutes > expect.maxMinutes) {
+          failures.push(`minutes ${minutes.toFixed(1)} > max ${expect.maxMinutes}`);
+        }
+        if (expect.minLifts != null && summary.lifts < expect.minLifts) {
+          failures.push(`lifts ${summary.lifts} < min ${expect.minLifts}`);
+        }
+        if (expect.minRuns != null && summary.runs < expect.minRuns) {
+          failures.push(`runs ${summary.runs} < min ${expect.minRuns}`);
+        }
+        if (expect.maxBlackRuns != null && summary.blacks > expect.maxBlackRuns) {
+          failures.push(`black runs ${summary.blacks} > max ${expect.maxBlackRuns}`);
+        }
+
+        // Contiguity check
+        for (let i = 1; i < result.path.length; i++) {
+          const prev = graph.routingEdges[result.path[i-1]];
+          const cur  = graph.routingEdges[result.path[i]];
+          if (prev && cur && prev.t !== cur.f) {
+            failures.push(`leg ${i} not contiguous (edge ${prev.t} → ${cur.f})`);
+            break;
+          }
+        }
+
+        // Cross-mode comparison
+        if (sc.compareTo) {
+          const other = routeOnce(sc.startNodeId, sc.endNodeId, sc.compareTo.mode);
+          if (other && other.path) {
+            if (sc.compareTo.thisModeAtLeastAsLong
+                && result.totalSeconds < other.totalSeconds - 1) {
+              failures.push(
+                `expected ${sc.mode} ≥ ${sc.compareTo.mode} but ` +
+                `${result.totalSeconds.toFixed(0)}s < ${other.totalSeconds.toFixed(0)}s`
+              );
+            }
+          }
+        }
+
+        const cls = failures.length ? "fail" : "pass";
+        results[cls]++;
+        const details = failures.length
+          ? failures.map(f => `<span class="miss">✗ ${f}</span>`).join("<br>")
+          : `<span class="ok">✓ ${result.path.length} edges · ${summary.lifts} lifts · ${summary.runs} runs · ${summary.blacks} blacks</span>`;
+        logRow(cls, sc, sc.mode, `${minutes.toFixed(1)} min`, details);
+      } else {
+        results.fail++;
+        logRow("fail", sc, sc.mode, "—", "no result");
+      }
+    } catch (err) {
+      results.error++;
+      logRow("error", sc, sc.mode, "—", `<span class="miss">JS error: ${err.message}</span>`);
+      console.error(err);
+    }
+  }
+
+  summary.innerHTML = `
+    <div class="stat pass"><strong>${results.pass}</strong><span>passing</span></div>
+    <div class="stat fail"><strong>${results.fail}</strong><span>failing</span></div>
+    <div class="stat"><strong>${results.error}</strong><span>errors</span></div>
+    <div class="stat"><strong>${results.total}</strong><span>total</span></div>
+  `;
+  // Expose results for headless automation and for the user to inspect.
+  window._parityResults = results;
+  document.title =
+    `[${results.pass}/${results.total}] Front-end parity`;
+}
+
+main().catch(err => {
+  console.error(err);
+  meta.textContent = `FATAL: ${err.message}`;
+  meta.style.color = "#ff6b6b";
+});
+</script>
+
+</body>
+</html>

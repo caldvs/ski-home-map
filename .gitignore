@@ -12,3 +12,17 @@ __pycache__/
 /styles/_openskimap_terrain_v2.json
 env.local
 /js/config.local.js
+
+# Session-specific debug screenshots from in-browser smoke tests.
+# Real test fixtures (fixtures.json) and the parity harness (parity.html)
+# are tracked; screenshots are throwaway.
+tests/*.png
+
+# Pre-existing experimental scratch — alternate map skeletons and
+# auto-generated debugging frames that aren't part of the live app.
+/scripts/*.png
+/alps.html
+/lake-district.html
+/leaflet-shademap.html
+/shademap-3d.html
+/dist/leaflet-shadow-simulator.umd.min.js

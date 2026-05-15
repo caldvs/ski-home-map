@@ -56,6 +56,9 @@
       <button type="button" data-mode="sun" role="tab" aria-selected="false">
         <span class="mode-icon">☀</span><span class="mode-label">Sun</span>
       </button>
+      <button type="button" data-mode="discover" role="tab" aria-selected="false">
+        <span class="mode-icon">⌖</span><span class="mode-label">Discover</span>
+      </button>
     </div>
 
     <!-- TOP-RIGHT: view controls ──────────────────────────────────── -->
@@ -146,33 +149,35 @@
           </div>
 
           <div class="difficulty-seg" id="user-difficulty-seg">
-            <button type="button" data-mode="prefer-easy" class="on">
-              <span class="seg-pips">
-                <span class="pip" style="background:#00b050"></span>
-                <span class="pip" style="background:#1e88e5"></span>
-              </span>
-              <span class="seg-label">Greens &amp; blues</span>
-            </button>
-            <button type="button" data-mode="reds-if-needed">
-              <span class="seg-pips">
-                <span class="pip" style="background:#e53935"></span>
-              </span>
-              <span class="seg-label">Reds OK</span>
-            </button>
-            <button type="button" data-mode="any-piste">
+            <button type="button" data-mode="any-piste" class="on">
               <span class="seg-pips">
                 <span class="pip" style="background:#00b050"></span>
                 <span class="pip" style="background:#1e88e5"></span>
                 <span class="pip" style="background:#e53935"></span>
                 <span class="pip" style="background:#2c2c2c"></span>
               </span>
-              <span class="seg-label">Fastest</span>
+              <span class="seg-label">Advanced</span>
+            </button>
+            <button type="button" data-mode="reds-if-needed">
+              <span class="seg-pips">
+                <span class="pip" style="background:#00b050"></span>
+                <span class="pip" style="background:#1e88e5"></span>
+                <span class="pip" style="background:#e53935"></span>
+              </span>
+              <span class="seg-label">Intermediate</span>
+            </button>
+            <button type="button" data-mode="prefer-easy">
+              <span class="seg-pips">
+                <span class="pip" style="background:#00b050"></span>
+                <span class="pip" style="background:#1e88e5"></span>
+              </span>
+              <span class="seg-label">Easy</span>
             </button>
           </div>
           <select id="user-difficulty" hidden>
-            <option value="prefer-easy" selected>Prefer greens &amp; blues</option>
-            <option value="reds-if-needed">Reds if needed</option>
-            <option value="any-piste">Any piste (fastest)</option>
+            <option value="any-piste" selected>Advanced</option>
+            <option value="reds-if-needed">Intermediate</option>
+            <option value="prefer-easy">Easy</option>
           </select>
 
           <div class="summary-chips" id="route-summary-chips" hidden></div>
@@ -232,6 +237,50 @@
         </header>
         <div class="sun-body">
           <div id="time-scrubber" class="time-scrubber"></div>
+        </div>
+      </section>
+
+      <!-- Discover section (visible in Discover mode only). Read-only graph
+           inspector: drop pin A and B on the map, see what nodes / pistes /
+           lifts touch each point, copy a structured report describing the
+           pair so it can be turned into an override patch elsewhere. -->
+      <section class="left-section discover-section" id="discover-section">
+        <header class="left-section-head">
+          <h3>Discover</h3>
+        </header>
+        <div class="discover-body">
+          <div id="discover-empty">
+            Click the map to drop pin A, then again for pin B.<br>
+            <span class="muted">Each pin snaps to the nearest graph node and shows everything connected to it.</span>
+          </div>
+
+          <div class="discover-pin" id="discover-pin-a" hidden>
+            <header><span class="discover-letter a">A</span><span class="discover-coords mono" id="discover-a-coords">—</span></header>
+            <div class="discover-info" id="discover-a-info"></div>
+          </div>
+
+          <div class="discover-pin" id="discover-pin-b" hidden>
+            <header><span class="discover-letter b">B</span><span class="discover-coords mono" id="discover-b-coords">—</span></header>
+            <div class="discover-info" id="discover-b-info"></div>
+          </div>
+
+          <div class="discover-route-test" id="discover-route-test" hidden>
+            <header>
+              <strong>Route test</strong>
+              <select id="discover-route-mode" class="discover-mode-select">
+                <option value="any-piste">Advanced</option>
+                <option value="reds-if-needed">Intermediate</option>
+                <option value="prefer-easy">Easy</option>
+              </select>
+              <button class="discover-btn small" id="discover-test-btn">Test A → B</button>
+            </header>
+            <div class="discover-route-result" id="discover-route-result">— click "Test A → B" to check connectivity</div>
+          </div>
+
+          <div class="discover-actions" id="discover-actions" hidden>
+            <button class="discover-btn primary" id="discover-copy-btn">Copy report</button>
+            <button class="discover-btn" id="discover-reset-btn">Reset pins</button>
+          </div>
         </div>
       </section>
 
@@ -300,7 +349,8 @@
     panes.forEach((p) => p.classList.toggle("on", p.dataset.tabPane === name));
   }
   tabs.forEach((t) => t.addEventListener("click", () => activateTab(t.dataset.tab)));
-  window.activateRouteTab = activateTab;
+  (window._ski = window._ski || {}).activateRouteTab = activateTab;
+  window.activateRouteTab = activateTab;  // legacy alias
 
   // ── Difficulty segmented control ↔ hidden <select> ──
   const diffSeg    = document.getElementById("user-difficulty-seg");
@@ -358,7 +408,7 @@
   // ── Mode picker (just Route · Sun) ──
   const modePicker = document.getElementById("mode-picker");
   const modeBtns   = modePicker.querySelectorAll("button[data-mode]");
-  const VALID_MODES = ["route", "sun"];
+  const VALID_MODES = ["route", "sun", "discover"];
   function setMode(name) {
     if (!VALID_MODES.includes(name)) name = "route";
     modeBtns.forEach((b) => {
@@ -366,11 +416,20 @@
       b.classList.toggle("on", on);
       b.setAttribute("aria-selected", on ? "true" : "false");
     });
-    document.body.classList.remove("mode-route", "mode-sun");
+    document.body.classList.remove("mode-route", "mode-sun", "mode-discover");
     document.body.classList.add("mode-" + name);
     localStorage.setItem("ski:mode", name);
 
     if (name === "sun" && window._renderTimeScrubber) window._renderTimeScrubber();
+
+    // Leaving route mode → wipe any active route so the unobstructed
+    // map is visible in sun / discover mode. Restores piste / lift /
+    // station opacity by calling clearUserRoute, which also strips the
+    // body.has-route class and tears down the route-dimming overlay.
+    if (name !== "route") {
+      const clear = (window._ski && window._ski.clearUserRoute);
+      if (typeof clear === "function") clear();
+    }
 
     // Camera + shadow rules:
     //   • Sun mode: 2D-only (pitch locked at 0), ShadeMap shadows ON.
@@ -407,6 +466,23 @@
         if (terrainCb && terrainCb.checked) terrainCb.checked = false;
         // Shadows always on in sun mode.
         if (typeof window._setShadowsEnabled === "function") window._setShadowsEnabled(true);
+      } else if (name === "discover") {
+        // Discover mode: flat 2D, terrain off, shadows off. The discover
+        // module owns clicks (drops inspection pins, never routes).
+        if (m.getPitch() > 1 || m.getBearing() !== 0) {
+          m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
+        }
+        m.setMaxPitch(0);
+        if (m.dragRotate) {
+          m.dragRotate.enable();
+          m.dragRotate._pitchWithRotate = false;
+        }
+        if (m.touchZoomRotate) m.touchZoomRotate.enableRotation();
+        if (m.touchPitch && m.touchPitch.disable) m.touchPitch.disable();
+        m.setTerrain(null);
+        if (terrainCb && terrainCb.checked) terrainCb.checked = false;
+        if (typeof window._setShadowsEnabled === "function") window._setShadowsEnabled(false);
+        if (btn3d) btn3d.textContent = "3D · 42°";
       } else { // route
         if (m.getPitch() > 1 || m.getBearing() !== 0) {
           m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
@@ -424,6 +500,10 @@
         // Shadows always off in route mode.
         if (typeof window._setShadowsEnabled === "function") window._setShadowsEnabled(false);
       }
+      // Notify the discover module — show node dots only in discover mode.
+      if (typeof window._setDiscoverModeActive === "function") {
+        window._setDiscoverModeActive(name === "discover");
+      }
     }
     setTimeout(() => { if (m && m.resize) m.resize(); }, 240);
   }
@@ -432,7 +512,8 @@
   // has been initialised (the module script loads after this inline one),
   // so app.js re-applies the current mode after `map.on("load")` to actually
   // commit the camera + maxPitch state.
-  window._applyMode = setMode;
+  (window._ski = window._ski || {}).applyMode = setMode;
+  window._applyMode = setMode;  // legacy alias
   setMode(localStorage.getItem("ski:mode") || "route");
 
   // ── ResizeObserver: keep MapLibre's canvas correctly sized ──

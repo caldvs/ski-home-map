@@ -152,7 +152,8 @@ export function wireSun(map) {
   async function initDemSampler() {
     try {
       await demSampler.setBbox(bbox, { bufferKm: 12 });
-      window._shadowDem = demSampler;
+      (window._ski = window._ski || {}).shadowDem = demSampler;
+      window._shadowDem = demSampler;  // legacy alias
       if (typeof window._refreshElevation === "function") {
         try { window._refreshElevation(); } catch (e) {}
       }
@@ -162,10 +163,12 @@ export function wireSun(map) {
   }
 
   // Exposed for the mode switcher in map.html.
-  window._setShadowsEnabled = (on) => {
+  const setShadowsEnabled = (on) => {
     shadowsWanted = !!on;
     applyShadowVisibility();
   };
+  (window._ski = window._ski || {}).setShadowsEnabled = setShadowsEnabled;
+  window._setShadowsEnabled = setShadowsEnabled;  // legacy alias
 
   // Time scrubber
   const scrubberContainer = document.getElementById("time-scrubber");
@@ -185,9 +188,11 @@ export function wireSun(map) {
       sunPositionFn: (date) => sunPosition(date, centerLat, centerLon),
     });
     scrubber.setDate(currentDate, { silent: true });
-    window._renderTimeScrubber = () => {
+    const renderTimeScrubber = () => {
       if (scrubber) scrubber.setDate(currentDate, { silent: true });
     };
+    (window._ski = window._ski || {}).renderTimeScrubber = renderTimeScrubber;
+    window._renderTimeScrubber = renderTimeScrubber;  // legacy alias
     new ResizeObserver(() => scrubber.render()).observe(scrubberContainer);
   }
 

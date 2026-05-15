@@ -388,6 +388,142 @@ body.mode-route.has-route .left-panel { max-height: calc(100vh - 102px); }
 .left-section.sun-section { display: none; }
 body.mode-sun .left-section.sun-section { display: flex; flex: 0 0 auto; }
 
+/* Discover section: only visible in discover mode. */
+.left-section.discover-section { display: none; }
+body.mode-discover .left-section.discover-section { display: flex; flex: 1 1 auto; }
+body.mode-discover .left-section.route-section,
+body.mode-discover .left-section.sun-section { display: none; }
+body.mode-discover .left-panel { max-height: calc(100vh - 102px); }
+
+.discover-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+#discover-empty {
+  padding: 16px 6px;
+  text-align: center;
+  color: var(--l-muted, #888);
+  font-size: 12px;
+}
+.discover-pin {
+  border: 1px solid var(--l-line, #ddd);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 12px;
+  background: var(--l-bg-soft, #fafafa);
+}
+.discover-pin header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.discover-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-weight: 600;
+  color: #fff;
+  font-size: 12px;
+}
+.discover-letter.a { background: #2466ff; }
+.discover-letter.b { background: #15130f; }
+.discover-coords {
+  font-size: 11px;
+  color: var(--l-muted, #888);
+}
+.discover-info {
+  font-size: 11px;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  line-height: 1.45;
+}
+.discover-info .label {
+  display: inline-block;
+  min-width: 78px;
+  color: var(--l-muted, #888);
+}
+.discover-info .badge {
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-right: 4px;
+  color: #fff;
+}
+.discover-info .badge.run { background: #1e88e5; }
+.discover-info .badge.lift { background: #2c2c2c; }
+.discover-info .badge.skate { background: #999; }
+.discover-info .badge.connection { background: #00b050; }
+.discover-info .badge.lift_down { background: #5a5a5a; }
+.discover-info ul { list-style: none; margin: 4px 0 0; padding: 0; }
+.discover-info li {
+  padding: 2px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.discover-info li .name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; }
+.discover-info li .meta { color: var(--l-muted, #888); flex: 0 0 auto; }
+.discover-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.discover-btn {
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 10px;
+  border: 1px solid var(--l-line, #ccc);
+  border-radius: 3px;
+  background: var(--l-bg, #fff);
+  color: inherit;
+  cursor: pointer;
+}
+.discover-btn:hover { background: #f4f7fb; }
+.discover-btn.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.discover-btn.primary:hover { background: #333; }
+.discover-btn.copied { background: #1f6b2f; color: #fff; border-color: #1f6b2f; }
+.discover-btn.small { padding: 3px 8px; font-size: 11px; }
+
+.discover-route-test {
+  border: 1px solid var(--l-line, #ddd);
+  border-radius: 4px;
+  padding: 8px 10px;
+  background: var(--l-bg-soft, #fafafa);
+  font-size: 12px;
+}
+.discover-route-test header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.discover-route-test header strong { flex: 0 0 auto; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--l-muted, #888); }
+.discover-mode-select {
+  font: inherit;
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid var(--l-line, #ccc);
+  border-radius: 3px;
+  background: var(--l-bg, #fff);
+  color: inherit;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.discover-route-result {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+  line-height: 1.45;
+}
+.discover-route-result.ok { color: #1f6b2f; }
+.discover-route-result.fail { color: #9b1c1c; }
+.discover-route-result.idle { color: var(--l-muted, #888); }
+
+/* In discover mode, give the canvas a different cursor */
+body.mode-discover .maplibregl-canvas-container,
+body.mode-discover .maplibregl-canvas { cursor: crosshair; }
+
 .left-section {
   display: flex;
   flex-direction: column;
@@ -692,7 +828,8 @@ body.mode-route .maplibregl-canvas { cursor: crosshair; }
   gap: 6px;
   margin: 6px 0 0;
 }
-body.has-route .route-action-row { display: flex; }
+body.has-route .route-action-row,
+body.has-no-route .route-action-row { display: flex; }
 .route-action-btn {
   appearance: none;
   padding: 6px 12px;

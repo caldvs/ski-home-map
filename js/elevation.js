@@ -163,10 +163,12 @@ export function renderElevationProfile(container, map, graph, path) {
   // Expose a refresh hook so sun.js can trigger a redraw when the DEM
   // finishes loading. Idempotent — always points at the most recent
   // container we rendered into.
-  window._refreshElevation = () => {
+  const refreshElevation = () => {
     const s = _state.get(container);
     if (s) drawChart(container, s.map, s.graph, s.path);
   };
+  (window._ski = window._ski || {}).refreshElevation = refreshElevation;
+  window._refreshElevation = refreshElevation;  // legacy alias
 
   // Attach a ResizeObserver once per container. Redraw on either
   // width or height change so the chart fills whatever box we get.

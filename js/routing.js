@@ -13,6 +13,23 @@
 // ride over a normal red piste descent. The user's intuition is that
 // reds should still be skied even when "preferring easy" — they're
 // the standard intermediate piste, not a hardship.
+// ─── DIFFICULTY PENALTIES ─────────────────────────────────────────────
+// Browser-side routing has its own penalty table — INTENTIONALLY softer
+// than the Python `RouteConfig.difficulty_penalty` defaults.
+//
+// Same-OD routes computed here vs through the API will sometimes differ:
+//   - prefer-easy/intermediate: 250 (here) vs 600 (Python)
+//   - prefer-easy/advanced:    1200 (here) vs 2000 (Python)
+//   - reds-if-needed/intermediate: 30 (here) vs 60 (Python)
+//   - reds-if-needed/advanced:    600 (here) vs 800 (Python)
+//   - expert/freeride:         3000 (here) vs 5000 (Python)
+//
+// The browser values were tuned by hand for the visualisation: the
+// route the user sees on the map needs to look like a route they'd
+// actually take, which is a slightly different objective than "what
+// the API returns for the iOS app to ski to a village". Don't
+// silently re-sync these to the Python defaults without checking that
+// `ski-home-map/tests/parity.html` still produces sensible routes.
 const DIFFICULTY_PENALTY = {
   "prefer-easy": {
     novice: 0, easy: 0, intermediate: 250, advanced: 1200,
@@ -35,6 +52,42 @@ const DIFFICULTY_PENALTY = {
 // Tuned so a ~10-edge red route still beats a single lift-down ride,
 // while a no-piste pocket can still force lift-down as the only path.
 const LIFT_DOWN_PENALTY = 3500;
+
+// ─── Binary min-heap on [priority, payload] tuples ─────────────────────────
+// Replaces the older "array.sort + shift" pattern which was O(n) per op.
+// Each push / pop is O(log n) here, which matters once Dijkstra builds a
+// heap of hundreds of entries on the mega-graphs (les-arcs, les-trois-
+// vallées, etc).
+function heapPush(heap, item) {
+  heap.push(item);
+  let i = heap.length - 1;
+  while (i > 0) {
+    const parent = (i - 1) >> 1;
+    if (heap[parent][0] <= heap[i][0]) break;
+    const tmp = heap[i]; heap[i] = heap[parent]; heap[parent] = tmp;
+    i = parent;
+  }
+}
+function heapPop(heap) {
+  if (heap.length === 0) return undefined;
+  const top = heap[0];
+  const last = heap.pop();
+  if (heap.length > 0) {
+    heap[0] = last;
+    let i = 0;
+    const n = heap.length;
+    while (true) {
+      const l = 2 * i + 1, r = l + 1;
+      let smallest = i;
+      if (l < n && heap[l][0] < heap[smallest][0]) smallest = l;
+      if (r < n && heap[r][0] < heap[smallest][0]) smallest = r;
+      if (smallest === i) break;
+      const tmp = heap[i]; heap[i] = heap[smallest]; heap[smallest] = tmp;
+      i = smallest;
+    }
+  }
+  return top;
+}
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371000;
@@ -72,8 +125,7 @@ class DijkstraRunner {
   step() {
     if (this.done) return null;
     while (this.heap.length) {
-      this.heap.sort((a, b) => a[0] - b[0]);
-      const [d, u] = this.heap.shift();
+      const [d, u] = heapPop(this.heap);
       if (this.visited.has(u)) continue;
       this.visited.add(u); this.iters++;
       if (u === this.tgt) {
@@ -87,7 +139,7 @@ class DijkstraRunner {
         const nd = d + edgeCost(e, this.mode);
         if (nd < (this.dist[e.t] ?? Infinity)) {
           this.dist[e.t] = nd; this.prev[e.t] = u; this.prevEdge[e.t] = eIdx;
-          this.heap.push([nd, e.t]);
+          heapPush(this.heap, [nd, e.t]);
         }
       }
       return { settled: u, direction: "fwd", meeting: false };
@@ -115,8 +167,7 @@ class AstarRunner {
   step() {
     if (this.done) return null;
     while (this.heap.length) {
-      this.heap.sort((a, b) => a[0] - b[0]);
-      const [, u] = this.heap.shift();
+      const [, u] = heapPop(this.heap);
       if (this.visited.has(u)) continue;
       this.visited.add(u); this.iters++;
       if (u === this.tgt) {
@@ -132,7 +183,7 @@ class AstarRunner {
         if (tentative < (this.gScore[e.t] ?? Infinity)) {
           this.gScore[e.t] = tentative;
           this.prev[e.t] = u; this.prevEdge[e.t] = eIdx;
-          this.heap.push([tentative + this.h(e.t), e.t]);
+          heapPush(this.heap, [tentative + this.h(e.t), e.t]);
         }
       }
       return { settled: u, direction: "fwd", meeting: false };
@@ -175,8 +226,7 @@ class BidirRunner {
       return null;
     }
     if (fTop <= bTop && this.fwdHeap.length) {
-      this.fwdHeap.sort((a, b) => a[0] - b[0]);
-      const [d, u] = this.fwdHeap.shift();
+      const [d, u] = heapPop(this.fwdHeap);
       if (u in this.fwdSettled) return { settled: -1, direction: "fwd", meeting: false };
       this.fwdSettled[u] = d; this.iters++;
       if (u in this.bwdDist) this.cm(u, d + this.bwdDist[u]);
@@ -186,14 +236,13 @@ class BidirRunner {
         const nd = d + edgeCost(e, this.mode);
         if (nd < (this.fwdDist[e.t] ?? Infinity)) {
           this.fwdDist[e.t] = nd; this.fwdPrev[e.t] = u; this.fwdPrevEdge[e.t] = eIdx;
-          this.fwdHeap.push([nd, e.t]);
+          heapPush(this.fwdHeap, [nd, e.t]);
           if (e.t in this.bwdDist) this.cm(e.t, nd + this.bwdDist[e.t]);
         }
       }
       return { settled: u, direction: "fwd", meeting: u === this.meetingNode };
     } else if (this.bwdHeap.length) {
-      this.bwdHeap.sort((a, b) => a[0] - b[0]);
-      const [d, u] = this.bwdHeap.shift();
+      const [d, u] = heapPop(this.bwdHeap);
       if (u in this.bwdSettled) return { settled: -1, direction: "bwd", meeting: false };
       this.bwdSettled[u] = d; this.iters++;
       if (u in this.fwdDist) this.cm(u, this.fwdDist[u] + d);
@@ -204,7 +253,7 @@ class BidirRunner {
         const nd = d + edgeCost(e, this.mode);
         if (nd < (this.bwdDist[v] ?? Infinity)) {
           this.bwdDist[v] = nd; this.bwdNext[v] = u; this.bwdNextEdge[v] = eIdx;
-          this.bwdHeap.push([nd, v]);
+          heapPush(this.bwdHeap, [nd, v]);
           if (v in this.fwdDist) this.cm(v, this.fwdDist[v] + nd);
         }
       }
@@ -234,8 +283,7 @@ export function runDijkstra(srcId, tgtId, mode, graph) {
   const heap = [[0, srcId]];
   let iters = 0;
   while (heap.length) {
-    heap.sort((a, b) => a[0] - b[0]);
-    const [d, u] = heap.shift();
+    const [d, u] = heapPop(heap);
     if (visited.has(u)) continue;
     visited.add(u); iters++;
     if (u === tgtId) {
@@ -247,7 +295,7 @@ export function runDijkstra(srcId, tgtId, mode, graph) {
       const nd = d + edgeCost(e, mode);
       if (nd < (dist[e.t] ?? Infinity)) {
         dist[e.t] = nd; prev[e.t] = u; prevEdge[e.t] = eIdx;
-        heap.push([nd, e.t]);
+        heapPush(heap, [nd, e.t]);
       }
     }
   }
@@ -338,9 +386,11 @@ export function nearestPisteLineProjection(graph, lat, lon) {
     if (Number.isFinite(e)) userElev = e;
   }
   if (userElev == null) {
+    // routingNodes is a plain object keyed by node id — `.length` is
+    // undefined and the index-loop would never execute. Iterate values.
     let nearestD2 = Infinity;
-    for (let i = 0; i < graph.routingNodes.length; i++) {
-      const n = graph.routingNodes[i];
+    for (const id in graph.routingNodes) {
+      const n = graph.routingNodes[id];
       const dLat = n[1] - lat, dLon = n[0] - lon;
       const d2 = dLat * dLat + dLon * dLon;
       if (d2 < nearestD2) { nearestD2 = d2; userElev = n[2]; }
