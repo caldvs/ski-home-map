@@ -390,21 +390,44 @@ export function wireRouting(map, graph) {
       }
     }
     if (minLat === Infinity) return;
-    // Frame the leg with some breathing room; clamp zoom so very
-    // short skating links don't shoot us to z19. The left-side padding
-    // expands to clear the sidebar so the framed segment isn't tucked
-    // under the panel.
+    // Sidebar-aware left padding.
     const panel = document.getElementById("left-panel");
     let leftPad = 60;
     if (panel && getComputedStyle(panel).display !== "none") {
       const r = panel.getBoundingClientRect();
-      // Right edge of the panel + a small buffer.
       leftPad = Math.max(60, Math.round(r.right) + 20);
     }
+    // Camera-aware focus: project the segment's bbox corners at the user's
+    // *current* pitch / bearing / zoom and check whether all four already lie
+    // inside the safe screen area (the viewport minus the sidebar). If so,
+    // don't move the camera at all — the user can already see the segment in
+    // the context they chose. If any corner is outside, do a fitBounds with
+    // pitch + bearing preserved (MapLibre's default), and cap zoom-in to a
+    // few steps beyond the current zoom so we don't snap from z10 → z17
+    // chasing a tiny piste link.
+    const cw = map.getContainer().clientWidth;
+    const ch = map.getContainer().clientHeight;
+    const inset = 30;
+    const corners = [
+      [minLon, minLat], [maxLon, minLat], [minLon, maxLat], [maxLon, maxLat],
+    ];
+    const allVisible = corners.every(([lng, lat]) => {
+      const p = map.project([lng, lat]);
+      return p.x >= leftPad + inset && p.x <= cw - inset
+          && p.y >= inset && p.y <= ch - inset;
+    });
+    if (allVisible) return;
+    const curZoom = map.getZoom();
     map.fitBounds(
       [[minLon, minLat], [maxLon, maxLat]],
-      { padding: { top: 60, right: 60, bottom: 60, left: leftPad },
-        duration: 700, maxZoom: 16.5 },
+      {
+        padding: { top: 60, right: 60, bottom: 60, left: leftPad },
+        duration: 700,
+        // Don't zoom in more than +2 levels from current — preserves the
+        // user's chosen detail level when they pick a short segment.
+        maxZoom: Math.min(16.5, curZoom + 2),
+        // pitch and bearing are preserved automatically by MapLibre.
+      },
     );
   }
 

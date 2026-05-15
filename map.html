@@ -384,13 +384,20 @@
       if (name === "sun") {
         // Flatten pitch only — bearing is preserved so the user keeps any
         // rotation they had, and the dragRotate / touch rotation handlers
-        // stay enabled so they can spin the map underneath them.
+        // stay enabled so they can spin the map underneath them. We do NOT
+        // want Ctrl+drag (or right-click drag) to attempt pitch in sun mode,
+        // so disable the pitch sub-handlers explicitly: setMaxPitch(0) alone
+        // doesn't block the gesture, only clamps the resulting value.
         if (m.getPitch() > 1) {
           m.easeTo({ pitch: 0, duration: 500 });
         }
         m.setMaxPitch(0);
-        if (m.dragRotate)      m.dragRotate.enable();
+        if (m.dragRotate) {
+          m.dragRotate.enable();
+          m.dragRotate._pitchWithRotate = false; // rotate-only Ctrl+drag
+        }
         if (m.touchZoomRotate) m.touchZoomRotate.enableRotation();
+        if (m.touchPitch && m.touchPitch.disable) m.touchPitch.disable();
         if (btn3d) btn3d.textContent = "3D · 42°";
         // Disable the 3D terrain mesh so the map is a flat 2D raster render
         // — hillshade still gives the relief impression via its baked
@@ -405,8 +412,12 @@
           m.easeTo({ pitch: 0, bearing: 0, duration: 500 });
         }
         m.setMaxPitch(75);
-        if (m.dragRotate)      m.dragRotate.enable();
+        if (m.dragRotate) {
+          m.dragRotate.enable();
+          m.dragRotate._pitchWithRotate = true; // restore pitch via Ctrl+drag
+        }
         if (m.touchZoomRotate) m.touchZoomRotate.enableRotation();
+        if (m.touchPitch && m.touchPitch.enable) m.touchPitch.enable();
         // Restore 3D terrain (the style declares the source as "terrain").
         if (!m.getTerrain()) m.setTerrain({ source: "terrain", exaggeration: 1.0 });
         if (terrainCb && !terrainCb.checked) terrainCb.checked = true;

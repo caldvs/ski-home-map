@@ -54,7 +54,7 @@ export function wireSun(map) {
     "skates-layer",
     "stations-layer", "villages-layer", "villages-label",
     "user-route-piste-base", "user-route-piste-dash", "user-route-lift",
-    "user-route-transitions-layer",
+    "user-route-arrows", "user-route-transitions-layer",
     "start-approach-layer",
     "route-leg-highlight-halo", "route-leg-highlight-layer",
     "anim-settled-layer",

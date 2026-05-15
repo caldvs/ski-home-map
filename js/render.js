@@ -451,6 +451,51 @@ export function addGraphLayers(map, graph) {
     },
   });
 
+  // Direction-of-travel arrows along the route. Rendered as symbols placed
+  // along each leg's LineString; the SDK rotates them to follow the line
+  // tangent so they always point in the direction of motion (A → B).
+  if (!map.hasImage("route-arrow")) {
+    // 22×22 black-edged dark chevron — subtle but legible over the
+    // coloured route line. Drawn pointing up (north) so symbol-placement:line
+    // rotates it along the line's local heading.
+    const SIZE = 22;
+    const cv = document.createElement("canvas");
+    cv.width = SIZE; cv.height = SIZE;
+    const cx = cv.getContext("2d");
+    cx.translate(SIZE / 2, SIZE / 2);
+    cx.lineWidth = 3;
+    cx.lineCap = "round";
+    cx.lineJoin = "round";
+    cx.strokeStyle = "rgba(20,20,30,0.85)";
+    cx.beginPath();
+    cx.moveTo(-5, 3);
+    cx.lineTo(0, -4);
+    cx.lineTo(5, 3);
+    cx.stroke();
+    const data = cx.getImageData(0, 0, SIZE, SIZE);
+    map.addImage("route-arrow", { width: SIZE, height: SIZE, data: new Uint8Array(data.data.buffer) });
+  }
+  map.addLayer({
+    id: "user-route-arrows",
+    source: "user-route",
+    type: "symbol",
+    layout: {
+      "symbol-placement": "line",
+      "symbol-spacing": 80,
+      "icon-image": "route-arrow",
+      "icon-size": 0.85,
+      "icon-rotation-alignment": "map",
+      "icon-pitch-alignment": "map",
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+      // Arrow opacity tapers in as you zoom — invisible at low zoom where the
+      // route is a thin line, visible from mid-zooms onward.
+    },
+    paint: {
+      "icon-opacity": ["interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.75, 17, 0.95],
+    },
+  });
+
   // Pin-A approach line — dashed grey connector from a free-form pin A
   // (placed off-piste) to the graph node the route actually starts from.
   // Empty unless pin A's display position differs from its routing node.
