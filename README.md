@@ -10,6 +10,28 @@ see sun shadows for any time of day. Built on
 
 **Live**: [caldvs.github.io/ski-home-map](https://caldvs.github.io/ski-home-map/)
 
+### Route mode
+
+Drop pin A and pin B on the map; Dijkstra finds the route under the
+selected difficulty filter (Advanced / Intermediate / Easy). Itinerary
+panel shows each leg, total distance, vertical ascent / descent, time,
+and lift count. Drag either pin to reroute live.
+
+![Route plan across Trois Vallées — pin A at top, pin B at Mottaret, the route highlighted purple/red across the linked area](./screenshot-route.png)
+
+Zoom in for leg-by-leg detail; click a leg in the panel to flash that
+segment on the map.
+
+![Zoomed-in route across Méribel-Mottaret with individual lift and run names visible](./screenshot-route-zoom.png)
+
+### Sun mode
+
+Drag the time scrubber across the day to watch sun-cast shadows move
+over the resort. Useful for working out which slopes are in shade at
+which time, e.g. when planning a morning warm-up on the sunny side.
+
+![Sun mode over Trois Vallées — pistes, lifts, and the time scrubber for shadow time-of-day](./screenshot-sun.png)
+
 ## Worlds available
 
 Sixteen contiguous Savoie ski areas, each a standalone routable graph
@@ -115,19 +137,13 @@ the same JSON, exposes `/route`, `/villages`, `/status` over HTTP), but
 this map does not depend on it. The two run side-by-side as different
 ways to query the same data.
 
-## Known issues
+## Sun mode requires a free ShadeMap key
 
-- **Sun-mode shadows do not render** in the bundled
-  `dist/mapbox-gl-shadow-simulator.umd.min.js` against MapLibre 4.7.1.
-  Symptom: `WebGL: INVALID_VALUE: texSubImage2D: no pixels (0 args)`
-  in the console; the sun mode tab shows the time scrubber but no
-  shadow pixels are painted regardless of date/time. Root cause is a
-  ShadeMap ↔ MapLibre 4.x prerender-hook incompatibility — the lib
-  hands MapLibre an `undefined` image which then fails the GPU
-  upload. Fix requires rebuilding ShadeMap from source against the
-  newer MapLibre API or pinning MapLibre to a version ShadeMap was
-  built against. Sun-position widget, time scrubber, and route-mode
-  pin handling are unaffected.
+The shadow renderer is [ShadeMap](https://shademap.app/), which
+requires a free educational-tier key. On first use the Sun panel
+shows an inline prompt — paste your key once and it's saved per-origin
+in `localStorage`. Developers can short-circuit the prompt by dropping
+a `js/config.local.js` (gitignored) exporting `SHADEMAP_API_KEY = "…"`.
 
 ## Use it locally
 

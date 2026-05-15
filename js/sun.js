@@ -10,19 +10,36 @@ import { sunPosition } from "./sun-position.js";
 import { ShadowLayer } from "./shadow-layer.js";
 import { TimeScrubber } from "./time-scrubber.js";
 
-// Try local override first; fall back to committed placeholder so deploy
-// keeps working when the workflow injects a key.
-let SHADEMAP_API_KEY = "";
-try {
-  const mod = await import("./config.local.js");
-  SHADEMAP_API_KEY = (mod.SHADEMAP_API_KEY || "").trim();
-} catch (e) { /* config.local.js absent — fine in CI */ }
-if (!SHADEMAP_API_KEY) {
+// ShadeMap API key — resolved at module load with this fallback chain:
+//   1. ./config.local.js   (gitignored, developer's own key)
+//   2. ./config.js         (committed at build time by a CI step)
+//   3. localStorage         (set by the in-app prompt the first time the
+//                            user opens Sun mode without a key)
+//
+// The free ShadeMap educational tier is signed up for at https://shademap.app
+// — paste the JWT into the prompt that appears in the Sun panel when no
+// key is set, and it'll be saved per-origin in localStorage.
+const SHADEMAP_KEY_STORAGE = "ski:shademap-key";
+
+async function _resolveShadeMapKey() {
+  // config.local.js is the developer's local copy (gitignored). Import
+  // failures here are silent on the browser side but DO still print a
+  // 404 in the network panel — there's no way to feature-detect an ES
+  // module without attempting the import, so we accept that cost in
+  // exchange for "drop a config.local.js in and it just works".
+  let key = "";
   try {
-    const mod = await import("./config.js");
-    SHADEMAP_API_KEY = (mod.SHADEMAP_API_KEY || "").trim();
-  } catch (e) { /* no config.js — ShadeMap will be inert */ }
+    const mod = await import("./config.local.js");
+    key = (mod.SHADEMAP_API_KEY || "").trim();
+  } catch (e) { /* config.local.js absent — fine on deployed CI */ }
+  // localStorage is the deployed-user path: paste a key once via the
+  // Sun-panel prompt, it sticks per-origin.
+  if (!key && typeof localStorage !== "undefined") {
+    key = (localStorage.getItem(SHADEMAP_KEY_STORAGE) || "").trim();
+  }
+  return key;
 }
+let SHADEMAP_API_KEY = await _resolveShadeMapKey();
 
 export function wireSun(map) {
   let currentDate = new Date();
@@ -85,13 +102,64 @@ export function wireSun(map) {
     }
   }
 
+  // Inline prompt rendered into the Sun panel when no ShadeMap key is
+  // available. Saves to localStorage on submit + re-initialises ShadeMap.
+  function renderKeyPrompt() {
+    const host = document.getElementById("sun-section")
+      ?? document.querySelector(".sun-section .sun-body")
+      ?? document.querySelector(".sun-body");
+    if (!host || host.querySelector(".shademap-key-prompt")) return;
+    const el = document.createElement("div");
+    el.className = "shademap-key-prompt";
+    el.innerHTML = `
+      <div style="padding:10px 14px;font-size:12px;line-height:1.45">
+        <strong>Shadows need a free ShadeMap key.</strong>
+        Get one (educational tier, free) at
+        <a href="https://shademap.app" target="_blank" rel="noopener">shademap.app</a>,
+        then paste it below. It's stored per-origin in your browser only.
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <input type="text" class="shademap-key-input"
+                 placeholder="eyJhbGciOi…"
+                 style="flex:1;min-width:0;font:11px ui-monospace, monospace;
+                        padding:5px 8px;border:1px solid var(--l-line,#ccc);
+                        border-radius:3px;background:var(--l-bg,#fff);color:inherit">
+          <button class="shademap-key-save"
+                  style="font-size:11px;padding:5px 12px;border:1px solid #1a1a1a;
+                         border-radius:3px;background:#1a1a1a;color:#fff;cursor:pointer">
+            Save
+          </button>
+        </div>
+        <div class="shademap-key-status muted" style="margin-top:6px;font-size:11px;color:#888"></div>
+      </div>
+    `;
+    host.appendChild(el);
+    const input = el.querySelector(".shademap-key-input");
+    const status = el.querySelector(".shademap-key-status");
+    const save = el.querySelector(".shademap-key-save");
+    const commit = () => {
+      const key = (input.value || "").trim();
+      if (!key) { status.textContent = "Paste a key first."; return; }
+      try { localStorage.setItem(SHADEMAP_KEY_STORAGE, key); }
+      catch (e) { status.textContent = "localStorage not available."; return; }
+      SHADEMAP_API_KEY = key;
+      el.remove();
+      initShadeMap();
+      applyShadowVisibility();
+    };
+    save.addEventListener("click", commit);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") commit(); });
+  }
+
   function initShadeMap() {
     if (typeof ShadeMap === "undefined") {
       console.warn("[shadows] ShadeMap script not loaded — shadows disabled.");
       return;
     }
     if (!SHADEMAP_API_KEY) {
-      console.warn("[shadows] no SHADEMAP_API_KEY — shadows disabled.");
+      // Don't spam the console — the prompt itself tells the user what
+      // to do. Console message remains for developers debugging CI.
+      console.info("[shadows] no SHADEMAP_API_KEY yet — prompting in Sun panel.");
+      renderKeyPrompt();
       return;
     }
     shadeMap = new ShadeMap({

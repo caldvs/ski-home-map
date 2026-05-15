@@ -35,6 +35,10 @@ export function initMap(container, initialView) {
   // missing id every tile, flooding the console. Supply a 1×1 transparent
   // placeholder so those layers silently render nothing.
   map.on("styleimagemissing", (e) => {
+    // MapLibre occasionally fires this event with a null / empty id when
+    // an upstream getImages() call races a style swap. Guard before the
+    // hasImage call — that API throws on a non-string id.
+    if (!e.id || typeof e.id !== "string") return;
     if (map.hasImage(e.id)) return;
     map.addImage(e.id, { width: 1, height: 1, data: new Uint8Array(4) });
   });
