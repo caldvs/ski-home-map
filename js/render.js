@@ -152,7 +152,11 @@ export function addBaseLayers(map) {
     source: "contour-source",
     "source-layer": "contours",
     minzoom: 12,
-    filter: [">", ["get", "level"], 0],
+    // Coalesce + has-guard: some contour tiles emit features with a missing
+    // `level` property. A naked [">", ["get","level"], 0] throws a worker
+    // warning ("Expected value to be of type number, but found null") when
+    // the prop is absent.
+    filter: ["all", ["has", "level"], [">", ["coalesce", ["get", "level"], 0], 0]],
     layout: {
       "symbol-placement": "line",
       "symbol-spacing": 220,
