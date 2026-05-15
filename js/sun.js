@@ -43,22 +43,22 @@ export function wireSun(map) {
   let shadowsWanted = (typeof document !== "undefined" && document.body.classList.contains("mode-sun"));
 
   // Keep our overlay layers (routes, pistes, lifts, …) above the shadow.
-  // Note: piste-labels and lift-labels are deliberately placed AFTER the
-  // route layers so the yellow route line doesn't cover the piste / lift
-  // names when a route is drawn.
+  // Note: stations-layer, piste-labels and lift-labels are deliberately
+  // placed AFTER the route layers so route-member lift termini and piste /
+  // lift names render on top of the route line.
   const TOP_LAYERS = [
     "shadow-mask-layer",
     "contour-lines", "contour-labels",
     "pistes-outline", "pistes-layer",
     "lifts-casing", "lifts-layer", "lifts-down-layer",
     "skates-layer",
-    "stations-layer", "villages-layer", "villages-label",
+    "villages-layer", "villages-label",
     "user-route-piste-base", "user-route-piste-dash", "user-route-lift",
     "user-route-arrows", "user-route-transitions-layer",
     "start-approach-layer",
     "route-leg-highlight-halo", "route-leg-highlight-layer",
     "anim-settled-layer",
-    "piste-labels", "lift-labels",
+    "stations-layer", "piste-labels", "lift-labels",
   ];
   function promoteOverlaysAboveShade() {
     for (const id of TOP_LAYERS) {

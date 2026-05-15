@@ -188,9 +188,10 @@ const PISTE_LIFT_LAYER_RESTORE = {
   "stations-layer": { prop: "circle-opacity", value: 1.0 },
 };
 
-// Non-route opacity multiplier. 0.8 ≈ "dim by 20%" — colours stay recognisable
-// while the route line and labels in the route stand out clearly.
-const NON_ROUTE_OPACITY = 0.8;
+// Non-route opacity multiplier. 0.5 ≈ "dim by 50%" — non-route pistes / lifts
+// fade well into the background while the route line, labels in the route,
+// and route-relevant lift termini (stations) stand out clearly.
+const NON_ROUTE_OPACITY = 0.5;
 
 // Build a "case" expression that keeps route members at their normal opacity
 // and applies the dim multiplier to everything else, by matching on feature
@@ -787,42 +788,89 @@ export function wireRouting(map, graph) {
         <span class="empty">Click again to place pin B.</span>
       </div>`;
   }
-  // Clicking on a piste segment of the rendered route forces the route to
-  // pass through that point (snapped to the nearest piste/lift graph node).
-  // Set before the general click handler so we can swallow the event.
-  let _routeClickedThisTick = false;
-  map.on("click", "user-route-piste-base", (ev) => {
+  // Drag-to-reroute. Like Apple / Google Maps: mousedown on any route line
+  // (piste OR lift) starts a drag; the handle follows the cursor until
+  // release, at which point it snaps to the nearest piste/lift node and is
+  // installed as a forced waypoint. The Dijkstra is split into two halves
+  // around it. The map's own pan handler is paused for the duration so the
+  // map doesn't pan instead.
+  let _routeDragActive = false;
+  let _routeDragHandle = null;
+  let _routeDragSwallowsClick = false;
+
+  function setViaFromNodeId(nid) {
+    viaNodeId = nid;
+    if (viaPin) { viaPin.remove(); viaPin = null; }
+    const n = graph.routingNodes[viaNodeId];
+    if (!n) return;
+    const el = document.createElement("div");
+    el.style.cssText = "width:14px;height:14px;border-radius:50%;background:#8b5cf6;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.25);cursor:pointer;";
+    el.title = "Forced waypoint — click to clear";
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      viaNodeId = null;
+      if (viaPin) { viaPin.remove(); viaPin = null; }
+      recomputeRoute();
+    });
+    viaPin = new maplibregl.Marker({ element: el, anchor: "center" })
+      .setLngLat([n[0], n[1]])
+      .addTo(map);
+  }
+
+  function startRouteDrag(ev) {
+    if (_routeDragActive) return;
     if (startNodeId == null || endNodeId == null) return;
-    const ll = ev.lngLat;
+    ev.preventDefault();        // stop map dragPan from kicking in
+    _routeDragActive = true;
+    map.dragPan.disable();
+    map.getCanvas().style.cursor = "grabbing";
+    const el = document.createElement("div");
+    el.style.cssText = "width:20px;height:20px;border-radius:50%;background:#8b5cf6;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.30);pointer-events:none;";
+    _routeDragHandle = new maplibregl.Marker({ element: el, anchor: "center" })
+      .setLngLat([ev.lngLat.lng, ev.lngLat.lat])
+      .addTo(map);
+    map.on("mousemove", onRouteDragMove);
+    window.addEventListener("mouseup", onRouteDragUp, { once: true });
+  }
+
+  function onRouteDragMove(ev) {
+    if (!_routeDragActive || !_routeDragHandle) return;
+    _routeDragHandle.setLngLat([ev.lngLat.lng, ev.lngLat.lat]);
+  }
+
+  function onRouteDragUp(ev) {
+    if (!_routeDragActive) return;
+    _routeDragActive = false;
+    map.off("mousemove", onRouteDragMove);
+    map.dragPan.enable();
+    map.getCanvas().style.cursor = "";
+    _routeDragSwallowsClick = true;
+    setTimeout(() => { _routeDragSwallowsClick = false; }, 50);
+    if (!_routeDragHandle) return;
+    const ll = _routeDragHandle.getLngLat();
+    _routeDragHandle.remove();
+    _routeDragHandle = null;
     const nid = nearestPisteOrLiftNodeId(graph, ll.lat, ll.lng);
     if (nid == null || nid === startNodeId || nid === endNodeId) return;
-    viaNodeId = nid;
-    if (viaPin) viaPin.remove();
-    const n = graph.routingNodes[viaNodeId];
-    if (n) {
-      const el = document.createElement("div");
-      el.style.cssText = "width:14px;height:14px;border-radius:50%;background:#8b5cf6;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.25);cursor:pointer;";
-      el.title = "Forced waypoint — click to clear";
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-        viaNodeId = null;
-        if (viaPin) { viaPin.remove(); viaPin = null; }
-        recomputeRoute();
-      });
-      viaPin = new maplibregl.Marker({ element: el, anchor: "center" })
-        .setLngLat([n[0], n[1]])
-        .addTo(map);
-    }
-    _routeClickedThisTick = true;
-    setTimeout(() => { _routeClickedThisTick = false; }, 0);
+    setViaFromNodeId(nid);
     recomputeRoute();
-  });
-  // Cursor affordance when hovering the route's piste segments.
-  map.on("mouseenter", "user-route-piste-base", () => { map.getCanvas().style.cursor = "pointer"; });
-  map.on("mouseleave", "user-route-piste-base", () => { map.getCanvas().style.cursor = ""; });
+  }
+
+  for (const layerId of ["user-route-piste-base", "user-route-piste-dash",
+                         "user-route-lift", "user-route-arrows",
+                         "user-route-transitions-layer"]) {
+    map.on("mousedown", layerId, startRouteDrag);
+    map.on("mouseenter", layerId, () => {
+      if (!_routeDragActive) map.getCanvas().style.cursor = "grab";
+    });
+    map.on("mouseleave", layerId, () => {
+      if (!_routeDragActive) map.getCanvas().style.cursor = "";
+    });
+  }
 
   map.on("click", (ev) => {
-    if (_routeClickedThisTick) return;
+    // Drag ended on this tick — don't also handle as a pin-place click.
+    if (_routeDragSwallowsClick) return;
     handlePinClick(pickClickCoord(ev));
   });
 
@@ -1075,6 +1123,17 @@ function pisteColourFromEdge(e) {
   return DIFF_COLOURS[(e.d || "").toLowerCase()] || "#888";
 }
 
+// Map piste colour hex → short arrow-sprite key (see render.js ARROW_COLOURS).
+// Used so the per-feature icon-image expression can pick the right pre-tinted
+// chevron without per-instance SDF tinting.
+const COLOUR_TO_ARROW_KEY = {
+  "#00b050": "green",
+  "#1e88e5": "blue",
+  "#e53935": "red",
+  "#2c2c2c": "dark",
+  "#ff8800": "orange",
+};
+
 function drawRoute(map, graph, path, approachGeom) {
   // Emit one LineString feature per edge so each piste segment can render in
   // its own difficulty colour. Transition points dropped at every piste↔lift
@@ -1117,6 +1176,7 @@ function drawRoute(map, graph, path, approachGeom) {
     if (!e.g) continue;
     const kind = (e.ty === "lift" || e.ty === "lift_down") ? "lift" : "piste";
     const colour = kind === "lift" ? "#8b5cf6" : pisteColourFromEdge(e);
+    const arrowKey = kind === "lift" ? "purple" : (COLOUR_TO_ARROW_KEY[colour] || "grey");
     if (e.n) (kind === "lift" ? routeLiftNames : routePisteNames).add(e.n);
 
     // Build the leg's coords. If joining onto a previous tail, prefix with it.
@@ -1131,7 +1191,7 @@ function drawRoute(map, graph, path, approachGeom) {
       });
     }
     for (const c of e.g) dedupedPush(coords, [c[1], c[0]]);
-    emitLeg(coords, { kind, colour, name: e.n || "" });
+    emitLeg(coords, { kind, colour, arrowKey, name: e.n || "" });
     prevKind = kind;
     prevTail = coords[coords.length - 1];
   }

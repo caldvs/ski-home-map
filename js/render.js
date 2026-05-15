@@ -451,31 +451,48 @@ export function addGraphLayers(map, graph) {
     },
   });
 
-  // Direction-of-travel arrows along the route. Sprite is drawn in white +
-  // marked sdf:true so we can tint each instance via icon-color — that lets
-  // arrows on a piste leg take the piste's difficulty colour and arrows on a
-  // lift leg use purple, matching the underlying line.
-  if (!map.hasImage("route-arrow")) {
-    const SIZE = 22;
+  // Direction-of-travel arrows along the route. Pre-render one coloured
+  // sprite per palette entry instead of SDF-tinting a single sprite —
+  // antialiased high-res canvases (64×64) give a much crisper chevron at
+  // common zoom levels than a 22×22 SDF could.
+  const ARROW_COLOURS = {
+    purple: "#8b5cf6",
+    green:  "#00b050",
+    blue:   "#1e88e5",
+    red:    "#e53935",
+    dark:   "#2c2c2c",
+    orange: "#ff8800",
+    grey:   "#888888",
+  };
+  for (const [key, colour] of Object.entries(ARROW_COLOURS)) {
+    const id = `route-arrow-${key}`;
+    if (map.hasImage(id)) continue;
+    const SIZE = 64;
     const cv = document.createElement("canvas");
     cv.width = SIZE; cv.height = SIZE;
     const cx = cv.getContext("2d");
     cx.translate(SIZE / 2, SIZE / 2);
-    cx.lineWidth = 3;
     cx.lineCap = "round";
     cx.lineJoin = "round";
-    cx.strokeStyle = "#ffffff";
+    // White outer halo so the chevron reads against the dashed-white piste
+    // overlay and other busy backgrounds.
+    cx.strokeStyle = "rgba(255,255,255,0.92)";
+    cx.lineWidth = 14;
     cx.beginPath();
-    cx.moveTo(-5, 3);
-    cx.lineTo(0, -4);
-    cx.lineTo(5, 3);
+    cx.moveTo(-14, 9);
+    cx.lineTo(0, -12);
+    cx.lineTo(14, 9);
+    cx.stroke();
+    // Coloured chevron on top.
+    cx.strokeStyle = colour;
+    cx.lineWidth = 9;
+    cx.beginPath();
+    cx.moveTo(-14, 9);
+    cx.lineTo(0, -12);
+    cx.lineTo(14, 9);
     cx.stroke();
     const data = cx.getImageData(0, 0, SIZE, SIZE);
-    map.addImage(
-      "route-arrow",
-      { width: SIZE, height: SIZE, data: new Uint8Array(data.data.buffer) },
-      { sdf: true },
-    );
+    map.addImage(id, { width: SIZE, height: SIZE, data: new Uint8Array(data.data.buffer) });
   }
   map.addLayer({
     id: "user-route-arrows",
@@ -483,30 +500,22 @@ export function addGraphLayers(map, graph) {
     type: "symbol",
     layout: {
       "symbol-placement": "line",
-      "symbol-spacing": 80,
-      "icon-image": "route-arrow",
-      "icon-size": 0.85,
+      "symbol-spacing": 90,
+      // Pick the colour-specific sprite by feature.arrowKey (set in ui.js
+      // drawRoute). Fallback to grey if a feature is missing the key.
+      "icon-image": ["concat", "route-arrow-", ["coalesce", ["get", "arrowKey"], "grey"]],
+      // Sprite is 64×64; 0.3 renders at ~19 px on screen — sharp at all
+      // common zoom levels because we're shrinking, not scaling up.
+      "icon-size": 0.3,
       "icon-rotation-alignment": "map",
       "icon-pitch-alignment": "map",
-      // Sprite is drawn pointing up; symbol-placement:line aligns its right
-      // axis with the line, so +90 puts the chevron tip along the travel.
+      // Sprite drawn pointing up; symbol-placement:line aligns its right
+      // axis with the line, so +90 points the chevron along the travel.
       "icon-rotate": 90,
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
     },
     paint: {
-      // Tint per feature: piste segments use their difficulty colour (set in
-      // ui.js drawRoute), lift segments use the route's purple. Falls back
-      // to a dark slate if a feature is missing the colour property.
-      "icon-color": [
-        "case",
-        ["==", ["get", "kind"], "lift"], "#8b5cf6",
-        ["coalesce", ["get", "colour"], "#222"],
-      ],
-      // White halo keeps the chevron legible against the dashed white piste
-      // overlay (where the colour can blend into the dash gaps).
-      "icon-halo-color": "#ffffff",
-      "icon-halo-width": 1.0,
       "icon-opacity": ["interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.9, 17, 1.0],
     },
   });
@@ -582,10 +591,14 @@ export function addGraphLayers(map, graph) {
     },
   });
 
-  // Labels above the route — piste / lift names should remain legible even
-  // when the yellow user-route line covers their geometry. moveLayer with no
-  // beforeId moves them to the very top of the layer stack.
-  for (const id of ["piste-labels", "lift-labels"]) {
+  // Promote a few overlays to render ON TOP of the route line so they
+  // remain visible / clickable when a route is drawn:
+  //   • stations-layer — lift terminus dots; route-member ones (white
+  //     circles at the ends of route lifts) should not be hidden by the
+  //     purple lift line.
+  //   • piste-labels / lift-labels — names of pistes / lifts must stay
+  //     legible regardless of route geometry.
+  for (const id of ["stations-layer", "piste-labels", "lift-labels"]) {
     if (map.getLayer(id)) map.moveLayer(id);
   }
 }
