@@ -1,0 +1,13 @@
+{
+  "name": "ski-home-map",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Vanilla JS / MapLibre static site. No build step. The package.json exists only for the Playwright E2E suite under tests/e2e.",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install --with-deps chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

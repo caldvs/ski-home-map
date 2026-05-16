@@ -6,6 +6,11 @@ __pycache__/
 .pytest_cache/
 *.pyc
 
+# Playwright E2E artefacts — node_modules, browsers, run output.
+/node_modules/
+/playwright-report/
+/test-results/
+
 # Local copy of the OpenSkiData GeoPackage; only data/*.json is committed
 /openskidata.gpkg
 
