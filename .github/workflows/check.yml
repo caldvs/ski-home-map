@@ -26,3 +26,21 @@ jobs:
             echo "checking $f"
             python3 -c "from html.parser import HTMLParser; HTMLParser().feed(open('$f').read())"
           done
+
+  graph-invariants:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test deps
+        run: pip install -r tests/requirements.txt
+      - name: Run graph invariants
+        # Per-world sanity: schema, coordinates, edge integrity, and the
+        # headline "every village reachable from every other village"
+        # check that catches the bugs we'd otherwise discover by clicking
+        # around the deployed map. needs-data worlds are xfail and don't
+        # fail CI; flipping one to "built" in worlds.js auto-converts its
+        # tests into hard requirements.
+        run: pytest tests/test_graph_invariants.py -q

@@ -1,7 +1,9 @@
 .DS_Store
 .claude/
 .venv/
+.venv-tests/
 __pycache__/
+.pytest_cache/
 *.pyc
 
 # Local copy of the OpenSkiData GeoPackage; only data/*.json is committed
