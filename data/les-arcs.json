@@ -54,9 +54,7 @@
       "lat": 45.603307,
       "elev": 1221.6,
       "name": "Millerette bottom",
-      "villages": [
-        "Arc 1800"
-      ]
+      "villages": []
     },
     {
       "id": 7,
@@ -64,9 +62,7 @@
       "lat": 45.602603,
       "elev": 1258.2,
       "name": "Millerette top",
-      "villages": [
-        "Arc 1800"
-      ]
+      "villages": []
     },
     {
       "id": 8,
@@ -98,7 +94,9 @@
       "lat": 45.567526,
       "elev": 1769.1,
       "name": "Jardin Alpin top",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 12,
@@ -106,7 +104,9 @@
       "lat": 45.572531,
       "elev": 1793.6,
       "name": "Carreley bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 13,
@@ -122,7 +122,9 @@
       "lat": 45.573367,
       "elev": 1712.6,
       "name": "Vag\u00e8re bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 15,
@@ -162,9 +164,7 @@
       "lat": 45.604414,
       "elev": 1127.8,
       "name": "Funiculaire 1 bottom",
-      "villages": [
-        "Arc 1800"
-      ]
+      "villages": []
     },
     {
       "id": 20,
@@ -172,9 +172,7 @@
       "lat": 45.60401,
       "elev": 1198.6,
       "name": "Funiculaire 1 top",
-      "villages": [
-        "Arc 1800"
-      ]
+      "villages": []
     },
     {
       "id": 21,
@@ -246,7 +244,9 @@
       "lat": 45.571981,
       "elev": 1706.9,
       "name": "Villards bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 30,
@@ -350,7 +350,9 @@
       "lat": 45.567919,
       "elev": 1741.1,
       "name": "Charmettoger bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 43,
@@ -454,7 +456,9 @@
       "lat": 45.57138,
       "elev": 1707.0,
       "name": "Transarc I bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 56,
@@ -526,7 +530,9 @@
       "lat": 45.574103,
       "elev": 1711.1,
       "name": "Dahu bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 65,
@@ -774,7 +780,9 @@
       "lat": 45.574228,
       "elev": 1720.2,
       "name": "T\u00e9tras top",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 96,
@@ -854,7 +862,9 @@
       "lat": 45.570322,
       "elev": 1740.3,
       "name": "",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 106,
@@ -1046,7 +1056,9 @@
       "lat": 45.571122,
       "elev": 1737.3,
       "name": "Grands M\u00e9l\u00e8zes bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 130,
@@ -1318,9 +1330,7 @@
       "lat": 45.603664,
       "elev": 1223.9,
       "name": "Les Granges bottom",
-      "villages": [
-        "Arc 1800"
-      ]
+      "villages": []
     },
     {
       "id": 164,
@@ -1392,7 +1402,9 @@
       "lat": 45.57293,
       "elev": 1793.7,
       "name": "Legend bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 173,
@@ -1504,7 +1516,9 @@
       "lat": 45.569253,
       "elev": 1756.0,
       "name": "Arc1800 vers ND des Vernettes, Route des Espagnols bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 187,
@@ -1936,7 +1950,9 @@
       "lat": 45.572905,
       "elev": 1713.3,
       "name": "",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 241,
@@ -2072,7 +2088,9 @@
       "lat": 45.574857,
       "elev": 1743.7,
       "name": "Liaison Legend vers Arc 1800 top",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 258,
@@ -2088,7 +2106,9 @@
       "lat": 45.574374,
       "elev": 1743.7,
       "name": "Liaison Legend vers Arc 1800 bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 260,
@@ -2448,7 +2468,9 @@
       "lat": 45.574618,
       "elev": 1714.4,
       "name": "Chemin du Front de Neige top",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 305,
@@ -2992,7 +3014,9 @@
       "lat": 45.573317,
       "elev": 1738.4,
       "name": "Chantel top",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 373,
@@ -3000,7 +3024,9 @@
       "lat": 45.573498,
       "elev": 1727.2,
       "name": "Chantel bottom",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 374,
@@ -3352,7 +3378,9 @@
       "lat": 45.570461,
       "elev": 1730.1,
       "name": "",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 418,
@@ -3376,7 +3404,9 @@
       "lat": 45.573693,
       "elev": 1788.7,
       "name": "",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 421,
@@ -3560,7 +3590,9 @@
       "lat": 45.573571,
       "elev": 1798.3,
       "name": "Route des Espagnols top",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 444,
@@ -3976,7 +4008,9 @@
       "lat": 45.570121,
       "elev": 1765.5,
       "name": "Arc1800 vers ND des Vernettes, Route des Espagnols top",
-      "villages": []
+      "villages": [
+        "Arc 1800"
+      ]
     },
     {
       "id": 496,
@@ -68962,8 +68996,8 @@
       "elev": 2000
     },
     "Arc 1800": {
-      "lat": 45.601,
-      "lon": 6.78,
+      "lat": 45.572,
+      "lon": 6.779,
       "elev": 1800
     },
     "Arc 1600": {

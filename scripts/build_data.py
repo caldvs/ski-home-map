@@ -92,7 +92,12 @@ RESORTS: list[ResortSpec] = [
         destinations=[
             skiroute.Destination("Arc 1950",         lat=45.5790, lon=6.7720, radius_m=400, elev=1950),
             skiroute.Destination("Arc 2000",         lat=45.5840, lon=6.7900, radius_m=400, elev=2000),
-            skiroute.Destination("Arc 1800",         lat=45.6010, lon=6.7800, radius_m=500, elev=1800),
+            # Arc 1800 base = Villards / Charmettoger lift hub (Transarc I,
+            # Vagère, Charmettoger bottoms cluster here). The previous coord
+            # (45.6010, 6.7800) was 3 km north — it snapped onto the
+            # Millerette beginner lift and left Arc 1800 stranded with no
+            # route to Peisey-Vallandry.
+            skiroute.Destination("Arc 1800",         lat=45.5720, lon=6.7790, radius_m=500, elev=1800),
             skiroute.Destination("Arc 1600",         lat=45.6160, lon=6.8060, radius_m=400, elev=1600),
             skiroute.Destination("Peisey-Vallandry", lat=45.5500, lon=6.7820, radius_m=500, elev=1600),
         ],
